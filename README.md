@@ -74,7 +74,8 @@ export default function TestPage({ mdxSource, frontMatter }) {
 
 export async function getStaticProps() {
   // mdx text - can be from a local file, database, anywhere
-  const source = 'Some **mdx** text, with a component <Test />'
+  const source =
+    '---\ntitle: Test\n---\n\nSome **mdx** text, with a component <Test />'
   const { content, data } = matter(source)
   const mdxSource = await renderToString(content, components)
   return { props: { mdxSource, frontMatter: data } }
