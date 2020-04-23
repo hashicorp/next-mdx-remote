@@ -24,8 +24,8 @@ npm i next-mdx-remote
 This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
 
 ```jsx
-import renderToString from 'next-mdx-enhanced/render-to-string'
-import hydrate from 'next-mdx-enhanced/hydrate'
+import renderToString from 'next-mdx-remote/render-to-string'
+import hydrate from 'next-mdx-remote/hydrate'
 import Test from '../components/test'
 
 const components = { Test }
@@ -55,8 +55,8 @@ Let's break down each function:
 Markdown in general is often paired with frontmatter, and normally this means adding some extra custom processing to the way markdown is handled. Luckily, this can be done entirely independently of `next-mdx-remote`, along with any extra custom processing necessary. Let's walk through an example of how we could process frontmatter out of our mdx source.
 
 ```jsx
-import renderToString from 'next-mdx-enhanced/render-to-string'
-import hydrate from 'next-mdx-enhanced/hydrate'
+import renderToString from 'next-mdx-remote/render-to-string'
+import hydrate from 'next-mdx-remote/hydrate'
 import Test from '../components/test'
 import matter from 'gray-matter'
 
