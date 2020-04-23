@@ -1,0 +1,34 @@
+{
+  "name": "next-mdx-remote",
+  "version": "0.0.0",
+  "description": "utilities for loading mdx from any remote source as data, rather than as a local import",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
+  },
+  "keywords": [
+    "next",
+    "next.js",
+    "mdx",
+    "markdown"
+  ],
+  "author": "Jeff Escalante",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/hashicorp/next-mdx-remote/issues"
+  },
+  "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@mdx-js/mdx": "^1.5.9",
+    "@mdx-js/react": "^1.5.9",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "require-from-string": "^2.0.2"
+  }
+}
