@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { mdx } from '@mdx-js/react'
+import { mdx, MDXProvider } from '@mdx-js/react'
 
 export default function hydrate({ source, renderedOutput }, components) {
   const [hydrated, setHydrated] = useState(false)
@@ -22,7 +22,7 @@ export default function hydrate({ source, renderedOutput }, components) {
     window.requestIdleCallback(() => {
       // first we set up the scope which has to include the mdx custom
       // create element function as well as any components we're using
-      const scope = { mdx, ...components }
+      const scope = { mdx, components, ...components }
       const keys = Object.keys(scope)
       const values = Object.values(scope)
 
@@ -33,10 +33,11 @@ export default function hydrate({ source, renderedOutput }, components) {
       // function with the actual values.
       const hydratedFn = new Function(
         'React',
+        'MDXProvider',
         ...keys,
         `${source}
-        return React.createElement(MDXContent, {});`
-      )(React, ...values)
+        return React.createElement(MDXProvider, { components }, React.createElement(MDXContent, {}));`
+      )(React, MDXProvider, ...values)
 
       // finally, we flip the hydrated status so this doesn't run again, and set
       // the output as the new result so that
