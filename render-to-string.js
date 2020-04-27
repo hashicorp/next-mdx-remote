@@ -5,7 +5,7 @@ const presetEnv = require('@babel/preset-env')
 const presetReact = require('@babel/preset-react')
 const pluginBrowser = require('./babel-plugin-mdx-browser')
 const nodeEval = require('require-from-string')
-const { renderToString } = require('react-dom/server')
+const reactRenderToString = require('react-dom/server').renderToString
 const React = require('react')
 
 export default function renderToString(source, components) {
@@ -48,7 +48,7 @@ import { mdx } from '@mdx-js/react'
       return {
         source: jsSource,
         // react: render to string
-        renderedOutput: renderToString(
+        renderedOutput: reactRenderToString(
           React.createElement(
             MDXProvider,
             {
