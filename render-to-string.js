@@ -8,7 +8,7 @@ const nodeEval = require('require-from-string')
 const reactRenderToString = require('react-dom/server').renderToString
 const React = require('react')
 
-export default function renderToString(source, components) {
+module.exports = function renderToString(source, components) {
   let jsSource
   // transform it into react
   const renderer = `

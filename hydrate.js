@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react'
-import { mdx } from '@mdx-js/react'
+const React = require('react')
+const { mdx } = require('@mdx-js/react')
 
-export default function hydrate({ source, renderedOutput }, components) {
-  const [hydrated, setHydrated] = useState(false)
+module.exports = function hydrate({ source, renderedOutput }, components) {
+  const [hydrated, setHydrated] = React.useState(false)
 
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
-  const [result, setResult] = useState(
+  const [result, setResult] = React.useState(
     <span dangerouslySetInnerHTML={{ __html: renderedOutput }} />
   )
 
@@ -44,5 +44,5 @@ export default function hydrate({ source, renderedOutput }, components) {
       setResult(hydratedFn)
     })
 
-  return useMemo(() => result, [source, result])
+  return React.useMemo(() => result, [source, result])
 }
