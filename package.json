@@ -6,6 +6,12 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "fixtures"
+    ],
+    "verbose": true
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
@@ -30,5 +36,14 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "require-from-string": "^2.0.2"
+  },
+  "devDependencies": {
+    "cross-spawn": "^7.0.2",
+    "express": "^4.17.1",
+    "gray-matter": "^4.0.2",
+    "jest": "^25.5.2",
+    "next": "^9.3.6",
+    "puppeteer": "^3.0.2",
+    "serve-handler": "^6.1.2"
   }
 }

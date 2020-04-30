@@ -7,7 +7,11 @@ module.exports = function hydrate({ source, renderedOutput }, components) {
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
   const [result, setResult] = React.useState(
-    <span dangerouslySetInnerHTML={{ __html: renderedOutput }} />
+    React.createElement('span', {
+      dangerouslySetInnerHTML: {
+        __html: renderedOutput,
+      },
+    })
   )
 
   // if we're on the client side and have not yet hydrated, we hydrate
