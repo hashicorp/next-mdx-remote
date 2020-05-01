@@ -41,7 +41,6 @@ import { mdx } from '@mdx-js/react'
       // - relative imports can't be expected to work with remote files, we'd need
       //   an extra babel transform to be able to import specific file paths
       jsSource = later.code
-      // problem here is that we don't have the components available, AND mdx
       return nodeEval(now.code).default
     })
     .then((component) => {
