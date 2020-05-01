@@ -1,33 +1,11 @@
 {
   "name": "next-mdx-remote",
-  "version": "0.1.0",
   "description": "utilities for loading mdx from any remote source as data, rather than as a local import",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "fixtures"
-    ],
-    "verbose": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
-  },
-  "keywords": [
-    "next",
-    "next.js",
-    "mdx",
-    "markdown"
-  ],
+  "version": "0.1.0",
   "author": "Jeff Escalante",
-  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
-  "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
   "dependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
@@ -45,5 +23,28 @@
     "next": "^9.3.6",
     "puppeteer": "^3.0.2",
     "serve-handler": "^6.1.2"
-  }
+  },
+  "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
+  "jest": {
+    "testPathIgnorePatterns": [
+      "fixtures"
+    ],
+    "verbose": true
+  },
+  "keywords": [
+    "markdown",
+    "mdx",
+    "next",
+    "next.js"
+  ],
+  "license": "MPL-2.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "sideEffects": false
 }
