@@ -27,11 +27,13 @@ import { mdx } from '@mdx-js/react'
         // this one is for immediate evaluation so we can renderToString below
         transformAsync(code, {
           presets: [presetReact, presetEnv],
+          configFile: false,
         }),
         // this one is for the browser to eval and rehydrate, later
         transformAsync(code, {
           presets: [presetReact, presetEnv],
           plugins: [pluginBrowser],
+          configFile: false,
         }),
       ])
     })
