@@ -19,12 +19,21 @@
     "cross-spawn": "^7.0.2",
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
     "next": "^9.4.1",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
     "puppeteer": "^3.1.0",
+    "rmfr": "^2.0.0",
     "serve-handler": "^6.1.2"
   },
   "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "jest": {
     "testPathIgnorePatterns": [
       "fixtures"
@@ -44,6 +53,7 @@
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
   },
   "scripts": {
+    "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
     "test": "jest"
   },
   "sideEffects": false

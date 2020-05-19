@@ -4,6 +4,7 @@ const fs = require('fs')
 const puppeteer = require('puppeteer')
 const handler = require('serve-handler')
 const http = require('http')
+const rmfr = require('rmfr')
 
 jest.setTimeout(30000)
 
@@ -42,6 +43,11 @@ test('it works', () => {
     await browser.close()
     return new Promise((resolve) => server.close(resolve))
   })
+})
+
+afterAll(async () => {
+  await rmfr(path.join(__dirname, 'fixtures/basic/out'))
+  await rmfr(path.join(__dirname, 'fixtures/basic/.next'))
 })
 
 function buildFixture(fixture) {
