@@ -16,6 +16,7 @@
     "require-from-string": "^2.0.2"
   },
   "devDependencies": {
+    "@hashicorp/remark-plugins": "^2.2.1",
     "cross-spawn": "^7.0.2",
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",

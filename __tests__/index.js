@@ -14,7 +14,7 @@ test('it works', () => {
 
   // server renders correctly
   expect(result).toMatch(
-    '<h1>foo</h1><span><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong>markdown</strong> content</p></span>'
+    '<h1>foo</h1><span><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong>markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></span>'
   )
   // hydrates correctly
   let browser, server

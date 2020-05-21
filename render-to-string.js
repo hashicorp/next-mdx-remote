@@ -8,14 +8,14 @@ const nodeEval = require('require-from-string')
 const reactRenderToString = require('react-dom/server').renderToString
 const React = require('react')
 
-module.exports = function renderToString(source, components) {
+module.exports = function renderToString(source, components, options) {
   let jsSource
   // transform it into react
   const renderer = `
 import React from 'react'
 import { mdx } from '@mdx-js/react'
 `
-  return mdx(source)
+  return mdx(source, options)
     .then((jsx) => {
       return `${renderer}\n${jsx}`
     })
