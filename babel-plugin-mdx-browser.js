@@ -25,10 +25,6 @@ module.exports = function BabelPluginMdxBrowser() {
           path.remove()
         }
       },
-      // remove the default export
-      ExportDefaultDeclaration(path) {
-        path.replaceWith(path.node.declaration)
-      },
     },
   }
 }
