@@ -46,18 +46,20 @@ import { mdx } from '@mdx-js/react'
       return nodeEval(now.code).default
     })
     .then((component) => {
+      let element = React.createElement(
+        MDXProvider,
+        {
+          components,
+        },
+        component({})
+      )
+      if (typeof options.Provider === 'function') {
+        element = React.createElement(options.Provider, {}, element)
+      }
       return {
         source: jsSource,
         // react: render to string
-        renderedOutput: reactRenderToString(
-          React.createElement(
-            MDXProvider,
-            {
-              components,
-            },
-            component({})
-          )
-        ),
+        renderedOutput: reactRenderToString(element),
       }
     })
 }
