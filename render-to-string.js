@@ -51,6 +51,16 @@ module.exports = function renderToString(
       )(React, MDXProvider, mdxReact, components, ...Object.values(scope))
     })
     .then((component) => {
+      let element = React.createElement(
+        MDXProvider,
+        {
+          components,
+        },
+        component({})
+      )
+      if (typeof options.Provider === 'function') {
+        element = React.createElement(options.Provider, {}, element)
+      }
       return {
         compiledSource: jsSource,
         // react: render to string
