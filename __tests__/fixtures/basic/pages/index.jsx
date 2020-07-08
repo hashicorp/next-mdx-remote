@@ -6,7 +6,10 @@ import hydrate from '../../../../hydrate'
 import Test from '../components/test'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
-const MDX_COMPONENTS = { Test }
+const MDX_COMPONENTS = {
+  Test,
+  strong: (props) => <strong className="custom-strong" {...props} />,
+}
 
 export default function TestPage({ data, mdxSource }) {
   return (

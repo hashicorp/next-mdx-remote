@@ -1,5 +1,5 @@
 const React = require('react')
-const { mdx } = require('@mdx-js/react')
+const { mdx, MDXProvider } = require('@mdx-js/react')
 
 module.exports = function hydrate({ source, renderedOutput }, components) {
   const [hydrated, setHydrated] = React.useState(false)
@@ -42,10 +42,18 @@ module.exports = function hydrate({ source, renderedOutput }, components) {
         return React.createElement(MDXContent, {});`
       )(React, ...values)
 
+      // wrapping the content with MDXProvider will allow us to customize the standard
+      // markdown components (such as "h1" or "a") with the "components" object
+      const wrappedWithMdxProvider = React.createElement(
+        MDXProvider,
+        { components },
+        hydratedFn
+      )
+
       // finally, we flip the hydrated status so this doesn't run again, and set
       // the output as the new result so that
       setHydrated(true)
-      setResult(hydratedFn)
+      setResult(wrappedWithMdxProvider)
     })
 
   return React.useMemo(() => result, [source, result])
