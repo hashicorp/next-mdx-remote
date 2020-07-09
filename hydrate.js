@@ -1,6 +1,24 @@
 const React = require('react')
 const { mdx, MDXProvider } = require('@mdx-js/react')
 
+// requestIdleCallback shim needed for Safari
+// https://developers.google.com/web/updates/2015/08/using-requestidlecallback#checking_for_requestidlecallback
+if (typeof window !== 'undefined') {
+  window.requestIdleCallback =
+    window.requestIdleCallback ||
+    function (cb) {
+      var start = Date.now()
+      return setTimeout(function () {
+        cb({
+          didTimeout: false,
+          timeRemaining: function () {
+            return Math.max(0, 50 - (Date.now() - start))
+          },
+        })
+      }, 1)
+    }
+}
+
 module.exports = function hydrate({ source, renderedOutput }, components) {
   const [hydrated, setHydrated] = React.useState(false)
 
