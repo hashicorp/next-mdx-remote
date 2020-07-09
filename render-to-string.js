@@ -1,24 +1,16 @@
 const mdx = require('@mdx-js/mdx')
-const { MDXProvider } = require('@mdx-js/react')
+const { MDXProvider, mdx: mdxReact } = require('@mdx-js/react')
 const { transformAsync } = require('@babel/core')
 const presetEnv = require('@babel/preset-env')
 const presetReact = require('@babel/preset-react')
 const pluginBrowser = require('./babel-plugin-mdx-browser')
-const nodeEval = require('require-from-string')
 const reactRenderToString = require('react-dom/server').renderToString
 const React = require('react')
 
-module.exports = function renderToString(source, components, options) {
+module.exports = function renderToString(source, components, options, scope) {
   let jsSource
   // transform it into react
-  const renderer = `
-import React from 'react'
-import { mdx } from '@mdx-js/react'
-`
-  return mdx(source, options)
-    .then((jsx) => {
-      return `${renderer}\n${jsx}`
-    })
+  return mdx(source, { ...options, skipExport: true })
     .then((code) => {
       // mdx gives us back es6 code, we then need to transform into two formats:
       // - first a version we can render to string right now as a "serialized" result
@@ -43,21 +35,24 @@ import { mdx } from '@mdx-js/react'
       // - relative imports can't be expected to work with remote files, we'd need
       //   an extra babel transform to be able to import specific file paths
       jsSource = later.code
-      return nodeEval(now.code).default
+      return new Function(
+        'React',
+        'MDXProvider',
+        'mdx',
+        'components',
+        ...Object.keys(scope),
+        `${now.code}
+    return React.createElement(MDXProvider, { components },
+      React.createElement(MDXContent, {})
+    );`
+      )(React, MDXProvider, mdxReact, components, ...Object.values(scope))
     })
     .then((component) => {
       return {
         source: jsSource,
         // react: render to string
-        renderedOutput: reactRenderToString(
-          React.createElement(
-            MDXProvider,
-            {
-              components,
-            },
-            component({})
-          )
-        ),
+        renderedOutput: reactRenderToString(component),
+        scope,
       }
     })
 }

@@ -47,8 +47,8 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 Let's break down each function:
 
-- `renderToString(source: string, components: object)` - This function consumes a string of mdx along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. The function returns an object that is intended to be passed into `hydrate` directly.
-- `hydrate(source: object, components: object, options?: object)` - This function consumes the output of `renderToString` as well as the same components argument as `renderToString`. It also can optionally be passed options which are [passed directly to mdx](https://mdxjs.com/advanced/plugins). Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
+- `renderToString(source: string, components: object, options?: object, scope?: object)` - This function consumes a string of mdx along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to mdx](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
+- `hydrate(source: object, components: object)` - This function consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
 
 ### Frontmatter & Custom Processing
 
@@ -79,10 +79,10 @@ export async function getStaticProps() {
 title: Test
 ---
 
-Some **mdx** text, with a component <Test />
+Some **mdx** text, with a component <Test name={title}/>
 `
   const { content, data } = matter(source)
-  const mdxSource = await renderToString(content, components)
+  const mdxSource = await renderToString(content, components, data)
   return { props: { mdxSource, frontMatter: data } }
 }
 ```
