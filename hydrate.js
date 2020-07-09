@@ -19,7 +19,10 @@ if (typeof window !== 'undefined') {
     }
 }
 
-module.exports = function hydrate({ source, renderedOutput }, components) {
+module.exports = function hydrate(
+  { source, renderedOutput, scope = {} },
+  components
+) {
   const [hydrated, setHydrated] = React.useState(false)
 
   // our default result is the server-rendered output
@@ -44,9 +47,9 @@ module.exports = function hydrate({ source, renderedOutput }, components) {
     window.requestIdleCallback(() => {
       // first we set up the scope which has to include the mdx custom
       // create element function as well as any components we're using
-      const scope = { mdx, ...components }
-      const keys = Object.keys(scope)
-      const values = Object.values(scope)
+      const fullScope = { mdx, ...components, ...scope }
+      const keys = Object.keys(fullScope)
+      const values = Object.values(fullScope)
 
       // now we eval the source code using a function constructor
       // in order for this to work we need to have React, the mdx createElement,
