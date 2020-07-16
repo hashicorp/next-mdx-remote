@@ -5,10 +5,13 @@ const puppeteer = require('puppeteer')
 const handler = require('serve-handler')
 const http = require('http')
 const rmfr = require('rmfr')
+const renderToString = require('../render-to-string')
+const React = require('react')
+const { paragraphCustomAlerts } = require('@hashicorp/remark-plugins')
 
 jest.setTimeout(30000)
 
-test('it works', () => {
+test('rehydrates correctly in browser', () => {
   buildFixture('basic')
   const result = readOutputFile('basic', 'index')
 
@@ -45,10 +48,47 @@ test('it works', () => {
   })
 })
 
+test('renderToString minimal', async () => {
+  const result = await renderToString('foo **bar**')
+  expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
+})
+
+test('renderToString with component', async () => {
+  const result = await renderToString('foo <Test />', {
+    Test: () => React.createElement('span', null, 'hello world'),
+  })
+  expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
+})
+
+test('renderToString with options', async () => {
+  const result = await renderToString('~> hello', null, {
+    remarkPlugins: [paragraphCustomAlerts],
+  })
+  expect(result.renderedOutput).toEqual(
+    '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
+  )
+})
+
+test('renderToString with scope', async () => {
+  const result = await renderToString(
+    '<Test name={bar} />',
+    { Test: ({ name }) => React.createElement('p', null, name) },
+    null,
+    {
+      bar: 'test',
+    }
+  )
+  expect(result.renderedOutput).toEqual('<p>test</p>')
+})
+
 afterAll(async () => {
   await rmfr(path.join(__dirname, 'fixtures/basic/out'))
   await rmfr(path.join(__dirname, 'fixtures/basic/.next'))
 })
+
+//
+// utility functions
+//
 
 function buildFixture(fixture) {
   spawn.sync('next', ['build'], {
