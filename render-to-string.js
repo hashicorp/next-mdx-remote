@@ -7,7 +7,12 @@ const pluginBrowser = require('./babel-plugin-mdx-browser')
 const reactRenderToString = require('react-dom/server').renderToString
 const React = require('react')
 
-module.exports = function renderToString(source, components, options, scope) {
+module.exports = function renderToString(
+  source,
+  components,
+  options,
+  scope = {}
+) {
   let jsSource
   // transform it into react
   return mdx(source, { ...options, skipExport: true })
