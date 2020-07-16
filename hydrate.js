@@ -1,30 +1,12 @@
+require('./idle-callback-polyfill')
 const React = require('react')
 const { mdx, MDXProvider } = require('@mdx-js/react')
-
-// requestIdleCallback shim needed for Safari
-// https://developers.google.com/web/updates/2015/08/using-requestidlecallback#checking_for_requestidlecallback
-if (typeof window !== 'undefined') {
-  window.requestIdleCallback =
-    window.requestIdleCallback ||
-    function (cb) {
-      var start = Date.now()
-      return setTimeout(function () {
-        cb({
-          didTimeout: false,
-          timeRemaining: function () {
-            return Math.max(0, 50 - (Date.now() - start))
-          },
-        })
-      }, 1)
-    }
-}
+const { useEffect } = require('react')
 
 module.exports = function hydrate(
   { source, renderedOutput, scope = {} },
   components
 ) {
-  const [hydrated, setHydrated] = React.useState(false)
-
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
   const [result, setResult] = React.useState(
@@ -35,16 +17,18 @@ module.exports = function hydrate(
     })
   )
 
-  // if we're on the client side and have not yet hydrated, we hydrate
-  // the mdx content inside requestIdleCallback, since we can be fairly
-  // confident that markdown-embedded components are not a high priority
-  // to get to interactive compared to... anything else on the page.
+  // if we're server-side, we can return the raw output early
+  if (typeof window === 'undefined') return result
+
+  // if we're on the client side, we hydrate the mdx content inside
+  // requestIdleCallback, since we can be fairly confident that
+  // markdown - embedded components are not a high priority to get
+  // to interactive compared to...anything else on the page.
   //
   // once the hydration is complete, we update the state/memo value and
   // react re-renders for us
-  typeof window !== 'undefined' &&
-    !hydrated &&
-    window.requestIdleCallback(() => {
+  useEffect(() => {
+    const handle = window.requestIdleCallback(() => {
       // first we set up the scope which has to include the mdx custom
       // create element function as well as any components we're using
       const fullScope = { mdx, ...components, ...scope }
@@ -60,7 +44,7 @@ module.exports = function hydrate(
         'React',
         ...keys,
         `${source}
-        return React.createElement(MDXContent, {});`
+      return React.createElement(MDXContent, {});`
       )(React, ...values)
 
       // wrapping the content with MDXProvider will allow us to customize the standard
@@ -71,11 +55,12 @@ module.exports = function hydrate(
         hydratedFn
       )
 
-      // finally, we flip the hydrated status so this doesn't run again, and set
-      // the output as the new result so that
-      setHydrated(true)
+      // finally, set the the output as the new result so that react will re-render for us
+      // and cancel the idle callback since we don't need it anymore
       setResult(wrappedWithMdxProvider)
+      window.cancelIdleCallback(handle)
     })
+  }, [source])
 
-  return React.useMemo(() => result, [source, result])
+  return result
 }
