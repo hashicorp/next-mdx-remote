@@ -40,7 +40,9 @@ renderToString(
       hastPlugins: []any,
       compilers: []any,
       filepath: String
-    }
+    },
+    // variable names and values which can be consumed by components
+    scope: { [key:string]: any }
   }
 )
 ```
