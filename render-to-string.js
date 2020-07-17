@@ -9,13 +9,11 @@ const React = require('react')
 
 module.exports = function renderToString(
   source,
-  components,
-  options,
-  scope = {}
+  { components, mdxOptions, scope = {} } = {}
 ) {
   let jsSource
   // transform it into react
-  return mdx(source, { ...options, skipExport: true })
+  return mdx(source, { ...mdxOptions, skipExport: true })
     .then((code) => {
       // mdx gives us back es6 code, we then need to transform into two formats:
       // - first a version we can render to string right now as a "serialized" result
