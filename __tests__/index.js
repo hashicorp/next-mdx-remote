@@ -55,14 +55,18 @@ test('renderToString minimal', async () => {
 
 test('renderToString with component', async () => {
   const result = await renderToString('foo <Test />', {
-    Test: () => React.createElement('span', null, 'hello world'),
+    components: {
+      Test: () => React.createElement('span', null, 'hello world'),
+    },
   })
   expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
 })
 
 test('renderToString with options', async () => {
-  const result = await renderToString('~> hello', null, {
-    remarkPlugins: [paragraphCustomAlerts],
+  const result = await renderToString('~> hello', {
+    mdxOptions: {
+      remarkPlugins: [paragraphCustomAlerts],
+    },
   })
   expect(result.renderedOutput).toEqual(
     '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
@@ -70,14 +74,12 @@ test('renderToString with options', async () => {
 })
 
 test('renderToString with scope', async () => {
-  const result = await renderToString(
-    '<Test name={bar} />',
-    { Test: ({ name }) => React.createElement('p', null, name) },
-    null,
-    {
+  const result = await renderToString('<Test name={bar} />', {
+    components: { Test: ({ name }) => React.createElement('p', null, name) },
+    scope: {
       bar: 'test',
-    }
-  )
+    },
+  })
   expect(result.renderedOutput).toEqual('<p>test</p>')
 })
 

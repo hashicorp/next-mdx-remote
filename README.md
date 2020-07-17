@@ -23,6 +23,41 @@ npm i next-mdx-remote
 
 This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
 
+First let's break down each function's signature in some pseudo-typescript-y format, then we'll look at an example:
+
+```typescript
+renderToString(
+  // raw mdx contents as a string
+  source: String,
+  options?: {
+    // the `name` is how you will invoke the component in your mdx
+    components: { name: React.ComponentType },
+    // mdx's available options at time of writing
+    // pulled directly from https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
+    mdxOptions: {
+      mdPlugins: []any,
+      rehypePlugins: []any,
+      hastPlugins: []any,
+      compilers: []any,
+      filepath: String
+    }
+  }
+)
+```
+
+```typescript
+hydrate(
+  // the direct return value of `renderToString`
+  source: CompiledMdxSourceType,
+  // should be the exact same components that were passed to renderToString
+  options?: {
+    components: { name: React.ComponentType }
+  }
+)
+```
+
+Ok with that out of the way, let's look at an example for the normal use case:
+
 ```jsx
 import renderToString from 'next-mdx-remote/render-to-string'
 import hydrate from 'next-mdx-remote/hydrate'
@@ -30,16 +65,16 @@ import Test from '../components/test'
 
 const components = { Test }
 
-export default function TestPage({ mdxSource }) {
-  const content = hydrate(mdxSource, components)
+export default function TestPage({ source }) {
+  const content = hydrate(source, { components })
   return <div className="wrapper">{content}</div>
 }
 
 export async function getStaticProps() {
   // mdx text - can be from a local file, database, anywhere
   const source = 'Some **mdx** text, with a component <Test />'
-  const mdxSource = await renderToString(source, components)
-  return { props: { mdxSource } }
+  const mdxSource = await renderToString(source, { components })
+  return { props: { source: mdxSource } }
 }
 ```
 
@@ -62,8 +97,8 @@ import matter from 'gray-matter'
 
 const components = { Test }
 
-export default function TestPage({ mdxSource, frontMatter }) {
-  const content = hydrate(mdxSource, components)
+export default function TestPage({ source, frontMatter }) {
+  const content = hydrate(source, { components })
   return (
     <div className="wrapper">
       <h1>{frontMatter.title}</h1>
@@ -81,8 +116,8 @@ title: Test
 Some **mdx** text, with a component <Test name={title}/>
 `
   const { content, data } = matter(source)
-  const mdxSource = await renderToString(content, components, null, data)
-  return { props: { mdxSource, frontMatter: data } }
+  const mdxSource = await renderToString(content, { components, scope: data })
+  return { props: { source: mdxSource, frontMatter: data } }
 }
 ```
 

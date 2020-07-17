@@ -5,7 +5,7 @@ const { useEffect } = require('react')
 
 module.exports = function hydrate(
   { source, renderedOutput, scope = {} },
-  components
+  { components } = {}
 ) {
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
