@@ -82,7 +82,7 @@ title: Test
 Some **mdx** text, with a component <Test name={title}/>
 `
   const { content, data } = matter(source)
-  const mdxSource = await renderToString(content, components, data)
+  const mdxSource = await renderToString(content, components, null, data)
   return { props: { mdxSource, frontMatter: data } }
 }
 ```
