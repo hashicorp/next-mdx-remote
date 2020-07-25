@@ -16,6 +16,9 @@
   },
   "devDependencies": {
     "@hashicorp/remark-plugins": "^3.0.0",
+    "@types/babel__preset-env": "^7.9.0",
+    "@types/mdx-js__react": "^1.5.2",
+    "@types/react-dom": "^16.9.8",
     "cross-spawn": "^7.0.3",
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",
@@ -27,7 +30,8 @@
     "puppeteer": "^5.1.0",
     "release": "^6.1.0",
     "rmfr": "^2.0.0",
-    "serve-handler": "^6.1.3"
+    "serve-handler": "^6.1.3",
+    "typescript": "^3.9.7"
   },
   "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
   "husky": {
@@ -48,7 +52,7 @@
     "next.js"
   ],
   "license": "MPL-2.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
@@ -56,6 +60,7 @@
   "scripts": {
     "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
     "test": "jest",
+    "tsc": "tsc",
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
     "release:patch": "release patch && npm publish"

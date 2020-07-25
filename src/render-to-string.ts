@@ -1,17 +1,21 @@
-const mdx = require('@mdx-js/mdx')
-const { MDXProvider, mdx: mdxReact } = require('@mdx-js/react')
-const { transformAsync } = require('@babel/core')
-const presetEnv = require('@babel/preset-env')
-const presetReact = require('@babel/preset-react')
-const pluginBrowser = require('./babel-plugin-mdx-browser')
-const reactRenderToString = require('react-dom/server').renderToString
-const React = require('react')
+import mdx from '@mdx-js/mdx'
+import { MDXProvider, mdx as mdxReact } from '@mdx-js/react'
+import { transformAsync } from '@babel/core'
+import presetEnv from '@babel/preset-env'
+import presetReact from '@babel/preset-react'
+import pluginBrowser from './babel-plugin-mdx-browser'
+import { renderToString as reactRenderToString } from 'react-dom/server'
+import React from 'react'
 
-module.exports = function renderToString(
-  source,
-  components,
-  options,
-  scope = {}
+interface Options {}
+
+interface Scope {}
+
+export default async function renderToString(
+  source: string,
+  components?: { [key: string]: React.Component<{}> },
+  options?: Options,
+  scope: Scope = {}
 ) {
   let jsSource
   // transform it into react

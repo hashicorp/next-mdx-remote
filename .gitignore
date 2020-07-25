@@ -1,4 +1,5 @@
 .DS_Store
 node_modules
-__tests__/fixtures/*/.next
-__tests__/fixtures/*/out
+dist
+src/__tests__/fixtures/*/.next
+src/__tests__/fixtures/*/out
