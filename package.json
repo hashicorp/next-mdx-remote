@@ -52,7 +52,9 @@
     "next.js"
   ],
   "license": "MPL-2.0",
-  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"

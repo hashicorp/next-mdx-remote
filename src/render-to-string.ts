@@ -6,11 +6,11 @@ import presetReact from '@babel/preset-react'
 import { renderToString as reactRenderToString } from 'react-dom/server'
 import React from 'react'
 import pluginBrowser from './babel-plugin-mdx-browser'
-import { Scope } from './types'
+import { Components, Scope } from './types'
 
 export default async function renderToString(
   source: string,
-  components?: { [key: string]: React.Component<{}> },
+  components?: Components,
   options?: Options,
   scope: Scope = {}
 ) {
