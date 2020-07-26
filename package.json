@@ -53,7 +53,9 @@
   ],
   "license": "MPL-2.0",
   "exports": {
-    ".": "./dist"
+    ".": "./dist",
+    "./hydrate": "./dist/hydrate.js",
+    "./render-to-string": "./dist/render-to-string.js"
   },
   "repository": {
     "type": "git",
