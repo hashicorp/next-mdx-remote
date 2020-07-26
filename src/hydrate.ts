@@ -1,15 +1,26 @@
-require('./idle-callback-polyfill')
-const React = require('react')
-const { mdx, MDXProvider } = require('@mdx-js/react')
-const { useEffect } = require('react')
+import './idle-callback-polyfill'
+import React, { useState, useEffect, ReactElement } from 'react'
+import { mdx, MDXProvider, MDXProviderProps } from '@mdx-js/react'
+import { Components, Scope } from './types'
 
-module.exports = function hydrate(
-  { source, renderedOutput, scope = {} },
-  components
+export default function hydrate(
+  {
+    source,
+    renderedOutput,
+    scope = {},
+  }: {
+    source: string
+    renderedOutput: string
+    scope: Scope
+  },
+  components: Components
 ) {
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
-  const [result, setResult] = React.useState(
+  const [result, setResult] = useState<
+    | React.FunctionComponentElement<MDXProviderProps>
+    | ReactElement<{ dangerouslySetInnerHTML: { __html: string } }>
+  >(
     React.createElement('span', {
       dangerouslySetInnerHTML: {
         __html: renderedOutput,
@@ -51,11 +62,11 @@ module.exports = function hydrate(
       // markdown components (such as "h1" or "a") with the "components" object
       const wrappedWithMdxProvider = React.createElement(
         MDXProvider,
-        { components },
+        { components } as MDXProviderProps,
         hydratedFn
       )
 
-      // finally, set the the output as the new result so that react will re-render for us
+      // finally, set the output as the new result so that react will re-render for us
       // and cancel the idle callback since we don't need it anymore
       setResult(wrappedWithMdxProvider)
       window.cancelIdleCallback(handle)

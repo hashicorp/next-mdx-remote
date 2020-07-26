@@ -6,4 +6,4 @@ export interface Scope {}
 //   [key: string]: React.Component<any>
 // }
 
-export type Components = Parameters<typeof createElement>
+export type Components = Parameters<typeof createElement>[1]

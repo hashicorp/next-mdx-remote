@@ -31,7 +31,7 @@ export default async function renderToString(
   ])
 
   if (!now || !later) {
-    throw new Error('Failed to trnasform mdx source code')
+    throw new Error('Failed to transform mdx source code')
   }
 
   // evaluate the code
