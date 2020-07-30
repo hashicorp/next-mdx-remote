@@ -52,7 +52,7 @@ module.exports = function renderToString(
     })
     .then((component) => {
       return {
-        source: jsSource,
+        compiledSource: jsSource,
         // react: render to string
         renderedOutput: reactRenderToString(component),
         scope,
