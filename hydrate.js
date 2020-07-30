@@ -4,7 +4,7 @@ const { mdx, MDXProvider } = require('@mdx-js/react')
 const { useEffect } = require('react')
 
 module.exports = function hydrate(
-  { source, renderedOutput, scope = {} },
+  { compiledSource, renderedOutput, scope = {} },
   { components } = {}
 ) {
   // our default result is the server-rendered output
@@ -43,7 +43,7 @@ module.exports = function hydrate(
       const hydratedFn = new Function(
         'React',
         ...keys,
-        `${source}
+        `${compiledSource}
       return React.createElement(MDXContent, {});`
       )(React, ...values)
 
@@ -60,7 +60,7 @@ module.exports = function hydrate(
       setResult(wrappedWithMdxProvider)
       window.cancelIdleCallback(handle)
     })
-  }, [source])
+  }, [compiledSource])
 
   return result
 }
