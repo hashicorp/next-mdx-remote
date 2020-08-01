@@ -10,12 +10,8 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noEmit": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "./jtypes",
-      "./node_modules/@types"
-    ] ,
+    "typeRoots": ["./@types", "./node_modules/@types"],
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

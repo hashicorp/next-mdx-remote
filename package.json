@@ -37,7 +37,7 @@
   "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && npm run typecheck"
     }
   },
   "jest": {
@@ -62,10 +62,11 @@
   "scripts": {
     "lint": "prettier --write \"./**/*.{ts,tsx,js,jsx,json}\"",
     "test": "jest",
-    "tsc": "tsc",
-    "release:major": "release major && npm run tsc --noEmit false && npm publish",
-    "release:minor": "release minor && npm run tsc --noEmit false && npm publish",
-    "release:patch": "release patch && npm run tsc --noEmit false && npm publish"
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "release:major": "release major && npm run tsc && npm publish",
+    "release:minor": "release minor && npm run tsc && npm publish",
+    "release:patch": "release patch && npm run tsc && npm publish"
   },
   "sideEffects": false
 }
