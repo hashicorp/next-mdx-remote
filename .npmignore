@@ -1,2 +1,6 @@
-src
+@types
+__tests__
 .prettierrc
+*.ts
+!*.d.ts
+tsconfig.json

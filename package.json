@@ -63,9 +63,9 @@
     "lint": "prettier --write \"./**/*.{ts,tsx,js,jsx,json}\"",
     "test": "jest",
     "tsc": "tsc",
-    "release:major": "release major && npm publish",
-    "release:minor": "release minor && npm publish",
-    "release:patch": "release patch && npm publish"
+    "release:major": "release major && npm run tsc --noEmit=false && npm publish",
+    "release:minor": "release minor && npm run tsc --noEmit=false && npm publish",
+    "release:patch": "release patch && npm run tsc --noEmit=false && npm publish"
   },
   "sideEffects": false
 }

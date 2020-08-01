@@ -6,17 +6,19 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "baseUrl": "./",
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "noEmit": true,
+    "baseUrl": ".",
+    "typeRoots": [
+      "./jtypes",
+      "./node_modules/@types"
+    ] ,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"]
+  "exclude": ["./__tests__", "./babel-plugin-mdx-browser.js"]
 }
