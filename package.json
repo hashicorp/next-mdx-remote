@@ -9,6 +9,7 @@
   "dependencies": {
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
     "@mdx-js/mdx": "^1.6.8",
     "@mdx-js/react": "^1.6.8",
     "react": "^16.13.1",
@@ -52,17 +53,14 @@
     "next.js"
   ],
   "license": "MPL-2.0",
-  "exports": {
-    ".": "./dist",
-    "./hydrate": "./dist/hydrate.js",
-    "./render-to-string": "./dist/render-to-string.js"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
   },
   "scripts": {
-    "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
+    "lint": "prettier --write \"./**/*.{ts,tsx,js,jsx,json}\"",
     "test": "jest",
     "tsc": "tsc",
     "release:major": "release major && npm publish",

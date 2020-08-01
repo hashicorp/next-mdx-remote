@@ -1,19 +1,11 @@
 import './idle-callback-polyfill'
 import React, { useState, useEffect, ReactElement } from 'react'
 import { mdx, MDXProvider, MDXProviderProps } from '@mdx-js/react'
-import { Components, Scope } from './types'
+import { Components, Source } from './types'
 
 export default function hydrate(
-  {
-    source,
-    renderedOutput,
-    scope = {},
-  }: {
-    source: string
-    renderedOutput: string
-    scope: Scope
-  },
-  components: Components
+  { source, renderedOutput, scope = {} }: Source,
+  components?: Components
 ) {
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible

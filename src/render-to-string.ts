@@ -6,14 +6,14 @@ import presetReact from '@babel/preset-react'
 import { renderToString as reactRenderToString } from 'react-dom/server'
 import React from 'react'
 import pluginBrowser from './babel-plugin-mdx-browser'
-import { Components, Scope } from './types'
+import { Components, Scope, Source } from './types'
 
 export default async function renderToString(
   source: string,
   components?: Components,
   options?: Options,
   scope: Scope = {}
-) {
+): Promise<Source> {
   // transform it into react
   const code = await mdx(source, { ...options, skipExport: true })
   const [now, later] = await Promise.all([
@@ -30,7 +30,7 @@ export default async function renderToString(
     }),
   ])
 
-  if (!now || !later) {
+  if (!now || !later || !later.code) {
     throw new Error('Failed to transform mdx source code')
   }
 
