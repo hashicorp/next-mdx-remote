@@ -4,4 +4,5 @@ __tests__/fixtures/*/.next
 __tests__/fixtures/*/out
 *.d.ts
 *.js
+!__tests__/**/*.js
 *.map
