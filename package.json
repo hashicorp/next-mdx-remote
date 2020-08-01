@@ -61,12 +61,12 @@
   },
   "scripts": {
     "lint": "prettier --write \"./**/*.{ts,tsx,js,jsx,json}\"",
-    "test": "jest",
+    "test": "tsc && jest",
     "typecheck": "tsc --noEmit",
     "build": "tsc",
-    "release:major": "release major && npm run tsc && npm publish",
-    "release:minor": "release minor && npm run tsc && npm publish",
-    "release:patch": "release patch && npm run tsc && npm publish"
+    "release:major": "release major && tsc && npm publish",
+    "release:minor": "release minor && tsc && npm publish",
+    "release:patch": "release patch && tsc && npm publish"
   },
   "sideEffects": false
 }

@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer')
 const handler = require('serve-handler')
 const http = require('http')
 const rmfr = require('rmfr')
-const renderToString = require('../render-to-string')
+const renderToString = require('../render-to-string').default
 const React = require('react')
 const { paragraphCustomAlerts } = require('@hashicorp/remark-plugins')
 
