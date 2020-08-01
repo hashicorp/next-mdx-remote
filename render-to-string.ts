@@ -5,6 +5,7 @@ import presetEnv from '@babel/preset-env'
 import presetReact from '@babel/preset-react'
 import { renderToString as reactRenderToString } from 'react-dom/server'
 import React from 'react'
+// @ts-ignore
 import pluginBrowser from './babel-plugin-mdx-browser'
 import { Components, Scope, Source } from './types'
 
