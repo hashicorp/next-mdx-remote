@@ -7,8 +7,9 @@
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
   "dependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
     "@mdx-js/mdx": "^1.6.16",
     "@mdx-js/react": "^1.6.16"
   },
@@ -18,7 +19,7 @@
     "express": "^4.17.1",
     "gray-matter": "^4.0.2",
     "husky": "^4.2.5",
-    "jest": "^26.3.0",
+    "jest": "^26.4.0",
     "next": "^9.5.2",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
