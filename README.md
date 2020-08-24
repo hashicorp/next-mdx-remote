@@ -61,8 +61,7 @@ hydrate(
 Ok with that out of the way, let's look at an example for the normal use case:
 
 ```jsx
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import { hydrate, renderToString } from 'next-mdx-remote'
 import Test from '../components/test'
 
 const components = { Test }
@@ -92,8 +91,7 @@ Let's break down each function:
 Markdown in general is often paired with frontmatter, and normally this means adding some extra custom processing to the way markdown is handled. Luckily, this can be done entirely independently of `next-mdx-remote`, along with any extra custom processing necessary. Let's walk through an example of how we could process frontmatter out of our mdx source.
 
 ```jsx
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import { hydrate, renderToString } from 'next-mdx-remote'
 import Test from '../components/test'
 import matter from 'gray-matter'
 
