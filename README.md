@@ -35,7 +35,7 @@ renderToString(
     // mdx's available options at time of writing
     // pulled directly from https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
     mdxOptions: {
-      mdPlugins: []any,
+      remarkPlugins: []any,
       rehypePlugins: []any,
       hastPlugins: []any,
       compilers: []any,
