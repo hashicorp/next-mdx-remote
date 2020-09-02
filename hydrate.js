@@ -10,7 +10,7 @@ module.exports = function hydrate(
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
   const [result, setResult] = React.useState(
-    React.createElement('span', {
+    React.createElement('div', {
       dangerouslySetInnerHTML: {
         __html: renderedOutput,
       },

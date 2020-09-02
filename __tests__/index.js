@@ -17,7 +17,7 @@ test('rehydrates correctly in browser', () => {
 
   // server renders correctly
   expect(result).toMatch(
-    '<h1>foo</h1><span><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></span>'
+    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
   )
   // hydrates correctly
   let browser, server
