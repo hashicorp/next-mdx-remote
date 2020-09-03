@@ -251,6 +251,12 @@ export async function getStaticProps() {
 
 That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
 
+### How Can I Build A Blog With This?
+
+Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal html and css. You definitely do not need to be using a heavy full-stack javascript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
+
+If you really insist though, check out [our official nextjs example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
+
 ### Caveats
 >>>>>>> 7ab2af4 (fix the implementation, add tests, update readme)
 
