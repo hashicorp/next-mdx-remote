@@ -9,7 +9,7 @@ const React = require('react')
 
 module.exports = function renderToString(
   source,
-  { components = {}, mdxOptions = {}, scope = {} } = {}
+  { components = {}, mdxOptions = {}, scope = {}, provider } = {}
 ) {
   let jsSource
   // transform it into react
@@ -51,16 +51,14 @@ module.exports = function renderToString(
       )(React, MDXProvider, mdxReact, components, ...Object.values(scope))
     })
     .then((component) => {
-      let element = React.createElement(
-        MDXProvider,
-        {
-          components,
-        },
-        component({})
-      )
-      if (typeof options.Provider === 'function') {
-        element = React.createElement(options.Provider, {}, element)
-      }
+      // if a custom provider was given, wrap it around the source
+      if (provider)
+        component = React.createElement(
+          provider.component,
+          provider.props || {},
+          component
+        )
+
       return {
         compiledSource: jsSource,
         // react: render to string

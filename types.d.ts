@@ -12,4 +12,9 @@ export declare namespace MdxRemote {
     renderedOutput: string
     scope?: Record<string, unknown>
   }
+  /** Format of the "provider" argument that is accepted by renderToString and hydrate */
+  interface Provider {
+    component: React.FunctionComponent | React.Component
+    props: Record<string, unknown>
+  }
 }

@@ -20,11 +20,11 @@ test('rehydrates correctly in browser', () => {
 
   // server renders correctly
   expect(result).toMatch(
-    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
+    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
   )
   // hydrates correctly
   let browser: Browser, server: Server
-  return new Promise(async (resolve) => {
+  return new Promise<string[]>(async (resolve) => {
     browser = await puppeteer.launch()
     const page = await browser.newPage()
     page.on('console', (msg) => console.log(msg.text()))
@@ -36,13 +36,18 @@ test('rehydrates correctly in browser', () => {
       await page.waitFor(() => {
         return document.querySelector('button')?.innerHTML === 'Count: 1'
       })
-      // pull the text for a test confirm
-      const buttonCount = page.$eval('button', (el) => el.innerHTML)
-      resolve(buttonCount)
+      // pull text for elements we're testing hydrate on
+      const contextElementText = page.$eval('.context', (el) => el.innerHTML)
+      const buttonText = page.$eval('button', (el) => el.innerHTML)
+
+      resolve(Promise.all([buttonText, contextElementText]))
     })
-    await page.goto('http://localhost:1235', { waitUntil: 'domcontentloaded' })
-  }).then(async (buttonText) => {
+    await page.goto('http://localhost:1235', {
+      waitUntil: 'domcontentloaded',
+    })
+  }).then(async ([buttonText, contextElementText]) => {
     expect(buttonText).toEqual('Count: 1')
+    expect(contextElementText).toEqual('Context value: "foo"')
 
     // close the browser and dev server
     await browser.close()
@@ -86,6 +91,25 @@ test('renderToString with scope', async () => {
     },
   })
   expect(result.renderedOutput).toEqual('<p>test</p>')
+})
+
+test('renderToString with custom provider', async () => {
+  const TestContext = React.createContext(null)
+
+  const result = await renderToString('<Test />', {
+    components: {
+      Test: () =>
+        React.createElement(TestContext.Consumer, null, (value) =>
+          React.createElement('p', null, value)
+        ),
+    },
+    provider: {
+      component: TestContext.Provider,
+      props: { value: 'provider-value' },
+    },
+  })
+
+  expect(result.renderedOutput).toEqual('<p>provider-value</p>')
 })
 
 afterAll(async () => {

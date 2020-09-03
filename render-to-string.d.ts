@@ -24,6 +24,12 @@ export default function renderToString(
      */
     scope?: Record<string, unknown>
     /**
+     * Configuration for a provider to be wrapped around your mdx content.
+     *
+     * For example: `{ provider: FooProvider, props: { foo: 'bar' } }`
+     */
+    provider?: MdxRemote.Provider
+    /**
      * These options are passed to the MDX compiler.
      * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
      */
