@@ -75,16 +75,16 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
 
-- **`renderToString(source: string, components: object, options?: object, scope?: object)`**
+- **`renderToString(source: string, options: { components: object, options?: object, scope?: object } )`**
 
   **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
 
   ```ts
-  renderToString({
+  renderToString(
     // Raw MDX contents as a string
     source: '# hello, world',
     // Optional parameters
-    options: {
+    {
       // The `name` is how you will invoke the component in your MDX
       components: { name: React.ComponentType },
       // MDX's available options at time of writing pulled directly from
@@ -96,9 +96,9 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
         compilers: [],
         filepath: '/some/file/path',
       },
-    },
-    scope: {},
-  })
+      scope: {},
+    }
+  )
   ```
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
