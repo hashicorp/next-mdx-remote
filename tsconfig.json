@@ -10,9 +10,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "baseUrl": ".",
-    "typeRoots": ["./@types", "./node_modules/@types"],
+    "typeRoots": ["@types", "node_modules/@types"],
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
   "exclude": ["node_modules", "__tests__"]

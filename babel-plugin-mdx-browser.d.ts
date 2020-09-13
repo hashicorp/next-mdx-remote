@@ -1,4 +1,7 @@
-import { PluginItem } from '@babel/core'
-
-const pluginBrowser: PluginItem
-export default pluginBrowser
+export default function BabelPluginMdxBrowser(): {
+  visitor: {
+    ImportDeclaration(path: any): void
+    VariableDeclaration(path: any): void
+  }
+}
+//# sourceMappingURL=babel-plugin-mdx-browser.d.ts.map

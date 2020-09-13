@@ -1,15 +1,13 @@
-'use strict'
-Object.defineProperty(exports, '__esModule', { value: true })
-function BabelPluginMdxBrowser() {
+export default function BabelPluginMdxBrowser() {
   return {
     visitor: {
       // remove all imports, we will add these to scope manually
-      ImportDeclaration: function (path) {
+      ImportDeclaration(path: any) {
         path.remove()
       },
       // the `makeShortcode` template is nice for error handling but we
       // don't need it here as we are manually injecting dependencies
-      VariableDeclaration: function (path) {
+      VariableDeclaration(path: any) {
         // this removes the `makeShortcode` function
         if (path.node.declarations[0].id.name === 'makeShortcode') {
           path.remove()
@@ -29,5 +27,3 @@ function BabelPluginMdxBrowser() {
     },
   }
 }
-exports.default = BabelPluginMdxBrowser
-//# sourceMappingURL=babel-plugin-mdx-browser.js.map
