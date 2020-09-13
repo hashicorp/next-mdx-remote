@@ -3,6 +3,7 @@ node_modules
 __tests__/fixtures/*/.next
 __tests__/fixtures/*/out
 *.d.ts
+!babel-plugin-mdx-browser.d.ts
 *.js
 !__tests__/**/*.js
 !babel-plugin-mdx-browser.js
