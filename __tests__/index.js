@@ -17,7 +17,7 @@ test('rehydrates correctly in browser', () => {
 
   // server renders correctly
   expect(result).toMatch(
-    '<h1>foo</h1><span><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></span>'
+    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
   )
   // hydrates correctly
   let browser, server
@@ -55,14 +55,18 @@ test('renderToString minimal', async () => {
 
 test('renderToString with component', async () => {
   const result = await renderToString('foo <Test />', {
-    Test: () => React.createElement('span', null, 'hello world'),
+    components: {
+      Test: () => React.createElement('span', null, 'hello world'),
+    },
   })
   expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
 })
 
 test('renderToString with options', async () => {
-  const result = await renderToString('~> hello', null, {
-    remarkPlugins: [paragraphCustomAlerts],
+  const result = await renderToString('~> hello', {
+    mdxOptions: {
+      remarkPlugins: [paragraphCustomAlerts],
+    },
   })
   expect(result.renderedOutput).toEqual(
     '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
@@ -70,14 +74,12 @@ test('renderToString with options', async () => {
 })
 
 test('renderToString with scope', async () => {
-  const result = await renderToString(
-    '<Test name={bar} />',
-    { Test: ({ name }) => React.createElement('p', null, name) },
-    null,
-    {
+  const result = await renderToString('<Test name={bar} />', {
+    components: { Test: ({ name }) => React.createElement('p', null, name) },
+    scope: {
       bar: 'test',
-    }
-  )
+    },
+  })
   expect(result.renderedOutput).toEqual('<p>test</p>')
 })
 

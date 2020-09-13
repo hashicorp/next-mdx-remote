@@ -1,21 +1,27 @@
-import mdx, { Options } from '@mdx-js/mdx'
-import { MDXProvider, mdx as mdxReact } from '@mdx-js/react'
+import mdx, { MdxOptions } from '@mdx-js/mdx'
+import { MDXProvider, mdx as mdxReact, MDXProviderProps } from '@mdx-js/react'
 import { transformAsync } from '@babel/core'
 import presetEnv from '@babel/preset-env'
 import presetReact from '@babel/preset-react'
 import { renderToString as reactRenderToString } from 'react-dom/server'
-import React from 'react'
 import pluginBrowser from './babel-plugin-mdx-browser'
-import { Components, Scope, Source } from './types'
+import React from 'react'
+import { Scope, Source } from './types'
 
 export default async function renderToString(
   source: string,
-  components?: Components,
-  options?: Options,
-  scope: Scope = {}
+  {
+    components,
+    mdxOptions,
+    scope = {},
+  }: {
+    components?: MDXProviderProps['components']
+    mdxOptions?: MdxOptions
+    scope?: Scope
+  } = {}
 ): Promise<Source> {
   // transform it into react
-  const code = await mdx(source, { ...options, skipExport: true })
+  const code = await mdx(source, { ...mdxOptions, skipExport: true })
   const [now, later] = await Promise.all([
     // this one is for immediate evaluation so we can renderToString below
     transformAsync(code, {
@@ -51,7 +57,7 @@ return React.createElement(MDXProvider, { components },
   )(React, MDXProvider, mdxReact, components, ...Object.values(scope))
 
   return {
-    source: later.code,
+    compiledSource: later.code,
     // react: render to string
     renderedOutput: reactRenderToString(component),
     scope,

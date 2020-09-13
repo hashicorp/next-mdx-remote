@@ -1,11 +1,11 @@
 import './idle-callback-polyfill'
 import React, { useState, useEffect, ReactElement } from 'react'
 import { mdx, MDXProvider, MDXProviderProps } from '@mdx-js/react'
-import { Components, Source } from './types'
+import { Source } from './types'
 
 export default function hydrate(
-  { source, renderedOutput, scope = {} }: Source,
-  components?: Components
+  { compiledSource, renderedOutput, scope = {} }: Source,
+  options: MDXProviderProps = { components: {}, children: null }
 ) {
   // our default result is the server-rendered output
   // we get this in front of users as quickly as possible
@@ -13,7 +13,7 @@ export default function hydrate(
     | React.FunctionComponentElement<MDXProviderProps>
     | ReactElement<{ dangerouslySetInnerHTML: { __html: string } }>
   >(
-    React.createElement('span', {
+    React.createElement('div', {
       dangerouslySetInnerHTML: {
         __html: renderedOutput,
       },
@@ -34,7 +34,7 @@ export default function hydrate(
     const handle = window.requestIdleCallback(() => {
       // first we set up the scope which has to include the mdx custom
       // create element function as well as any components we're using
-      const fullScope = { mdx, ...components, ...scope }
+      const fullScope = { mdx, ...options.components, ...scope }
       const keys = Object.keys(fullScope)
       const values = Object.values(fullScope)
 
@@ -46,7 +46,7 @@ export default function hydrate(
       const hydratedFn = new Function(
         'React',
         ...keys,
-        `${source}
+        `${compiledSource}
       return React.createElement(MDXContent, {});`
       )(React, ...values)
 
@@ -54,7 +54,7 @@ export default function hydrate(
       // markdown components (such as "h1" or "a") with the "components" object
       const wrappedWithMdxProvider = React.createElement(
         MDXProvider,
-        { components } as MDXProviderProps,
+        options,
         hydratedFn
       )
 
@@ -63,7 +63,7 @@ export default function hydrate(
       setResult(wrappedWithMdxProvider)
       window.cancelIdleCallback(handle)
     })
-  }, [source])
+  }, [compiledSource])
 
   return result
 }

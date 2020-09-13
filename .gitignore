@@ -7,3 +7,5 @@ __tests__/fixtures/*/out
 *.js
 !__tests__/**/*.js
 *.map
+examples/*/package-lock.json
+examples/*/.next
