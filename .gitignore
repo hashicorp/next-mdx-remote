@@ -6,5 +6,4 @@ __tests__/fixtures/*/out
 !@types/*.d.ts
 *.js
 !__tests__/**/*.js
-!babel-plugin-mdx-browser.js
 *.map
