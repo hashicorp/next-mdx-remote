@@ -96,8 +96,8 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
         compilers: [],
         filepath: '/some/file/path',
       },
+      scope: {},
     },
-    scope: {},
   })
   ```
 
