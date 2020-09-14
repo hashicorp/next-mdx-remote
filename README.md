@@ -75,7 +75,7 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
 
-- **`renderToString(source: string, components: object, options?: object, scope?: object)`**
+- **`renderToString(source: string, { components?: object, mdxOptions?: object, scope?: object })`**
 
   **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
 
@@ -103,7 +103,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`hydrate(source: object, components: object)`**
+- **`hydrate(source: object, { components?: object })`**
 
   **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
 
