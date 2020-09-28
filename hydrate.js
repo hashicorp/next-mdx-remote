@@ -1,10 +1,10 @@
+// The code here is IE 11 compatible, and only works if Next.js polyfills are included
 const React = require('react')
 const mdxReact = require('@mdx-js/react')
 
 const mdx = mdxReact.mdx
 const MDXProvider = mdxReact.MDXProvider
 
-// The code here is IE 11 compatible, and only works if Next.js polyfills are included
 module.exports = function hydrate(source, props, options) {
   const scope = (options && options.scope) || {}
   const args = ['mdx'].concat(Object.keys(scope), source + 'return MDXContent;')
