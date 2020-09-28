@@ -1,3 +1,5 @@
+const { types: t } = require('@babel/core')
+
 module.exports = function BabelPluginMdxBrowser() {
   return {
     visitor: {
@@ -23,6 +25,20 @@ module.exports = function BabelPluginMdxBrowser() {
           path.node.declarations[0].init.callee.name === 'makeShortcode'
         ) {
           path.remove()
+        }
+      },
+      // Add `components.` to every custom component. That way components that are outside
+      // the MDX file can be rendered by using the components object
+      JSXIdentifier(path) {
+        if (
+          path.node.name[0] === path.node.name[0].toUpperCase() &&
+          path.node.name !== 'MDXLayout' &&
+          (path.parentPath.isJSXOpeningElement() ||
+            path.parentPath.isJSXClosingElement())
+        ) {
+          path.replaceWith(
+            t.jsxMemberExpression(t.jsxIdentifier('components'), path.node)
+          )
         }
       },
     },

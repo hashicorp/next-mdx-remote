@@ -6,7 +6,9 @@ const handler = require('serve-handler')
 const http = require('http')
 const rmfr = require('rmfr')
 const renderToString = require('../render-to-string')
+const hydrate = require('../hydrate')
 const React = require('react')
+const ReactDOM = require('react-dom/server')
 const { paragraphCustomAlerts } = require('@hashicorp/remark-plugins')
 
 jest.setTimeout(30000)
@@ -17,12 +19,14 @@ test('rehydrates correctly in browser', () => {
 
   // server renders correctly
   expect(result).toMatch(
-    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
+    '<h1>foo</h1><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div>'
   )
   // hydrates correctly
   let browser, server
   return new Promise(async (resolve) => {
-    browser = await puppeteer.launch()
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    })
     const page = await browser.newPage()
     page.on('console', (msg) => console.log(msg.text()))
     server = await serveStatic('basic')
@@ -31,7 +35,7 @@ test('rehydrates correctly in browser', () => {
       await page.click('button')
       await page.click('button')
       // wait for react to render
-      await page.waitFor(() => {
+      await page.waitForFunction(() => {
         return document.querySelector('button').innerText !== 'Count: 0'
       })
       // pull the text for a test confirm
@@ -50,16 +54,20 @@ test('rehydrates correctly in browser', () => {
 
 test('renderToString minimal', async () => {
   const result = await renderToString('foo **bar**')
-  expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
+  const html = ReactDOM.renderToString(hydrate(result))
+  expect(html).toMatch('<p>foo <strong>bar</strong></p>')
 })
 
 test('renderToString with component', async () => {
-  const result = await renderToString('foo <Test />', {
-    components: {
-      Test: () => React.createElement('span', null, 'hello world'),
-    },
-  })
-  expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
+  const result = await renderToString('foo <Test />')
+  const html = ReactDOM.renderToString(
+    hydrate(result, {
+      components: {
+        Test: () => React.createElement('span', null, 'hello world'),
+      },
+    })
+  )
+  expect(html).toEqual('<p>foo <span>hello world</span></p>')
 })
 
 test('renderToString with options', async () => {
@@ -68,19 +76,26 @@ test('renderToString with options', async () => {
       remarkPlugins: [paragraphCustomAlerts],
     },
   })
-  expect(result.renderedOutput).toEqual(
+  const html = ReactDOM.renderToString(hydrate(result))
+  expect(html).toEqual(
     '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
   )
 })
 
 test('renderToString with scope', async () => {
-  const result = await renderToString('<Test name={bar} />', {
-    components: { Test: ({ name }) => React.createElement('p', null, name) },
-    scope: {
-      bar: 'test',
-    },
-  })
-  expect(result.renderedOutput).toEqual('<p>test</p>')
+  const result = await renderToString('<Test name={bar} />')
+  const html = ReactDOM.renderToString(
+    hydrate(
+      result,
+      {
+        components: {
+          Test: ({ name }) => React.createElement('p', null, name),
+        },
+      },
+      { scope: { bar: 'test' } }
+    )
+  )
+  expect(html).toEqual('<p>test</p>')
 })
 
 afterAll(async () => {

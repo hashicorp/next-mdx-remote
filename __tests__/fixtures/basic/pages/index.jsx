@@ -15,7 +15,7 @@ export default function TestPage({ data, mdxSource }) {
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, { components: MDX_COMPONENTS })}
+      {hydrate(mdxSource, { components: MDX_COMPONENTS }, { scope: data })}
     </>
   )
 }
@@ -24,9 +24,7 @@ export async function getStaticProps() {
   const fixturePath = path.join(process.cwd(), 'mdx/test.mdx')
   const { data, content } = matter(fs.readFileSync(fixturePath, 'utf8'))
   const mdxSource = await renderToString(content, {
-    components: MDX_COMPONENTS,
     mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
-    scope: data,
   })
   return { props: { mdxSource, data } }
 }

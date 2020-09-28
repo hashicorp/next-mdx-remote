@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@babel/core": "^7.11.1",
-    "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
     "@mdx-js/mdx": "^1.6.16",
-    "@mdx-js/react": "^1.6.16"
+    "@mdx-js/react": "^1.6.16",
+    "babel-preset-minify": "^0.5.1"
   },
   "devDependencies": {
     "@hashicorp/remark-plugins": "^3.0.0",
