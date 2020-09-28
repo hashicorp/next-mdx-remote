@@ -1,5 +1,8 @@
 const React = require('react')
-const { mdx, MDXProvider } = require('@mdx-js/react')
+const mdxReact = require('@mdx-js/react')
+
+const mdx = mdxReact.mdx
+const MDXProvider = mdxReact.MDXProvider
 
 // The code here is IE 11 compatible, and only works if Next.js polyfills are included
 module.exports = function hydrate(source, props, options) {
