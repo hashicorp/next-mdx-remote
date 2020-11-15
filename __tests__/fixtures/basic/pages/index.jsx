@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import renderToString from '../../../../render-to-string'
+import serialize from '../../../../serialize'
 import hydrate from '../../../../hydrate'
 import Test from '../components/test'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
@@ -23,7 +23,7 @@ export default function TestPage({ data, mdxSource }) {
 export async function getStaticProps() {
   const fixturePath = path.join(process.cwd(), 'mdx/test.mdx')
   const { data, content } = matter(fs.readFileSync(fixturePath, 'utf8'))
-  const mdxSource = await renderToString(content, {
+  const mdxSource = await serialize(content, {
     mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
   })
   return { props: { mdxSource, data } }

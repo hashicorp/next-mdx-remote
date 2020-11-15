@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer')
 const handler = require('serve-handler')
 const http = require('http')
 const rmfr = require('rmfr')
-const renderToString = require('../render-to-string')
+const serialize = require('../serialize')
 const hydrate = require('../hydrate')
 const React = require('react')
 const ReactDOM = require('react-dom/server')
@@ -13,7 +13,7 @@ const { paragraphCustomAlerts } = require('@hashicorp/remark-plugins')
 
 jest.setTimeout(30000)
 
-test('rehydrates correctly in browser', () => {
+test.only('rehydrates correctly in browser', () => {
   buildFixture('basic')
   const result = readOutputFile('basic', 'index')
 
@@ -52,26 +52,14 @@ test('rehydrates correctly in browser', () => {
   })
 })
 
-test('renderToString minimal', async () => {
-  const result = await renderToString('foo **bar**')
+test('serialize minimal', async () => {
+  const result = await serialize('foo **bar**')
   const html = ReactDOM.renderToString(hydrate(result))
   expect(html).toMatch('<p>foo <strong>bar</strong></p>')
 })
 
-test('renderToString with component', async () => {
-  const result = await renderToString('foo <Test />')
-  const html = ReactDOM.renderToString(
-    hydrate(result, {
-      components: {
-        Test: () => React.createElement('span', null, 'hello world'),
-      },
-    })
-  )
-  expect(html).toEqual('<p>foo <span>hello world</span></p>')
-})
-
-test('renderToString with options', async () => {
-  const result = await renderToString('~> hello', {
+test('serialize with options', async () => {
+  const result = await serialize('~> hello', {
     mdxOptions: {
       remarkPlugins: [paragraphCustomAlerts],
     },
@@ -82,8 +70,20 @@ test('renderToString with options', async () => {
   )
 })
 
-test('renderToString with scope', async () => {
-  const result = await renderToString('<Test name={bar} />')
+test('serialize with component', async () => {
+  const result = await serialize('foo <Test />')
+  const html = ReactDOM.renderToString(
+    hydrate(result, {
+      components: {
+        Test: () => React.createElement('span', null, 'hello world'),
+      },
+    })
+  )
+  expect(html).toEqual('<p>foo <span>hello world</span></p>')
+})
+
+test('serialize with scope', async () => {
+  const result = await serialize('<Test name={bar} />')
   const html = ReactDOM.renderToString(
     hydrate(
       result,

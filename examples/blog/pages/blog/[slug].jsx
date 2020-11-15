@@ -1,4 +1,4 @@
-import renderToString from 'next-mdx-remote/render-to-string'
+import serialize from 'next-mdx-remote/serialize'
 import hydrate from 'next-mdx-remote/hydrate'
 import matter from 'gray-matter'
 import fs from 'fs'
@@ -31,6 +31,6 @@ export async function getStaticProps({ params }) {
     'utf8'
   )
   const { data, content } = matter(source)
-  const mdxSource = await renderToString(content)
+  const mdxSource = await serialize(content)
   return { props: { mdxSource, frontMatter: data } }
 }
