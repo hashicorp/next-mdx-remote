@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import serialize from '../../../../serialize'
-import hydrate from '../../../../hydrate'
+import MdxRemote from '../../../../mdx-remote'
 import Test from '../components/test'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
@@ -15,7 +15,7 @@ export default function TestPage({ data, mdxSource }) {
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, { components: MDX_COMPONENTS }, { scope: data })}
+      <MdxRemote source={mdxSource} components={MDX_COMPONENTS} scope={data} />
     </>
   )
 }

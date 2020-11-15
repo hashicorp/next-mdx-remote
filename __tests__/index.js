@@ -6,14 +6,14 @@ const handler = require('serve-handler')
 const http = require('http')
 const rmfr = require('rmfr')
 const serialize = require('../serialize')
-const hydrate = require('../hydrate')
+const MdxRemote = require('../mdx-remote')
 const React = require('react')
 const ReactDOM = require('react-dom/server')
 const { paragraphCustomAlerts } = require('@hashicorp/remark-plugins')
 
 jest.setTimeout(30000)
 
-test.only('rehydrates correctly in browser', () => {
+test('rehydrates correctly in browser', () => {
   buildFixture('basic')
   const result = readOutputFile('basic', 'index')
 
@@ -54,7 +54,9 @@ test.only('rehydrates correctly in browser', () => {
 
 test('serialize minimal', async () => {
   const result = await serialize('foo **bar**')
-  const html = ReactDOM.renderToString(hydrate(result))
+  const html = ReactDOM.renderToString(
+    React.createElement(MdxRemote, { source: result })
+  )
   expect(html).toMatch('<p>foo <strong>bar</strong></p>')
 })
 
@@ -64,7 +66,9 @@ test('serialize with options', async () => {
       remarkPlugins: [paragraphCustomAlerts],
     },
   })
-  const html = ReactDOM.renderToString(hydrate(result))
+  const html = ReactDOM.renderToString(
+    React.createElement(MdxRemote, { source: result })
+  )
   expect(html).toEqual(
     '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
   )
@@ -73,7 +77,8 @@ test('serialize with options', async () => {
 test('serialize with component', async () => {
   const result = await serialize('foo <Test />')
   const html = ReactDOM.renderToString(
-    hydrate(result, {
+    React.createElement(MdxRemote, {
+      source: result,
       components: {
         Test: () => React.createElement('span', null, 'hello world'),
       },
@@ -85,15 +90,13 @@ test('serialize with component', async () => {
 test('serialize with scope', async () => {
   const result = await serialize('<Test name={bar} />')
   const html = ReactDOM.renderToString(
-    hydrate(
-      result,
-      {
-        components: {
-          Test: ({ name }) => React.createElement('p', null, name),
-        },
+    React.createElement(MdxRemote, {
+      source: result,
+      components: {
+        Test: ({ name }) => React.createElement('p', null, name),
       },
-      { scope: { bar: 'test' } }
-    )
+      scope: { bar: 'test' },
+    })
   )
   expect(html).toEqual('<p>test</p>')
 })

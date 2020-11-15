@@ -1,20 +1,19 @@
 import serialize from 'next-mdx-remote/serialize'
-import hydrate from 'next-mdx-remote/hydrate'
+import MdxRemote from 'next-mdx-remote/mdx-remote'
 import matter from 'gray-matter'
 import fs from 'fs'
 import path from 'path'
 
 const root = process.cwd()
 
-export default function BlogPost({ mdxSource, frontMatter }) {
-  const content = hydrate(mdxSource)
-  return (
-    <>
-      <h1>{frontMatter.title}</h1>
-      {content}
-    </>
-  )
-}
+const BlogPost = ({ mdxSource, frontMatter }) => (
+  <>
+    <h1>{frontMatter.title}</h1>
+    <MdxRemote source={mdxSource} />
+  </>
+)
+
+export default BlogPost
 
 export async function getStaticPaths() {
   return {
