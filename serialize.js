@@ -7,7 +7,7 @@ const pluginBrowser = require('./babel-plugin-mdx-browser')
 // NOTES:
 // - relative imports can't be expected to work with remote files, we'd need
 //   an extra babel transform to be able to import specific file paths
-module.exports = function renderToString(source, { mdxOptions } = {}) {
+module.exports = function serialize(source, { mdxOptions } = {}) {
   // transform it into react
   return mdx(source, { ...mdxOptions, skipExport: true })
     .then((code) => {
@@ -19,7 +19,7 @@ module.exports = function renderToString(source, { mdxOptions } = {}) {
       })
     })
     .then((file) => {
-      // The first line is: /* @jsx mdx */ - We can save some bytes by removing it
-      return file.code.replace(/^\/* @jsx mdx *\//, '')
+      // We can save some bytes by removing first line comments
+      return file.code.replace(/^\/\*.*\*\//, '')
     })
 }
