@@ -69,7 +69,7 @@ export async function getStaticProps() {
 }
 ```
 
-While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions only it uses, so `renderToString` will be removed from the browser bundle entirely.
+While it may seem strange to see these two in the same file, this is one of the cool things about next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `renderToString` will be removed from the browser bundle entirely.
 
 ## APIs
 
