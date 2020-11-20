@@ -167,9 +167,9 @@ Nice and easy - since we get the content as a string originally and have full co
 
 ## Caveats
 
-There's only one caveat here, which is that imports won't be resolved in MDX files. If you need to use custom components or have imports in your MDX files, they should be provided through the `components` prop to the `MdxRemote` component.
+There's only one caveat here, which is that imports or exports won't be resolved in MDX files. If you need to use custom components, or have imports or exports in your MDX files, they should be provided through the `components` prop to the `MdxRemote` component.
 
-Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path.
+Hopefully this makes sense, since in order to work, imports and exports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path.
 
 ## Security
 
