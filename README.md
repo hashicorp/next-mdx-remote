@@ -146,8 +146,7 @@ export default function TestPage({ source, frontMatter }) {
 
 export async function getStaticProps() {
   // MDX text - can be from a local file, database, anywhere
-  const source = `
----
+  const source = `---
 title: Test
 ---
 
