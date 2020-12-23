@@ -9,7 +9,7 @@ const React = require('react')
 
 module.exports = function renderToString(
   source,
-  { components, mdxOptions, scope = {} } = {}
+  { components = {}, mdxOptions = {}, scope = {} } = {}
 ) {
   let jsSource
   // transform it into react
