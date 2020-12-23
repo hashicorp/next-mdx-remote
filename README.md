@@ -185,7 +185,12 @@ import Test from '../components/test'
 const components = { Test }
 
 export default function TestPage({ renderedOutput }) {
-  return <div className="wrapper" dangerouslySetInnerHTML={{ __html: renderedOutput }} />
+  return (
+    <div
+      className="wrapper"
+      dangerouslySetInnerHTML={{ __html: renderedOutput }}
+    />
+  )
 }
 
 export async function getStaticProps() {
@@ -193,6 +198,41 @@ export async function getStaticProps() {
   const source = 'Some **mdx** text, with a component <Test />'
   const { renderedOutput } = await renderToString(source, { components })
   return { props: { renderedOutput } }
+}
+```
+
+## Typescript
+
+This project does include native types for typescript use. Both `renderToString` and `hydrate` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
+
+- `MdxRemote.Components` - represents the type of the "components" object referenced in the docs above, which needs to be passed to both `hydrate` and `renderToString`
+- `MdxRemote.Source` - represents the type of the return value of `renderToString`, which also must be passed into `hydrate.
+
+Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
+
+```ts
+import renderToString from 'next-mdx-remote/render-to-string'
+import hydrate from 'next-mdx-remote/hydrate'
+import { MdxRemote } from 'next-mdx-remote/types'
+import ExampleComponent from './example'
+
+const components: MdxRemote.Components = { ExampleComponent }
+
+interface Props {
+  mdxSource: MdxRemote.Source
+}
+
+export default function ExamplePage({ mdxSource }: Props) {
+  const content = hydrate(mdxSource, { components })
+  return <div>{content}</div>
+}
+
+export async function getStaticProps() {
+  const mdxSource = await renderToString(
+    'some *mdx* content: <ExampleComponent />',
+    { components }
+  )
+  return { props: { mdxSource } }
 }
 ```
 
