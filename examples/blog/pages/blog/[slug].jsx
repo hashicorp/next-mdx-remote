@@ -7,7 +7,7 @@ import path from 'path'
 const root = process.cwd()
 
 export default function BlogPost({ mdxSource, frontMatter }) {
-  const content = hydrate(mdxSource)
+  const { content } = hydrate(mdxSource)
   return (
     <>
       <h1>{frontMatter.title}</h1>
