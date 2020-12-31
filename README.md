@@ -57,7 +57,7 @@ import Test from '../components/test'
 const components = { Test }
 
 export default function TestPage({ source }) {
-  const content = hydrate(source, { components })
+  const { content } = hydrate(source, { components })
   return <div className="wrapper">{content}</div>
 }
 
@@ -105,7 +105,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
 
 - **`hydrate(source: object, { components?: object })`**
 
-  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
+  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result is an object with two keys: `content` and `isHydrated`. The content can be rendered directly into your component. This function will initially render static content and `isHydrated` will be `false`. When the browser isn't busy with higher priority tasks, `content` will be updated to the hydrated content and the value of `isHydrated` will be updated to `true`.
 
   ```ts
   hydrate(
@@ -116,6 +116,12 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
       components: { name: React.ComponentType },
     }
   )
+  ```
+
+  Example call:
+
+  ```ts
+  const { content, isHydrated } = hydrate(source, { components: myCustomComponents })
   ```
 
 ## Frontmatter & Custom Processing
@@ -135,7 +141,7 @@ import Test from '../components/test'
 const components = { Test }
 
 export default function TestPage({ source, frontMatter }) {
-  const content = hydrate(source, { components })
+  const { content } = hydrate(source, { components })
   return (
     <div className="wrapper">
       <h1>{frontMatter.title}</h1>
@@ -210,7 +216,7 @@ This project does include native types for typescript use. Both `renderToString`
 
 Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
 
-```ts
+```tsx
 import renderToString from 'next-mdx-remote/render-to-string'
 import hydrate from 'next-mdx-remote/hydrate'
 import { MdxRemote } from 'next-mdx-remote/types'
@@ -223,7 +229,7 @@ interface Props {
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
-  const content = hydrate(mdxSource, { components })
+  const { content } = hydrate(mdxSource, { components })
   return <div>{content}</div>
 }
 
