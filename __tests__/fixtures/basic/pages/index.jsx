@@ -36,13 +36,15 @@ export default function TestPage({ data, mdxSource }) {
     })
   }, [])
 
+  const { hydrate } = hydrate(mdxSource, {
+    components: MDX_COMPONENTS,
+    provider: providerOptions,
+  })
+
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, {
-        components: MDX_COMPONENTS,
-        provider: providerOptions,
-      })}
+      {content}
     </>
   )
 }
