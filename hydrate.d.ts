@@ -11,4 +11,7 @@ export default function hydrate(
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
    */
   options?: { components?: MdxRemote.Components }
-): ReactNode
+): {
+    isHydrated: boolean;
+    content: ReactNode;
+}
