@@ -19,4 +19,7 @@ export default function hydrate(
      */
     provider?: MdxRemote.Provider
   }
-): ReactNode
+): {
+    isHydrated: boolean;
+    content: ReactNode;
+}

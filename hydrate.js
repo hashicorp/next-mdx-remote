@@ -23,6 +23,11 @@ module.exports = function hydrate(params, options) {
   var result = useStateResult[0]
   var setResult = useStateResult[1]
 
+  // to track if hydration is completed
+  var hydrationStatus = React.useState(false)
+  var isHydrated = hydrationStatus[0]
+  var setIsHydrated = hydrationStatus[1]
+
   // if we're server-side, we can return the raw output early
   if (typeof window === 'undefined') return result
 
@@ -35,6 +40,7 @@ module.exports = function hydrate(params, options) {
   // react re-renders for us
   React.useEffect(
     function () {
+      setIsHydrated(false)
       var handle = window.requestIdleCallback(function () {
         // first we set up the scope which has to include the mdx custom
         // create element function as well as any components we're using
@@ -71,6 +77,7 @@ module.exports = function hydrate(params, options) {
         // finally, set the the output as the new result so that react will re-render for us
         // and cancel the idle callback since we don't need it anymore
         setResult(result)
+        setIsHydrated(true)
         window.cancelIdleCallback(handle)
       })
     },
@@ -81,5 +88,8 @@ module.exports = function hydrate(params, options) {
     return React.createElement(provider.component, provider.props || {}, result)
   }
 
-  return result
+  return {
+    isHydrated,
+    content: result,
+  }
 }
