@@ -29,7 +29,6 @@ If you are using MDX within a Next.js app, you are probably using the Webpack lo
 
 This workflow is fine, but introduces a few limitations that we aim to remove with `next-mdx-remote`:
 
-<<<<<<< HEAD
 - **The file content must be local.** You cannot store MDX files in another repo, a database, etc. For a large enough operation, there will end up being a split between those authoring content and those working on presentation of the content. Overlapping these two concerns in the same repo makes a more difficult workflow for everyone.
 - **You are bound to filesystem-based routing.** Your pages are generated with urls according to their locations. Or maybe you remap them using `exportPathMap`, which creates confusion for authors. Regardless, moving pages around in any way breaks things -- either the page's url or your `exportPathMap` configuration.
 - **You will end up running into performance issues.** Webpack is a JavaScript bundler, forcing it to load hundreds/thousands of pages of text content will blow out your memory requirements. Webpack stores each page as a distinct object with a large amount of metadata. One of our implementations with a couple hundred pages hit more than 8GB of memory required to compile the site. Builds took more than 25 minutes.
@@ -39,50 +38,12 @@ So, `next-mdx-remote` changes the entire pattern so that you load your MDX conte
 
 ## Installation
 
-```sh
+````sh
 # using npm
 npm i next-mdx-remote
 
 # using yarn
 yarn add next-mdx-remote
-=======
-First let's break down each function's signature in some pseudo-typescript-y format, then we'll look at an example:
-
-```typescript
-renderToString(
-  // raw mdx contents as a string
-  source: String,
-  options?: {
-    // the `name` is how you will invoke the component in your mdx
-    components?: { name: React.ComponentType },
-    // mdx's available options at time of writing
-    // pulled directly from https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
-    mdxOptions?: {
-      remarkPlugins: []any,
-      rehypePlugins: []any,
-      hastPlugins: []any,
-      compilers: []any,
-      filepath: String
-    },
-    // a provider that will be wrapped around your mdx component
-    provider?: { component: React.ProviderType, props: { [key:string]: any } },
-    // variable names and values which can be consumed by components
-    scope?: { [key:string]: any }
-  }
-)
-```
-
-```typescript
-hydrate(
-  // the direct return value of `renderToString`
-  source: CompiledMdxSourceType,
-  // should be the exact same components/provider that were passed to renderToString
-  options?: {
-    components?: { name: React.ComponentType },
-    provider?: { component: React.ProviderType, props: { [key:string]: any } },
-  }
-)
->>>>>>> 7ab2af4 (fix the implementation, add tests, update readme)
 ```
 
 ## Example Usage
@@ -114,8 +75,7 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
 
-<<<<<<< HEAD
-- **`renderToString(source: string, { components?: object, mdxOptions?: object, scope?: object })`**
+- **`renderToString(source: string, { components?: object, mdxOptions?: object, provider?: object scope?: object })`**
 
   **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
 
@@ -126,36 +86,27 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
     // Optional parameters
     {
       // The `name` is how you will invoke the component in your MDX
-      components: { name: React.ComponentType },
+      components?: { name: React.Component },
+      // wraps the given provider around the mdx content
+      provider?: { component: React.Component, props: Record<string, unknown> },
+      // made available to the arguments of any custom mdx component
+      scope?: {},
       // MDX's available options at time of writing pulled directly from
       // https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
-      mdxOptions: {
+      mdxOptions?: {
         remarkPlugins: [],
         rehypePlugins: [],
         hastPlugins: [],
         compilers: [],
         filepath: '/some/file/path',
       },
-      scope: {},
     }
   )
   ```
-=======
-- `renderToString(source: string, options?: object)` - This function consumes a string of mdx along with a variety of potential options, detailed below:
-
-  - `components`: Components to be made available in the mdx template, in the format `{ ComponentName: ActualComponent }`
-  - `mdxOptions`: [Passed directly to mdx](https://mdxjs.com/advanced/plugins)
-  - `provider`: A custom provider to wrap your mdx, in the format `{ component: Example.Provider, props: { value: 'xxx' } }`
-  - `scope`: An object that will be made available for use as props to components.
-
-  The function returns an object that is intended to be passed into `hydrate` directly.
-
-- `hydrate(source: object, options?: object)` - This function consumes the output of `renderToString` as well as optionally `provider` and/or `scope`, in the exact same form, if either/both wwre provided to `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
->>>>>>> 7ab2af4 (fix the implementation, add tests, update readme)
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`hydrate(source: object, { components?: object })`**
+- **`hydrate(source: object, { components?: object, provider?: object })`**
 
   **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
 
@@ -166,6 +117,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
     // Should be the exact same components that were passed to `renderToString`
     {
       components: { name: React.ComponentType },
+      provider: { component: React.ComponentType, props: Record<string, unknown> },
     }
   )
   ```
@@ -213,9 +165,6 @@ Some **mdx** text, with a component <Test name={title}/>
 
 Nice and easy - since we get the content as a string originally and have full control, we can run any extra custom processing needed before passing it into `renderToString`, and easily append extra data to the return value from `getStaticProps` without issue.
 
-<<<<<<< HEAD
-## Caveats
-=======
 ### Using Providers
 
 If any of the components in your MDX file require access to the values from a provider, you need special handling for this. Remember, this library treats your mdx content as _data provided to your page_, not as a page itself, so providers in your normal scope will not naturally wrap its results.
@@ -258,7 +207,6 @@ Data has shown that 99% of use cases for all developer tooling are building unne
 If you really insist though, check out [our official nextjs example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
 
 ### Caveats
->>>>>>> 7ab2af4 (fix the implementation, add tests, update readme)
 
 There's only one caveat here, which is that `import` cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided through the second argument to the `hydrate` and `renderToString` functions.
 
@@ -336,3 +284,4 @@ export async function getStaticProps() {
 ## License
 
 [Mozilla Public License Version 2.0](./LICENSE)
+````
