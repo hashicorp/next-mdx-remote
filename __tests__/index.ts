@@ -47,7 +47,8 @@ test('rehydrates correctly in browser', () => {
     })
   }).then(async ([buttonText, contextElementText]) => {
     expect(buttonText).toEqual('Count: 1')
-    expect(contextElementText).toEqual('Context value: "foo"')
+    console.log(contextElementText)
+    expect(contextElementText).toEqual('Context value: "bar"')
 
     // close the browser and dev server
     await browser.close()

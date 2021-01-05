@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { createContext } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import renderToString from '../../../../render-to-string'
 import hydrate from '../../../../hydrate'
 import Test from '../components/test'
@@ -25,10 +25,24 @@ const MDX_COMPONENTS = {
 }
 
 export default function TestPage({ data, mdxSource }) {
+  const [providerOptions, setProviderOptions] = useState(PROVIDER)
+
+  useEffect(() => {
+    setProviderOptions({
+      ...PROVIDER,
+      props: {
+        value: 'bar',
+      },
+    })
+  }, [])
+
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, { components: MDX_COMPONENTS, provider: PROVIDER })}
+      {hydrate(mdxSource, {
+        components: MDX_COMPONENTS,
+        provider: providerOptions,
+      })}
     </>
   )
 }
