@@ -70,12 +70,12 @@ describe('renderToString', () => {
   })
 
   test('with component', async () => {
-    const result = await renderToString('foo <Test />', {
+    const result = await renderToString('foo <Test name="test" />', {
       components: {
-        Test: () => React.createElement('span', null, 'hello world'),
+        Test: ({ name }) => React.createElement('span', null, `hello ${name}`),
       },
     })
-    expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
+    expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
   })
 
   test('with options', async () => {
