@@ -38,7 +38,7 @@ module.exports = function hydrate(params, options) {
       var handle = window.requestIdleCallback(function () {
         // first we set up the scope which has to include the mdx custom
         // create element function as well as any components we're using
-        var fullScope = Object.assign({ mdx: MDX.mdx }, components, scope)
+        var fullScope = Object.assign({ mdx: MDX.mdx }, scope)
         var keys = Object.keys(fullScope)
         var values = Object.values(fullScope)
 
