@@ -1,5 +1,5 @@
 import { MdxRemote } from 'types'
-import { Plugin, Compiler } from 'unified'
+import { Pluggable, Compiler } from 'unified'
 
 /**
  * Runs the MDX renderer on the MDX string provided with the components and data provided.
@@ -34,9 +34,9 @@ export default function renderToString(
      * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
      */
     mdxOptions?: {
-      remarkPlugins?: Plugin[]
-      rehypePlugins?: Plugin[]
-      hastPlugins?: Plugin[]
+      remarkPlugins?: Pluggable[]
+      rehypePlugins?: Pluggable[]
+      hastPlugins?: Pluggable[]
       compilers?: Compiler[]
       filepath?: string
     }
