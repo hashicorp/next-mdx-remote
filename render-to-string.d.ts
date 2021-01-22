@@ -1,5 +1,5 @@
-import { MdxRemote } from 'types'
 import { Pluggable, Compiler } from 'unified'
+import { MdxRemote } from './types'
 
 /**
  * Runs the MDX renderer on the MDX string provided with the components and data provided.
