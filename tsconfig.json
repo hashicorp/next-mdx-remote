@@ -10,7 +10,6 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "jsx": "preserve",
-    "baseUrl": ".",
     "typeRoots": ["node_modules/@types", "./"]
   },
   "exclude": ["__tests__"]

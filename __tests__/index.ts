@@ -14,78 +14,112 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
 jest.setTimeout(30000)
 
-test('rehydrates correctly in browser', () => {
-  buildFixture('basic')
-  const result = readOutputFile('basic', 'index')
+describe('hydration', () => {
+  beforeAll(() => {
+    buildFixture('basic')
+  })
 
-  // server renders correctly
-  expect(result).toMatch(
-    '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
-  )
-  // hydrates correctly
-  let browser: Browser, server: Server
-  return new Promise(async (resolve) => {
-    browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    page.on('console', (msg) => console.log(msg.text()))
-    server = await serveStatic('basic')
-    await page.exposeFunction('__NEXT_HYDRATED_CB', async () => {
-      // click the button
-      await page.click('button')
-      // wait for react to render
-      await page.waitFor(() => {
-        return document.querySelector('button')?.innerHTML === 'Count: 1'
+  test('server rendered output', () => {
+    const result = readOutputFile('basic', 'index')
+
+    // server renders correctly
+    expect(result).toMatch(
+      '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
+    )
+  })
+
+  test('rehydrates correctly in browser', async () => {
+    // hydrates correctly
+    let browser: Browser, server: Server
+    return new Promise<string[]>(async (resolve) => {
+      browser = await puppeteer.launch()
+      const page = await browser.newPage()
+      page.on('console', (msg) => console.log(msg.text()))
+      server = await serveStatic('basic')
+      await page.exposeFunction('__NEXT_HYDRATED_CB', async () => {
+        // click the button
+        await page.click('button')
+        // wait for react to render
+        await page.waitFor(() => {
+          return document.querySelector('button')?.innerHTML === 'Count: 1'
+        })
+        // pull text for elements we're testing hydrate on
+        const contextElementText = page.$eval('.context', (el) => el.innerHTML)
+        const buttonText = page.$eval('button', (el) => el.innerHTML)
+
+        resolve(Promise.all([buttonText, contextElementText]))
       })
-      // pull the text for a test confirm
-      const buttonCount = page.$eval('button', (el) => el.innerHTML)
-      resolve(buttonCount)
+      await page.goto('http://localhost:1235', {
+        waitUntil: 'domcontentloaded',
+      })
+    }).then(async ([buttonText, contextElementText]) => {
+      expect(buttonText).toEqual('Count: 1')
+      expect(contextElementText).toEqual('Context value: "bar"')
+
+      // close the browser and dev server
+      await browser.close()
+      return new Promise((resolve) => server.close(resolve))
     })
-    await page.goto('http://localhost:1235', { waitUntil: 'domcontentloaded' })
-  }).then(async (buttonText) => {
-    expect(buttonText).toEqual('Count: 1')
-
-    // close the browser and dev server
-    await browser.close()
-    return new Promise((resolve) => server.close(resolve))
   })
 })
 
-test('renderToString minimal', async () => {
-  const result = await renderToString('foo **bar**')
-  expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
-})
-
-test('renderToString with component', async () => {
-  const result = await renderToString('foo <Test />', {
-    components: {
-      Test: () => React.createElement('span', null, 'hello world'),
-    },
+describe('renderToString', () => {
+  test('minimal', async () => {
+    const result = await renderToString('foo **bar**')
+    expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
   })
-  expect(result.renderedOutput).toEqual('<p>foo <span>hello world</span></p>')
-})
 
-test('renderToString with options', async () => {
-  const result = await renderToString('~> hello', {
-    mdxOptions: {
-      remarkPlugins: [paragraphCustomAlerts],
-    },
+  test('with component', async () => {
+    const result = await renderToString('foo <Test name="test" />', {
+      components: {
+        Test: ({ name }) => React.createElement('span', null, `hello ${name}`),
+      },
+    })
+    expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
   })
-  expect(result.renderedOutput).toEqual(
-    '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
-  )
-})
 
-test('renderToString with scope', async () => {
-  const result = await renderToString('<Test name={bar} />', {
-    components: {
-      Test: ({ name }: { name: string }) =>
-        React.createElement('p', null, name),
-    },
-    scope: {
-      bar: 'test',
-    },
+  test('with options', async () => {
+    const result = await renderToString('~> hello', {
+      mdxOptions: {
+        remarkPlugins: [paragraphCustomAlerts],
+      },
+    })
+    expect(result.renderedOutput).toEqual(
+      '<div class="alert alert-warning g-type-body" role="alert"><p>hello</p></div>'
+    )
   })
-  expect(result.renderedOutput).toEqual('<p>test</p>')
+
+  test('with scope', async () => {
+    const result = await renderToString('<Test name={bar} />', {
+      components: {
+        Test: ({ name }: { name: string }) =>
+          React.createElement('p', null, name),
+      },
+      scope: {
+        bar: 'test',
+      },
+    })
+    expect(result.renderedOutput).toEqual('<p>test</p>')
+  })
+
+  test('with custom provider', async () => {
+    const TestContext = React.createContext(null)
+
+    const result = await renderToString('<Test />', {
+      components: {
+        Test: () =>
+          React.createElement(TestContext.Consumer, null, (value) =>
+            React.createElement('p', null, value)
+          ),
+      },
+      provider: {
+        component: TestContext.Provider,
+        props: { value: 'provider-value' },
+      },
+    })
+
+    expect(result.renderedOutput).toEqual('<p>provider-value</p>')
+  })
 })
 
 afterAll(async () => {
