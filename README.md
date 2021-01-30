@@ -192,7 +192,7 @@ const provider = {
 }
 
 export default function TestPage({ source }) {
-  const content = hydrate(source, { components, provider }) // <- add the provider here
+  const { content } = hydrate(source, { components, provider }) // <- add the provider here
   return <div className="wrapper">{content}</div>
 }
 
