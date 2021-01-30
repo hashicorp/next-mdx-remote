@@ -85,7 +85,14 @@ module.exports = function hydrate(params, options) {
   )
 
   if (provider) {
-    return React.createElement(provider.component, provider.props || {}, result)
+    return {
+      isHydrated,
+      content: React.createElement(
+        provider.component,
+        provider.props || {},
+        result
+      ),
+    }
   }
 
   return {
