@@ -6,11 +6,13 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    // "noEmit": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "jsx": "preserve",
-    "typeRoots": ["node_modules/@types", "./"]
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "exclude": ["__tests__"]
+  "include": ["src/"],
+  "exclude": ["src/__tests__/**", "dist"]
 }

@@ -15,9 +15,9 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 jest.setTimeout(30000)
 
 describe('hydration', () => {
-  beforeAll(() => {
-    buildFixture('basic')
-  })
+  // beforeAll(() => {
+  //   buildFixture('basic')
+  // })
 
   test('server rendered output', () => {
     const result = readOutputFile('basic', 'index')
@@ -63,8 +63,8 @@ describe('hydration', () => {
   })
 })
 
-describe('renderToString', () => {
-  test('minimal', async () => {
+describe.only('renderToString', () => {
+  test.only('minimal', async () => {
     const result = await renderToString('foo **bar**')
     expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
   })
