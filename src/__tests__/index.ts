@@ -11,6 +11,7 @@ import rmfr from 'rmfr'
 import renderToString from '../render-to-string'
 import React from 'react'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
+import { compile } from 'xdm'
 
 jest.setTimeout(30000)
 
@@ -64,17 +65,29 @@ describe('hydration', () => {
 })
 
 describe.only('renderToString', () => {
-  test.only('minimal', async () => {
+  test('minimal', async () => {
     const result = await renderToString('foo **bar**')
     expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
   })
 
+  test.only('xdm custom component', async () => {
+    const result = await compile(`foo
+    <Test name="test" />`)
+
+    expect(result).toEqual('')
+  })
+
   test('with component', async () => {
-    const result = await renderToString('foo <Test name="test" />', {
-      components: {
-        Test: ({ name }) => React.createElement('span', null, `hello ${name}`),
-      },
-    })
+    const result = await renderToString(
+      `foo
+<Test name="test" />`,
+      {
+        components: {
+          Test: ({ name }) =>
+            React.createElement('span', null, `hello ${name}`),
+        },
+      }
+    )
     expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
   })
 
