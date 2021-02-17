@@ -70,24 +70,12 @@ describe.only('renderToString', () => {
     expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
   })
 
-  test.only('xdm custom component', async () => {
-    const result = await compile(`foo
-    <Test name="test" />`)
-
-    expect(result).toEqual('')
-  })
-
   test('with component', async () => {
-    const result = await renderToString(
-      `foo
-<Test name="test" />`,
-      {
-        components: {
-          Test: ({ name }) =>
-            React.createElement('span', null, `hello ${name}`),
-        },
-      }
-    )
+    const result = await renderToString(`foo <Test name="test" />`, {
+      components: {
+        Test: ({ name }) => React.createElement('span', null, `hello ${name}`),
+      },
+    })
     expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
   })
 

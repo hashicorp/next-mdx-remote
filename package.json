@@ -13,6 +13,7 @@
     "@babel/preset-typescript": "^7.12.7",
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
+    "mdast-util-to-hast": "^10.2.0",
     "xdm": "wooorm/xdm"
   },
   "devDependencies": {
