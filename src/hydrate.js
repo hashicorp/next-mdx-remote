@@ -4,7 +4,7 @@ import './idle-callback-polyfill'
 import React from 'react'
 import * as MDX from '@mdx-js/react'
 
-module.exports = function hydrate(params, options) {
+export default function hydrate(params, options) {
   var compiledSource = params.compiledSource
   var renderedOutput = params.renderedOutput
   var scope = params.scope || {}
@@ -38,9 +38,8 @@ module.exports = function hydrate(params, options) {
       var handle = window.requestIdleCallback(function () {
         // first we set up the scope which has to include the mdx custom
         // create element function as well as any components we're using
-        var fullScope = Object.assign({ mdx: MDX.mdx }, components, scope)
-        var keys = Object.keys(fullScope)
-        var values = Object.values(fullScope)
+
+        const { jsx, jsxs, Fragment } = require('react/jsx-runtime')
 
         // now we eval the source code using a function constructor
         // in order for this to work we need to have React, the mdx createElement,
@@ -49,14 +48,24 @@ module.exports = function hydrate(params, options) {
         // function with the actual values.
         var hydrateFn = Reflect.construct(
           Function,
-          ['React']
-            .concat(keys)
-            .concat(
-              compiledSource + '\nreturn React.createElement(MDXContent, {});'
-            )
+          [
+            '_jsx',
+            '_jsxs',
+            '_Fragment',
+            'components',
+            ...Object.keys(scope),
+          ].concat(
+            compiledSource + '\nreturn _jsx(MDXContent, { components });'
+          )
         )
 
-        var hydrated = hydrateFn.apply(hydrateFn, [React].concat(values))
+        var hydrated = hydrateFn.apply(hydrateFn, [
+          jsx,
+          jsxs,
+          Fragment,
+          components,
+          ...Object.values(scope),
+        ])
 
         // wrapping the content with MDXProvider will allow us to customize the standard
         // markdown components (such as "h1" or "a") with the "components" object

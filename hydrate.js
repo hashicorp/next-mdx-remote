@@ -1,1 +1,1 @@
-module.exports = require('../dist/hydrate')
+module.exports = require('./dist/hydrate')

@@ -40,5 +40,7 @@ export default function renderToString(
       compilers?: Compiler[]
       filepath?: string
     }
+
+    __dangerouslyStripHTMLComments?: boolean
   }
 ): Promise<MdxRemote.Source>

@@ -1,5 +1,4 @@
 import { compile } from 'xdm'
-import { MDXProvider, mdx as mdxReact } from '@mdx-js/react'
 import { transformAsync } from '@babel/core'
 import presetEnv from '@babel/preset-env'
 import presetReact from '@babel/preset-react'
@@ -7,15 +6,28 @@ import pluginBrowser from './babel-plugin-mdx-browser'
 import { renderToString as reactRenderToString } from 'react-dom/server'
 import React from 'react'
 
-module.exports = function renderToString(
+const htmlCommentRegex = /<!--([\s\S]*?)-->/g
+
+export default function renderToString(
   source,
-  { components = {}, mdxOptions = {}, scope = {}, provider } = {}
+  {
+    components = {},
+    mdxOptions = {},
+    scope = {},
+    provider,
+    __dangerouslyStripHTMLComments,
+  } = {}
 ) {
   let jsSource
+  const sourceToCompile = __dangerouslyStripHTMLComments
+    ? source.replace(htmlCommentRegex, '')
+    : source
+
   // transform it into react
-  return compile(source, { ...mdxOptions })
+  return compile(sourceToCompile, {
+    ...mdxOptions,
+  })
     .then((code) => {
-      console.log(String(code))
       // mdx gives us back es6 code, we then need to transform into two formats:
       // - first a version we can render to string right now as a "serialized" result
       // - next a version that is fully browser-compatible that we can eval to rehydrate
@@ -51,13 +63,13 @@ module.exports = function renderToString(
       ])
     })
     .then(([now, later]) => {
-      console.log(now.code)
       const { jsx, jsxs, Fragment } = require('react/jsx-runtime')
       // evaluate the code
       // NOTES:
       // - relative imports can't be expected to work with remote files, we'd need
       //   an extra babel transform to be able to import specific file paths
       jsSource = later.code
+      // TODO: figure out how to inject the jsx runtime without explicit parameters like this
       return new Function(
         '_jsx',
         '_jsxs',

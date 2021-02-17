@@ -8,14 +8,15 @@ import puppeteer from 'puppeteer'
 import handler from 'serve-handler'
 import http from 'http'
 import rmfr from 'rmfr'
-import renderToString from '../render-to-string'
 import React from 'react'
+import { act, render, screen } from '@testing-library/react'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
-import { compile } from 'xdm'
+import renderToString from '../render-to-string'
+import hydrate from '../hydrate'
 
 jest.setTimeout(30000)
 
-describe('hydration', () => {
+describe('integration', () => {
   // beforeAll(() => {
   //   buildFixture('basic')
   // })
@@ -25,7 +26,11 @@ describe('hydration', () => {
 
     // server renders correctly
     expect(result).toMatch(
-      '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div>'
+      `<h1>foo</h1><div><h1>Headline</h1>
+<p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button>
+<p class=\"context\">Context value: &quot;<!-- -->foo<!-- -->&quot;</p>
+<p>Some <strong class=\"custom-strong\">markdown</strong> content</p>
+<div class=\"alert alert-warning g-type-body\" role=\"alert\"><p>Alert</p></div></div>`
     )
   })
 
@@ -38,6 +43,7 @@ describe('hydration', () => {
       page.on('console', (msg) => console.log(msg.text()))
       server = await serveStatic('basic')
       await page.exposeFunction('__NEXT_HYDRATED_CB', async () => {
+        console.log('hydrated')
         // click the button
         await page.click('button')
         // wait for react to render
@@ -64,6 +70,32 @@ describe('hydration', () => {
   })
 })
 
+describe('hydrate', () => {
+  test('minimal', async () => {
+    const components = {
+      Foo: () => {
+        const [state, setState] = React.useState(false)
+
+        React.useEffect(() => setState(true))
+
+        if (state) return <span>Hydrated</span>
+
+        return <span>Dehydrated</span>
+      },
+    }
+
+    const Test = (props) => {
+      return <>{hydrate(props, { components })}</>
+    }
+
+    const result = await renderToString('foo **bar** <Foo />', { components })
+
+    render(<Test {...result} />)
+
+    expect(await screen.findByText('Hydrated')).not.toBeNull()
+  })
+})
+
 describe.only('renderToString', () => {
   test('minimal', async () => {
     const result = await renderToString('foo **bar**')
@@ -77,6 +109,16 @@ describe.only('renderToString', () => {
       },
     })
     expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
+  })
+
+  test.only('with html comment', async () => {
+    const result = await renderToString(
+      '<!-- I am an html comment -->foo **bar**',
+      {
+        __dangerouslyStripHTMLComments: true,
+      }
+    )
+    expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
   })
 
   test('with options', async () => {
