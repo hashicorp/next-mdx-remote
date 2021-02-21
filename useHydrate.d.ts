@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { MdxRemote } from './types'
 
-export default function hydrate(
+export default function useHydrate(
   /** Rendered MDX output. The direct output of `renderToString`. */
   source: MdxRemote.Source,
   options?: {

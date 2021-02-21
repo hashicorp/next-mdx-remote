@@ -4,7 +4,7 @@ require('./idle-callback-polyfill')
 var React = require('react')
 var MDX = require('@mdx-js/react')
 
-module.exports = function hydrate(params, options) {
+module.exports = function useHydrate(params, options) {
   var compiledSource = params.compiledSource
   var renderedOutput = params.renderedOutput
   var scope = params.scope || {}
