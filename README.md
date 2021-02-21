@@ -50,14 +50,14 @@ yarn add next-mdx-remote
 
 ```jsx
 import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import useHydrate from 'next-mdx-remote/useHydrate'
 
 import Test from '../components/test'
 
 const components = { Test }
 
 export default function TestPage({ source }) {
-  const content = hydrate(source, { components })
+  const content = useHydrate(source, { components })
   return <div className="wrapper">{content}</div>
 }
 
@@ -73,11 +73,11 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 ## APIs
 
-This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
+This library exposes two functions, `renderToString` and `useHydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `useHydrate` on the other hand is intended to be run on the client side, in the browser.
 
 - **`renderToString(source: string, { components?: object, mdxOptions?: object, provider?: object, scope?: object })`**
 
-  **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
+  **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `useHydrate` directly.
 
   ```ts
   renderToString(
@@ -106,12 +106,12 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`hydrate(source: object, { components?: object, provider?: object })`**
+- **`useHydrate(source: object, { components?: object, provider?: object })`**
 
-  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
+  **`useHydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
 
   ```ts
-  hydrate(
+  useHydrate(
     // The direct return value of `renderToString`
     source,
     // Should be the exact same components that were passed to `renderToString`
@@ -130,7 +130,7 @@ Let's walk through an example of how we could process frontmatter out of our MDX
 
 ```jsx
 import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import useHydrate from 'next-mdx-remote/useHydrate'
 
 import matter from 'gray-matter'
 
@@ -139,7 +139,7 @@ import Test from '../components/test'
 const components = { Test }
 
 export default function TestPage({ source, frontMatter }) {
-  const content = hydrate(source, { components })
+  const content = useHydrate(source, { components })
   return (
     <div className="wrapper">
       <h1>{frontMatter.title}</h1>
@@ -174,7 +174,7 @@ Let's look at an example of using an auth0 provider, so that you could potential
 ```jsx
 import { Auth0Provider } from '@auth0/auth0-react'
 import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import useHydrate from 'next-mdx-remote/useHydrate'
 import Test from '../components/test'
 
 const components = { Test }
@@ -186,7 +186,7 @@ const provider = {
 }
 
 export default function TestPage({ source }) {
-  const content = hydrate(source, { components, provider }) // <- add the provider here
+  const content = useHydrate(source, { components, provider }) // <- add the provider here
   return <div className="wrapper">{content}</div>
 }
 
@@ -208,19 +208,19 @@ If you really insist though, check out [our official nextjs example implementati
 
 ### Caveats
 
-There's only one caveat here, which is that `import` cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided through the second argument to the `hydrate` and `renderToString` functions.
+There's only one caveat here, which is that `import` cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided through the second argument to the `useHydrate` and `renderToString` functions.
 
 Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path.
 
 ## Security
 
-This library evaluates a string of JavaScript on the client side, which is how it hydrates the MDX content. Evaluating a string into javascript can be a dangerous practice if not done carefully, as it can enable XSS attacks. It's important to make sure that you are only passing the `mdxSource` input generated by the `render-to-string` function to `hydrate`, as instructed in the documentation. **Do not pass user input into `hydrate`.**
+This library evaluates a string of JavaScript on the client side, which is how it hydrates the MDX content. Evaluating a string into javascript can be a dangerous practice if not done carefully, as it can enable XSS attacks. It's important to make sure that you are only passing the `mdxSource` input generated by the `render-to-string` function to `useHydrate`, as instructed in the documentation. **Do not pass user input into `useHydrate`.**
 
-If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize the `hydrate` function, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
+If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize the `useHydrate` function, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
 
 ### Usage Without Hydration
 
-It's also worth noting that you do not _have_ to use `hydrate` on the client side — but without it, you will get a server-rendered result, meaning no ability to react to user input, etc. To do this, pass the `renderedOutput` prop of the object returned by `renderToString` to [`dangerouslySetInnerHTML`](https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml):
+It's also worth noting that you do not _have_ to use `useHydrate` on the client side — but without it, you will get a server-rendered result, meaning no ability to react to user input, etc. To do this, pass the `renderedOutput` prop of the object returned by `renderToString` to [`dangerouslySetInnerHTML`](https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml):
 
 ```jsx
 import renderToString from 'next-mdx-remote/render-to-string'
@@ -248,16 +248,16 @@ export async function getStaticProps() {
 
 ## Typescript
 
-This project does include native types for typescript use. Both `renderToString` and `hydrate` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
+This project does include native types for typescript use. Both `renderToString` and `useHydrate` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
 
-- `MdxRemote.Components` - represents the type of the "components" object referenced in the docs above, which needs to be passed to both `hydrate` and `renderToString`
+- `MdxRemote.Components` - represents the type of the "components" object referenced in the docs above, which needs to be passed to both `useHydrate` and `renderToString`
 - `MdxRemote.Source` - represents the type of the return value of `renderToString`, which also must be passed into `hydrate.
 
 Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
 
 ```ts
 import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import useHydrate from 'next-mdx-remote/useHydrate'
 import { MdxRemote } from 'next-mdx-remote/types'
 import ExampleComponent from './example'
 
@@ -268,7 +268,7 @@ interface Props {
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
-  const content = hydrate(mdxSource, { components })
+  const content = useHydrate(mdxSource, { components })
   return <div>{content}</div>
 }
 

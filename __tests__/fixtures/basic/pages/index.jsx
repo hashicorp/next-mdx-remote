@@ -3,7 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { createContext, useEffect, useState } from 'react'
 import renderToString from '../../../../render-to-string'
-import hydrate from '../../../../hydrate'
+import useHydrate from '../../../../useHydrate'
 import Test from '../components/test'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
@@ -26,6 +26,10 @@ const MDX_COMPONENTS = {
 
 export default function TestPage({ data, mdxSource }) {
   const [providerOptions, setProviderOptions] = useState(PROVIDER)
+  const hydratedContents = useHydrate(mdxSource, {
+    components: MDX_COMPONENTS,
+    provider: providerOptions,
+  })
 
   useEffect(() => {
     setProviderOptions({
@@ -39,10 +43,7 @@ export default function TestPage({ data, mdxSource }) {
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, {
-        components: MDX_COMPONENTS,
-        provider: providerOptions,
-      })}
+      {hydratedContents}
     </>
   )
 }
