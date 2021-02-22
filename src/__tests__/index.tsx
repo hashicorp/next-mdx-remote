@@ -37,36 +37,39 @@ describe('integration', () => {
   test('rehydrates correctly in browser', async () => {
     // hydrates correctly
     let browser: Browser, server: Server
-    return new Promise<string[]>(async (resolve) => {
-      browser = await puppeteer.launch()
-      const page = await browser.newPage()
-      page.on('console', (msg) => console.log(msg.text()))
-      server = await serveStatic('basic')
-      await page.exposeFunction('__NEXT_HYDRATED_CB', async () => {
-        console.log('hydrated')
-        // click the button
-        await page.click('button')
-        // wait for react to render
-        await page.waitFor(() => {
-          return document.querySelector('button')?.innerHTML === 'Count: 1'
-        })
-        // pull text for elements we're testing hydrate on
-        const contextElementText = page.$eval('.context', (el) => el.innerHTML)
-        const buttonText = page.$eval('button', (el) => el.innerHTML)
+    browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    page.on('console', (msg) => console.log(msg.text()))
+    server = await serveStatic('basic')
 
-        resolve(Promise.all([buttonText, contextElementText]))
-      })
-      await page.goto('http://localhost:1235', {
-        waitUntil: 'domcontentloaded',
-      })
-    }).then(async ([buttonText, contextElementText]) => {
-      expect(buttonText).toEqual('Count: 1')
-      expect(contextElementText).toEqual('Context value: "bar"')
+    await page.goto('http://localhost:1235')
 
-      // close the browser and dev server
-      await browser.close()
-      return new Promise((resolve) => server.close(resolve))
+    // @ts-expect-error
+    await page.waitForFunction(() => Boolean(window.__NEXT_HYDRATED))
+
+    await page.waitForSelector('button')
+
+    // click the button
+    await page.click('button')
+
+    // wait for react to render
+    await page.waitForFunction(() => {
+      return document.querySelector('button')?.innerHTML === 'Count: 1'
     })
+
+    // pull text for elements we're testing hydrate on
+    const contextElementText = await page.$eval(
+      '.context',
+      (el) => el.innerHTML
+    )
+    const buttonText = await page.$eval('button', (el) => el.innerHTML)
+
+    expect(buttonText).toEqual('Count: 1')
+    expect(contextElementText).toEqual('Context value: "bar"')
+
+    // close the browser and dev server
+    await browser.close()
+    await new Promise((resolve) => server.close(resolve))
   })
 })
 
