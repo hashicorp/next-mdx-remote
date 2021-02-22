@@ -17,9 +17,9 @@ import hydrate from '../hydrate'
 jest.setTimeout(30000)
 
 describe('integration', () => {
-  // beforeAll(() => {
-  //   buildFixture('basic')
-  // })
+  beforeAll(() => {
+    buildFixture('basic')
+  })
 
   test('server rendered output', () => {
     const result = readOutputFile('basic', 'index')
@@ -96,7 +96,7 @@ describe('hydrate', () => {
   })
 })
 
-describe.only('renderToString', () => {
+describe('renderToString', () => {
   test('minimal', async () => {
     const result = await renderToString('foo **bar**')
     expect(result.renderedOutput).toEqual('<p>foo <strong>bar</strong></p>')
@@ -111,7 +111,7 @@ describe.only('renderToString', () => {
     expect(result.renderedOutput).toEqual('<p>foo <span>hello test</span></p>')
   })
 
-  test.only('with html comment', async () => {
+  test('with html comment', async () => {
     const result = await renderToString(
       '<!-- I am an html comment -->foo **bar**',
       {
