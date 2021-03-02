@@ -198,7 +198,7 @@ export async function getStaticProps() {
 }
 ```
 
-That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
+That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
 
 ### How Can I Build A Blog With This?
 
