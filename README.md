@@ -202,21 +202,16 @@ That's it! The provider will be wrapped around your MDX page when hydrated and y
 
 ### Replacing main components
 
-Hydratation will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components during hydratation. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components). 
+Rendering will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components). 
 
 An example use case is rendering the content with your preferred styling library.
 
 ```jsx
 import { Typography } from "@material-ui/core";
-const components = { Test }
 
-export default function TestPage({ source }) {
-  const content = hydrate(source, { components: h2: (props) => <Typography variant="h2" {...props} /> });
-  return <div className="wrapper">{content}</div>
-}
+const components = { Test, h2: (props) => <Typography variant="h2" {...props} /> }
+...
 ```
-
-Note: you need to add components for HTML tags **only during hydratation**, not during server-side `renderToString` call, contrary to custom components like `<Test />`.
 
 Note: "th/td" won't work because of the "/" in the component name.
 
