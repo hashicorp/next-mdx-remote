@@ -200,7 +200,7 @@ export async function getStaticProps() {
 
 That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
 
-### Replacing main components
+### Replacing default components
 
 Rendering will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components). 
 
