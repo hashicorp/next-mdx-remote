@@ -200,6 +200,27 @@ export async function getStaticProps() {
 
 That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
 
+### Replacing main components
+
+Hydratation will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components during hydratation. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components). 
+
+An example use case is rendering the content with your preferred styling library.
+
+```jsx
+import { Typography } from "@material-ui/core";
+const components = { Test }
+
+export default function TestPage({ source }) {
+  const content = hydrate(source, { components: h2: (props) => <Typography variant="h2" {...props} /> });
+  return <div className="wrapper">{content}</div>
+}
+```
+
+Note: you need to add components for HTML tags **only during hydratation**, not during server-side `renderToString` call, contrary to custom components like `<Test />`.
+
+Note: "th/td" won't work because of the "/" in the component name.
+
+
 ### How Can I Build A Blog With This?
 
 Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal html and css. You definitely do not need to be using a heavy full-stack javascript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
