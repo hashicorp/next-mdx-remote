@@ -59,8 +59,8 @@
   ],
   "license": "MPL-2.0",
   "peerDependencies": {
-    "react": ">=16.13.1 <=17.0.1",
-    "react-dom": ">=16.13.1 <=17.0.1"
+    "react": ">=16.x <=17.x",
+    "react-dom": ">=16.x <=17.x"
   },
   "repository": {
     "type": "git",
