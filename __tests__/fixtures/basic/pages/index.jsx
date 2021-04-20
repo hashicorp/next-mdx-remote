@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { createContext, useEffect, useState } from 'react'
-import renderToString from '../../../../render-to-string'
-import hydrate from '../../../../hydrate'
+import serialize from '../../../../serialize'
+import MDXRemote from '../../../../mdx-remote'
 import Test from '../components/test'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
@@ -12,6 +12,14 @@ const PROVIDER = {
   component: TestContext.Provider,
   props: { value: 'foo' },
 }
+const ContextConsumer = () => {
+  return (
+    <TestContext.Consumer>
+      {(value) => <p className="context">Context value: "{value}"</p>}
+    </TestContext.Consumer>
+  )
+}
+
 const MDX_COMPONENTS = {
   Test,
   ContextConsumer: () => {
@@ -39,10 +47,14 @@ export default function TestPage({ data, mdxSource }) {
   return (
     <>
       <h1>{data.title}</h1>
-      {hydrate(mdxSource, {
-        components: MDX_COMPONENTS,
-        provider: providerOptions,
-      })}
+      <TestContext.Provider {...providerOptions.props}>
+        <MDXRemote
+          {...mdxSource}
+          components={MDX_COMPONENTS}
+          scope={data}
+          lazy
+        />
+      </TestContext.Provider>
     </>
   )
 }
@@ -50,11 +62,8 @@ export default function TestPage({ data, mdxSource }) {
 export async function getStaticProps() {
   const fixturePath = path.join(process.cwd(), 'mdx/test.mdx')
   const { data, content } = matter(fs.readFileSync(fixturePath, 'utf8'))
-  const mdxSource = await renderToString(content, {
-    components: MDX_COMPONENTS,
-    provider: PROVIDER,
+  const mdxSource = await serialize(content, {
     mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
-    scope: data,
   })
   return { props: { mdxSource, data } }
 }
