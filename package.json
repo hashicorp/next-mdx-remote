@@ -73,11 +73,12 @@
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
   },
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
     "release:patch": "release patch && npm publish",
-    "test": "jest"
+    "test": "npm run build && jest"
   },
   "sideEffects": false,
   "types": "index.d.ts"
