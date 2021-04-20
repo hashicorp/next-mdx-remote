@@ -11,6 +11,7 @@ import rmfr from 'rmfr'
 import ReactDOMServer from 'react-dom/server'
 import React from 'react'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
+import * as MDX from '@mdx-js/react'
 
 import MDXRemote from '../mdx-remote'
 import serialize from '../serialize'
@@ -134,6 +135,24 @@ describe('serialize', () => {
     )
 
     expect(result).toMatchInlineSnapshot(`"<div><p>provider-value</p></div>"`)
+  })
+
+  test('with MDXProvider providing custom components', async () => {
+    const TestContext = React.createContext(null)
+
+    const mdxSource = await serialize('<Test />')
+
+    const result = ReactDOMServer.renderToStaticMarkup(
+      <MDX.MDXProvider
+        components={{
+          Test: () => <p>Hello world</p>,
+        }}
+      >
+        <MDXRemote {...mdxSource} />
+      </MDX.MDXProvider>
+    )
+
+    expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
   })
 })
 

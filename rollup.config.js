@@ -12,8 +12,21 @@ export default [
       file: 'dist/mdx-remote.js',
       format: 'cjs',
     },
-    external: ['react'],
-    plugins: [resolve(), babel({ extensions })],
+    external: ['react', '@mdx-js/react'],
+    plugins: [
+      resolve(),
+      babel({ extensions }),
+      {
+        // ensure that the requestIdleCallback polyfill file is marked as having
+        // side-effects so that it gets bundled
+        name: 'ensure-idle-callback-polyfill',
+        transform(code, id) {
+          if (id.includes('idle-callback-polyfill.js')) {
+            return { code, moduleSideEffects: true }
+          }
+        },
+      },
+    ],
   },
   {
     input: 'src/serialize.js',
@@ -25,7 +38,7 @@ export default [
       '@mdx-js/mdx',
       '@babel/core',
       '@babel/preset-env',
-      '@babel/preset-react',
+      '@babel/plugin-transform-react-jsx',
     ],
     plugins: [json(), resolve(), cjs(), babel({ extensions })],
   },
