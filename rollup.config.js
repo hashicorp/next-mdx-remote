@@ -1,21 +1,25 @@
 import resolve from '@rollup/plugin-node-resolve'
-import babel from '@rollup/plugin-babel'
 import cjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
+import ts from '@rollup/plugin-typescript'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
 export default [
   {
-    input: 'src/mdx-remote.jsx',
+    input: './src/index.tsx',
     output: {
-      file: 'dist/mdx-remote.js',
+      dir: './dist',
       format: 'cjs',
     },
     external: ['react', '@mdx-js/react'],
     plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist',
+      }),
       resolve(),
-      babel({ extensions }),
       {
         // ensure that the requestIdleCallback polyfill file is marked as having
         // side-effects so that it gets bundled
@@ -29,17 +33,21 @@ export default [
     ],
   },
   {
-    input: 'src/serialize.js',
+    input: './src/serialize.ts',
     output: {
-      file: 'dist/serialize.js',
+      dir: './dist',
       format: 'cjs',
     },
-    external: [
-      '@mdx-js/mdx',
-      '@babel/core',
-      '@babel/preset-env',
-      '@babel/plugin-transform-react-jsx',
+    external: ['@mdx-js/mdx', 'esbuild', 'pkg-dir'],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist',
+      }),
+      json(),
+      resolve(),
+      cjs(),
     ],
-    plugins: [json(), resolve(), cjs(), babel({ extensions })],
   },
 ]

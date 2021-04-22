@@ -13,8 +13,8 @@ import React from 'react'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 
-import MDXRemote from '../mdx-remote'
-import serialize from '../serialize'
+import { MDXRemote } from '..'
+import { serialize } from '../serialize'
 
 jest.setTimeout(30000)
 

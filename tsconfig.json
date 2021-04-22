@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "esnext",
     "lib": ["es6", "dom"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "jsx": "preserve",
-    "typeRoots": ["node_modules/@types", "./"]
+    "jsx": "react",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist"
   },
-  "exclude": ["__tests__"]
+  "exclude": ["__tests__"],
+  "include": ["./src", "types.d.ts"]
 }
