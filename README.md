@@ -20,7 +20,7 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 - [Caveats](#caveats)
 - [Security](#security)
 - [Typescript](#typescript)
-- [Migrating to v3.x](#)
+- [Migrating to v3.x](#migrating-to-v3)
 - [License](#license)
 
 ---
