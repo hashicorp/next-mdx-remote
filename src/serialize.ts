@@ -52,14 +52,14 @@ export async function serialize(
   { scope = {}, mdxOptions = {} }: Options = {}
 ) {
   const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
-  const babelResult = await transform(compiledMdx, {
+  const transformResult = await transform(compiledMdx, {
     loader: 'jsx',
     jsxFactory: 'mdx',
     minify: true,
   })
 
   return {
-    compiledSource: babelResult.code,
+    compiledSource: transformResult.code,
     scope,
   }
 }
