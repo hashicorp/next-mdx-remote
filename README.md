@@ -188,34 +188,6 @@ This library evaluates a string of JavaScript on the client side, which is how i
 
 If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize `next-mdx-remote`, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
 
-### Usage Without Hydration
-
-It's also worth noting that you do not _have_ to use `<MDXRemote />` on the client side — but without it, you will get a server-rendered result, meaning no ability to react to user input, etc. To do this, pass the `renderedOutput` prop of the object returned by `serialize` to [`dangerouslySetInnerHTML`](https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml):
-
-```jsx
-import serialize from 'next-mdx-remote/serialize'
-
-import Test from '../components/test'
-
-const components = { Test }
-
-export default function TestPage({ renderedOutput }) {
-  return (
-    <div
-      className="wrapper"
-      dangerouslySetInnerHTML={{ __html: renderedOutput }}
-    />
-  )
-}
-
-export async function getStaticProps() {
-  // <Test /> will be rendered to static markup, but will be non-interactive!
-  const source = 'Some **mdx** text, with a component <Test />'
-  const { renderedOutput } = await serialize(source, { components })
-  return { props: { renderedOutput } }
-}
-```
-
 ## Typescript
 
 This project does include native types for typescript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
@@ -228,13 +200,13 @@ Below is an example of a simple implementation in typescript. You may not need t
 ```ts
 import serialize from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote/mdx-remote'
-import { MdxRemote } from 'next-mdx-remote/types'
+import { MdxRemote as MDXRemoteTypes } from 'next-mdx-remote/types'
 import ExampleComponent from './example'
 
-const components: MdxRemote.Components = { ExampleComponent }
+const components: MDXRemoteTypes.Components = { ExampleComponent }
 
 interface Props {
-  mdxSource: MdxRemote.Source
+  mdxSource: MDXRemoteTypes.Source
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
