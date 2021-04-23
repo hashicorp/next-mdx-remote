@@ -18,5 +18,9 @@ export default function hydrate(
      * For example: `{ provider: FooProvider, props: { foo: 'bar' } }`
      */
     provider?: MdxRemote.Provider
+    /**
+     * Whether to hydrate synchronously.
+     */
+    synchronous?: boolean
   }
 ): ReactNode

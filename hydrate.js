@@ -4,6 +4,41 @@ require('./idle-callback-polyfill')
 var React = require('react')
 var MDX = require('@mdx-js/react')
 
+function evalSource(compiledSource, scope, provider, components) {
+  // first we set up the scope which has to include the mdx custom
+  // create element function as well as any components we're using
+  var fullScope = Object.assign({ mdx: MDX.mdx }, components, scope)
+  var keys = Object.keys(fullScope)
+  var values = Object.values(fullScope)
+
+  // now we eval the source code using a function constructor
+  // in order for this to work we need to have React, the mdx createElement,
+  // and all our components in scope for the function, which is the case here
+  // we pass the names (via keys) in as the function's args, and execute the
+  // function with the actual values.
+  var hydrateFn = Reflect.construct(
+    Function,
+    ['React']
+    .concat(keys)
+    .concat(
+      compiledSource + '\nreturn React.createElement(MDXContent, {});'
+    )
+  )
+
+  var hydrated = hydrateFn.apply(hydrateFn, [React].concat(values))
+
+  // wrapping the content with MDXProvider will allow us to customize the standard
+  // markdown components (such as "h1" or "a") with the "components" object
+  var wrappedWithMdxProvider = React.createElement(
+    MDX.MDXProvider,
+    { components: components },
+    hydrated
+  )
+
+  var result = wrappedWithMdxProvider
+  return result
+}
+
 module.exports = function hydrate(params, options) {
   var compiledSource = params.compiledSource
   var renderedOutput = params.renderedOutput
@@ -11,15 +46,20 @@ module.exports = function hydrate(params, options) {
   var components = (options && options.components) || {}
   var provider = options && options.provider
 
-  // our default result is the server-rendered output
-  // we get this in front of users as quickly as possible
-  var useStateResult = React.useState(
-    React.createElement('div', {
+  var initialContents;
+  if (options.synchronous) {
+    initialContents = evalSource(compiledSource, scope, provider, components)
+  } else {
+    initialContents = React.createElement('div', {
       dangerouslySetInnerHTML: {
         __html: renderedOutput,
       },
     })
-  )
+  }
+
+  // our default result is the server-rendered output
+  // we get this in front of users as quickly as possible
+  var useStateResult = React.useState(initialContents)
   var result = useStateResult[0]
   var setResult = useStateResult[1]
 
@@ -35,38 +75,12 @@ module.exports = function hydrate(params, options) {
   // react re-renders for us
   React.useEffect(
     function () {
+      if (options.synchronous) {
+        // we've already hydrated the mdx content
+        return
+      }
       var handle = window.requestIdleCallback(function () {
-        // first we set up the scope which has to include the mdx custom
-        // create element function as well as any components we're using
-        var fullScope = Object.assign({ mdx: MDX.mdx }, components, scope)
-        var keys = Object.keys(fullScope)
-        var values = Object.values(fullScope)
-
-        // now we eval the source code using a function constructor
-        // in order for this to work we need to have React, the mdx createElement,
-        // and all our components in scope for the function, which is the case here
-        // we pass the names (via keys) in as the function's args, and execute the
-        // function with the actual values.
-        var hydrateFn = Reflect.construct(
-          Function,
-          ['React']
-            .concat(keys)
-            .concat(
-              compiledSource + '\nreturn React.createElement(MDXContent, {});'
-            )
-        )
-
-        var hydrated = hydrateFn.apply(hydrateFn, [React].concat(values))
-
-        // wrapping the content with MDXProvider will allow us to customize the standard
-        // markdown components (such as "h1" or "a") with the "components" object
-        var wrappedWithMdxProvider = React.createElement(
-          MDX.MDXProvider,
-          { components: components },
-          hydrated
-        )
-
-        var result = wrappedWithMdxProvider
+        var result = evalSource(compiledSource, scope, provider, components)
 
         // finally, set the the output as the new result so that react will re-render for us
         // and cancel the idle callback since we don't need it anymore

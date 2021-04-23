@@ -106,9 +106,9 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`hydrate(source: object, { components?: object, provider?: object })`**
+- **`hydrate(source: object, { components?: object, provider?: object, synchronous?: boolean })`**
 
-  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
+  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks. If the option `synchronous: true` is given, it will instead render content synchronously (skipping the static content altogether), which gives a slower initial render but avoids the default behavior of replacing the contents of the DOM after the asynchronous hydration is complete.
 
   ```ts
   hydrate(
@@ -118,6 +118,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
     {
       components: { name: React.ComponentType },
       provider: { component: React.ComponentType, props: Record<string, unknown> },
+      synchronous: boolean,
     }
   )
   ```
