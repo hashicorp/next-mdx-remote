@@ -19,7 +19,7 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 - [Frontmatter & Custom Processing](#frontmatter--custom-processing)
 - [Caveats](#caveats)
 - [Security](#security)
-- [Typescript](#typescript)
+- [TypeScript](#typescript)
 - [Migrating to v3](#migrating-to-v3)
 - [License](#license)
 
@@ -339,13 +339,13 @@ This library evaluates a string of JavaScript on the client side, which is how i
 
 If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize `next-mdx-remote`, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
 
-## Typescript
+## TypeScript
 
-This project does include native types for typescript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also exports a type which you can use to type the result of `getStaticProps`.
+This project does include native types for TypeScript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also exports a type which you can use to type the result of `getStaticProps`.
 
 - `MDXRemoteSerialize<TScope = Record<string, unknown>>`: Represents the return value of `serialize`. The `TScope` generic type can be passed to represent the type of the scoped data you pass in.
 
-Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
+Below is an example of a simple implementation in TypeScript. You may not need to implement the types exactly in this way for every configuration of TypeScript - this example is just a demonstration of where the types could be applied if needed.
 
 ```tsx
 import { GetStaticProps } from 'next'
