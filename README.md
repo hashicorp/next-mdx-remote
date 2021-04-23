@@ -14,7 +14,7 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 
 - [Background & Theory](#background--theory)
 - [Installation](#installation)
-- [Example Usage](#example-usage)
+- [Example Usage](#examples)
 - [APIs](#apis)
 - [Frontmatter & Custom Processing](#frontmatter--custom-processing)
 - [Caveats](#caveats)
@@ -48,7 +48,10 @@ npm i next-mdx-remote
 yarn add next-mdx-remote
 ```
 
-## Example Usage
+## Examples
+
+<details>
+  <summary>Basic usage</summary>
 
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
@@ -74,7 +77,152 @@ export async function getStaticProps() {
 }
 ```
 
-While it may seem strange to see these two in the same file, this is one of the cool things about next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
+</details>
+
+<details>
+  <summary>Passing custom data (component)</summary>
+
+`<MDXRemote />` accepts a `scope` prop, which makes all of the values available for use in your MDX.
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+const data = { product: 'next' }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} scope={data} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source =
+    'Some **mdx** text, with a component <Test /> and some data: {product}'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>Passing custom data (serialize)</summary>
+
+You can also pass custom data into `serialize`, which will then pass the value through and make it available from its result. By spreading the result from `source` into `<MDXRemote />`, the data will be made available.
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+const data = { product: 'next' }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source =
+    'Some **mdx** text, with a component <Test /> and some data: {product}'
+  const mdxSource = await serialize(source, { scope: data })
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>
+    Custom components from <code><MDXProvider /></code>
+  </summary>
+
+If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/advanced/components#mdxprovider) from `@mdx-js/react`.
+
+```jsx
+// pages/_app.jsx
+import { MDXProvider } from '@mdx-js/react'
+
+const components = { Test }
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <MDXProvider components={components}>
+      <Component {...pageProps} />
+    </MDXProvider>
+  )
+}
+```
+
+```jsx
+// pages/test.jsx
+import { MDXProvider } from '@mdx-js/react'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>Lazy hydration</summary>
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} lazy />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
 
 ## APIs
 
@@ -225,7 +373,7 @@ export async function getStaticProps() {
 }
 ```
 
-## Migrating To v3
+## Migrating to v3
 
 As of v3, usage of `next-mdx-remote` is slightly different. `renderToString` has been replaced with `serialize`, and `hydrate` has been removed in favor of the `<MDXRemote />` component.
 
