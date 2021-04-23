@@ -147,7 +147,7 @@ export async function getStaticProps() {
 
 <details>
   <summary>
-    Custom components from <code><MDXProvider /></code>
+    Custom components from <code>MDXProvider</code>
   </summary>
 
 If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/advanced/components#mdxprovider) from `@mdx-js/react`.
