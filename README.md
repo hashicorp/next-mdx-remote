@@ -50,9 +50,6 @@ yarn add next-mdx-remote
 
 ## Examples
 
-<details>
-  <summary>Basic usage</summary>
-
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
@@ -77,7 +74,9 @@ export async function getStaticProps() {
 }
 ```
 
-</details>
+While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
+
+### Additional Examples
 
 <details>
   <summary>Passing custom data (component)</summary>
@@ -147,7 +146,7 @@ export async function getStaticProps() {
 
 <details>
   <summary>
-    Custom components from <code>MDXProvider</code>
+    Custom components from <code>MDXProvider</code><a id="mdx-provider"></a>
   </summary>
 
 If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/advanced/components#mdxprovider) from `@mdx-js/react`.
@@ -196,6 +195,8 @@ export async function getStaticProps() {
 <details>
   <summary>Lazy hydration</summary>
 
+Lazy hydration defers hydration of the components on the client. This is an optimization technique to improve the initial load of your application, but may introduce unexpected delays in interactivity for any dynamic content within your MDX content.
+
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
@@ -221,8 +222,6 @@ export async function getStaticProps() {
 ```
 
 </details>
-
-While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
 
 ## APIs
 
@@ -255,7 +254,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`<MDXRemote source={object} components?={object} scope?={object} lazy?={boolean} />`**
+- **`<MDXRemote compiledSource={string} components?={object} scope?={object} lazy?={boolean} />`**
 
   **`<MDXRemote />`** consumes the output of `serialize` as well as an optional components argument. Its result can be rendered directly into your component. To defer hydration of the content and immediately serve the static markup, pass the `lazy` prop.
 
@@ -318,7 +317,9 @@ const components = { Test, h2: (props) => <Typography variant="h2" {...props} />
 ...
 ```
 
-Note: "th/td" won't work because of the "/" in the component name.
+If you prefer, you can also wrap your entire application in an `<MDXProvider />` instead of passing your components directly to `<MDXRemote />`. See the [example](#mdx-provider) above.
+
+Note: `th/td` won't work because of the "/" in the component name.
 
 ### How Can I Build A Blog With This?
 
