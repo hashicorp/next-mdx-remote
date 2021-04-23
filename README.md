@@ -14,13 +14,13 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 
 - [Background & Theory](#background--theory)
 - [Installation](#installation)
-- [Example Usage](#examples)
+- [Examples](#examples)
 - [APIs](#apis)
 - [Frontmatter & Custom Processing](#frontmatter--custom-processing)
 - [Caveats](#caveats)
 - [Security](#security)
 - [Typescript](#typescript)
-- [Migrating to v3.x](#migrating-to-v3)
+- [Migrating to v3](#migrating-to-v3)
 - [License](#license)
 
 ---
@@ -339,25 +339,24 @@ This library evaluates a string of JavaScript on the client side, which is how i
 
 If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize `next-mdx-remote`, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
 
-## Typescript (TODO: FIX FOR v3)
+## Typescript
 
-This project does include native types for typescript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
+This project does include native types for typescript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also exports a type which you can use to type the result of `getStaticProps`.
 
-- `MdxRemote.Components` - represents the type of the "components" object referenced in the docs above, which needs to be passed to `<MDXRemote />` as a prop
-- `MdxRemote.Source` - represents the type of the return value of `serialize`, which also must be passed into `<MDXRemote />`
+- `MDXRemoteSerialize<TScope = Record<string, unknown>>`: Represents the return value of `serialize`. The `TScope` generic type can be passed to represent the type of the scoped data you pass in.
 
 Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
 
-```ts
+```tsx
+import { GetStaticProps } from 'next'
 import serialize from 'next-mdx-remote/serialize'
-import { MDXRemote } from 'next-mdx-remote/mdx-remote'
-import { MdxRemote as MDXRemoteTypes } from 'next-mdx-remote/types'
+import { MDXRemote, MDXRemoteSerialize } from 'next-mdx-remote/mdx-remote'
 import ExampleComponent from './example'
 
-const components: MDXRemoteTypes.Components = { ExampleComponent }
+const components = { ExampleComponent }
 
 interface Props {
-  mdxSource: MDXRemoteTypes.Source
+  mdxSource: MDXRemoteSerialize
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
@@ -368,7 +367,7 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps<MDXRemoteSerialize> = async () => {
   const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
   return { props: { mdxSource } }
 }

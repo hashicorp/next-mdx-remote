@@ -1,6 +1,7 @@
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
 import * as MDX from '@mdx-js/react'
+import { MDXRemoteSerialize } from './types'
 
 // requestIdleCallback types found here: https://github.com/microsoft/TypeScript/issues/21309
 type RequestIdleCallbackHandle = any
@@ -22,18 +23,7 @@ declare global {
   }
 }
 
-interface MDXRemoteProps {
-  /**
-   * The compiledSource, generated from next-mdx-remote/serialize
-   */
-  compiledSource: string
-  /**
-   * An arbitrary object of data which will be supplied to the MDX.
-   *
-   * For example, in cases where you want to provide template variables to the MDX, like `my name is {name}`,
-   * you could provide scope as `{ name: "Some name" }`.
-   */
-  scope?: Record<string, unknown>
+type MDXRemoteProps = MDXRemoteSerialize & {
   /**
    * A object mapping names to React components.
    * The key used will be the name accessible to MDX.
@@ -46,6 +36,8 @@ interface MDXRemoteProps {
    */
   lazy?: boolean
 }
+
+export { MDXRemoteSerialize }
 
 /**
  * Renders compiled source from next-mdx-remote/serialize.

@@ -5,6 +5,7 @@ import pkgDir from 'pkg-dir'
 
 // types
 import { Pluggable, Compiler } from 'unified'
+import { MDXRemoteSerialize } from './types'
 
 const baseDir = pkgDir.sync() || process.cwd()
 
@@ -50,7 +51,7 @@ export async function serialize(
   /** Raw MDX contents as a string. */
   source: string,
   { scope = {}, mdxOptions = {} }: Options = {}
-) {
+): Promise<MDXRemoteSerialize> {
   const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
   const transformResult = await transform(compiledMdx, {
     loader: 'jsx',
