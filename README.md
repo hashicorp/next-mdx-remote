@@ -329,9 +329,9 @@ If you really insist though, check out [our official nextjs example implementati
 
 ### Caveats
 
-There's only one caveat here, which is that `import` cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided as a prop to `<MDXRemote />`.
+There's only one caveat here, which is that `import` and `export` statements cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided as a prop to `<MDXRemote />`.
 
-Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path.
+Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path. As for exports, the MDX content is treated as data, not a **module**, so there is no way for us to access any value which may be exported from the MDX passed to `next-mdx-remote`.
 
 ## Security
 
