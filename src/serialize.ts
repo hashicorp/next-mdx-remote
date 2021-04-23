@@ -2,9 +2,10 @@ import mdx from '@mdx-js/mdx'
 import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
+import { remove } from 'unist-util-remove'
 
 // types
-import { Pluggable, Compiler } from 'unified'
+import { Plugin } from 'unified'
 import { MDXRemoteSerialize, SerializeOptions } from './types'
 
 /**
@@ -38,9 +39,11 @@ function setEsbuildBinaryPath() {
 
 setEsbuildBinaryPath()
 
-function removeImportsPlugin() {
-  return function transformer(tree) {}
-}
+/**
+ * remark plugin which removes all import and export statements
+ */
+const removeImportsExportsPlugin: Plugin = () => (tree) =>
+  remove(remove(tree, 'import'), 'export')
 
 /**
  * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
@@ -50,6 +53,11 @@ export async function serialize(
   source: string,
   { scope = {}, mdxOptions = {} }: SerializeOptions = {}
 ): Promise<MDXRemoteSerialize> {
+  mdxOptions.remarkPlugins = [
+    ...(mdxOptions.remarkPlugins || []),
+    removeImportsExportsPlugin,
+  ]
+
   const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
   const transformResult = await transform(compiledMdx, {
     loader: 'jsx',

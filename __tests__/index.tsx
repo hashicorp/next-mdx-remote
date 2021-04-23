@@ -154,6 +154,17 @@ describe('serialize', () => {
 
     expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
   })
+
+  test('strips imports & exports', async () => {
+    const result = await renderStatic(`import foo from 'bar'
+
+foo **bar**
+
+export const foo = 'bar'`)
+    expect(result).toMatchInlineSnapshot(
+      `"<div><p>foo <strong>bar</strong></p></div>"`
+    )
+  })
 })
 
 afterAll(async () => {
