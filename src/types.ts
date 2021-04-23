@@ -1,3 +1,24 @@
+export interface SerializeOptions {
+  /**
+   * Pass-through variables for use in the MDX content
+   */
+  scope?: Record<string, unknown>
+  /**
+   * These options are passed to the MDX compiler.
+   * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
+   */
+  mdxOptions?: {
+    remarkPlugins?: Pluggable[]
+    rehypePlugins?: Pluggable[]
+    hastPlugins?: Pluggable[]
+    compilers?: Compiler[]
+    filepath?: string
+  }
+}
+
+/**
+ * Represents the return value of a call to serialize()
+ */
 export type MDXRemoteSerialize<TScope = Record<string, unknown>> = {
   /**
    * The compiledSource, generated from next-mdx-remote/serialize

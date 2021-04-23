@@ -5,43 +5,41 @@ import pkgDir from 'pkg-dir'
 
 // types
 import { Pluggable, Compiler } from 'unified'
-import { MDXRemoteSerialize } from './types'
+import { MDXRemoteSerialize, SerializeOptions } from './types'
 
-const baseDir = pkgDir.sync() || process.cwd()
+/**
+ * Due to the way Next.js is built and deployed, esbuild's internal use of
+ * __dirname to derive the path to its binary does not work. This function
+ * gets around that by explicitly setting the path based on the CWD.
+ *
+ * Related: https://nextjs.org/docs/basic-features/data-fetching#reading-files-use-processcwd
+ */
+function setEsbuildBinaryPath() {
+  // c.f.: https://www.arcath.net/2021/03/mdx-bundler#esbuild-executable
+  const baseDir = pkgDir.sync() || process.cwd()
 
-if (process.platform === 'win32') {
-  process.env.ESBUILD_BINARY_PATH = path.join(
-    baseDir,
-    'node_modules',
-    'esbuild',
-    'esbuild.exe'
-  )
-} else {
-  process.env.ESBUILD_BINARY_PATH = path.join(
-    baseDir,
-    'node_modules',
-    'esbuild',
-    'bin',
-    'esbuild'
-  )
+  if (process.platform === 'win32') {
+    process.env.ESBUILD_BINARY_PATH = path.join(
+      baseDir,
+      'node_modules',
+      'esbuild',
+      'esbuild.exe'
+    )
+  } else {
+    process.env.ESBUILD_BINARY_PATH = path.join(
+      baseDir,
+      'node_modules',
+      'esbuild',
+      'bin',
+      'esbuild'
+    )
+  }
 }
 
-interface Options {
-  /**
-   * Pass-through variables for use in the MDX content
-   */
-  scope?: Record<string, unknown>
-  /**
-   * These options are passed to the MDX compiler.
-   * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
-   */
-  mdxOptions?: {
-    remarkPlugins?: Pluggable[]
-    rehypePlugins?: Pluggable[]
-    hastPlugins?: Pluggable[]
-    compilers?: Compiler[]
-    filepath?: string
-  }
+setEsbuildBinaryPath()
+
+function removeImportsPlugin() {
+  return function transformer(tree) {}
 }
 
 /**
@@ -50,7 +48,7 @@ interface Options {
 export async function serialize(
   /** Raw MDX contents as a string. */
   source: string,
-  { scope = {}, mdxOptions = {} }: Options = {}
+  { scope = {}, mdxOptions = {} }: SerializeOptions = {}
 ): Promise<MDXRemoteSerialize> {
   const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
   const transformResult = await transform(compiledMdx, {
