@@ -158,8 +158,6 @@ describe('serialize', () => {
   test('supports component names with a .', async () => {
     const mdxSource = await serialize('<motion.p />')
 
-    console.log(mdxSource.compiledSource)
-
     const result = ReactDOMServer.renderToStaticMarkup(
       <MDXRemote
         {...mdxSource}
