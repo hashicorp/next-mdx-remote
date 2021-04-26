@@ -116,6 +116,8 @@ export async function getStaticProps() {
 
 You can also pass custom data into `serialize`, which will then pass the value through and make it available from its result. By spreading the result from `source` into `<MDXRemote />`, the data will be made available.
 
+Note that any scope values passed into `serialize` need to be serializable, meaning passing functions or components is not possible. If you need to pass custom scope that is not just an object, pass `scope` directly to `<MDXRemote />` where it's rendered.
+
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
@@ -185,6 +187,40 @@ export default function TestPage({ source }) {
 export async function getStaticProps() {
   // MDX text - can be from a local file, database, anywhere
   const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>
+    Component names with dot (e.g. <code>motion.div</code>)
+  </summary>
+
+Component names that contain a dot (`.`), such as those from `framer-motion`, can be rendered as long as the top-level namespace is declared in the MDX scope:
+
+```js
+import { motion } from 'framer-motion'
+
+import { MDXProvider } from '@mdx-js/react'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} scope={{ motion }} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = `Some **mdx** text, with a component:
+
+<motion.div animate={{ x: 100 }} />`
   const mdxSource = await serialize(source)
   return { props: { source: mdxSource } }
 }

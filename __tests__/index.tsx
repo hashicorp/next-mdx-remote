@@ -155,6 +155,23 @@ describe('serialize', () => {
     expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
   })
 
+  test('supports component names with a .', async () => {
+    const mdxSource = await serialize('<motion.p />')
+
+    console.log(mdxSource.compiledSource)
+
+    const result = ReactDOMServer.renderToStaticMarkup(
+      <MDXRemote
+        {...mdxSource}
+        scope={{
+          motion: { p: () => <p>Hello world</p> },
+        }}
+      />
+    )
+
+    expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
+  })
+
   test('strips imports & exports', async () => {
     const result = await renderStatic(`import foo from 'bar'
 
