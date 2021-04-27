@@ -16,9 +16,9 @@ import { MDXRemoteSerialize, SerializeOptions } from './types'
  * Related: https://nextjs.org/docs/basic-features/data-fetching#reading-files-use-processcwd
  */
 function setEsbuildBinaryPath() {
-  // c.f.: https://www.arcath.net/2021/03/mdx-bundler#esbuild-executable
   const baseDir = pkgDir.sync() || process.cwd()
 
+  // c.f.: https://www.arcath.net/2021/03/mdx-bundler#esbuild-executable
   if (process.platform === 'win32') {
     process.env.ESBUILD_BINARY_PATH = path.join(
       baseDir,
