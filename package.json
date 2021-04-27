@@ -27,7 +27,7 @@
     "@types/mdx-js__react": "^1.5.3",
     "@types/node": "^14.14.16",
     "@types/puppeteer": "^5.4.2",
-    "@types/react": "^17.0.0",
+    "@types/react": "^17.0.4",
     "@types/rmfr": "^2.0.0",
     "@types/serve-handler": "^6.1.0",
     "cross-spawn": "^7.0.3",
