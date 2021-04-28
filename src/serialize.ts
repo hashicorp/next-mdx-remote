@@ -6,7 +6,7 @@ import { remove } from 'unist-util-remove'
 
 // types
 import { Plugin } from 'unified'
-import { MDXRemoteSerialize, SerializeOptions } from './types'
+import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 
 /**
  * Due to the way Next.js is built and deployed, esbuild's internal use of
@@ -43,7 +43,7 @@ setEsbuildBinaryPath()
  * remark plugin which removes all import and export statements
  */
 const removeImportsExportsPlugin: Plugin = () => (tree) =>
-  remove(remove(tree, 'import'), 'export')
+  remove(tree, ['import', 'export'])
 
 /**
  * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
@@ -52,7 +52,7 @@ export async function serialize(
   /** Raw MDX contents as a string. */
   source: string,
   { scope = {}, mdxOptions = {} }: SerializeOptions = {}
-): Promise<MDXRemoteSerialize> {
+): Promise<MDXRemoteSerializeResult> {
   mdxOptions.remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
     removeImportsExportsPlugin,

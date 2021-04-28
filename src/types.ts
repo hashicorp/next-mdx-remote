@@ -20,7 +20,7 @@ export interface SerializeOptions {
 /**
  * Represents the return value of a call to serialize()
  */
-export type MDXRemoteSerialize<TScope = Record<string, unknown>> = {
+export type MDXRemoteSerializeResult<TScope = Record<string, unknown>> = {
   /**
    * The compiledSource, generated from next-mdx-remote/serialize
    */

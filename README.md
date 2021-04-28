@@ -379,20 +379,20 @@ If you have a CSP on your website that disallows code evaluation via `eval` or `
 
 This project does include native types for TypeScript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also exports a type which you can use to type the result of `getStaticProps`.
 
-- `MDXRemoteSerialize<TScope = Record<string, unknown>>`: Represents the return value of `serialize`. The `TScope` generic type can be passed to represent the type of the scoped data you pass in.
+- `MDXRemoteSerializeResult<TScope = Record<string, unknown>>`: Represents the return value of `serialize`. The `TScope` generic type can be passed to represent the type of the scoped data you pass in.
 
 Below is an example of a simple implementation in TypeScript. You may not need to implement the types exactly in this way for every configuration of TypeScript - this example is just a demonstration of where the types could be applied if needed.
 
 ```tsx
 import { GetStaticProps } from 'next'
 import serialize from 'next-mdx-remote/serialize'
-import { MDXRemote, MDXRemoteSerialize } from 'next-mdx-remote/mdx-remote'
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import ExampleComponent from './example'
 
 const components = { ExampleComponent }
 
 interface Props {
-  mdxSource: MDXRemoteSerialize
+  mdxSource: MDXRemoteSerializeResult
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
@@ -403,7 +403,7 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export const getStaticProps: GetStaticProps<MDXRemoteSerialize> = async () => {
+export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> = async () => {
   const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
   return { props: { mdxSource } }
 }
