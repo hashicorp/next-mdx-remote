@@ -86,7 +86,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
     // Optional parameters
     {
       // The `name` is how you will invoke the component in your MDX
-      components?: { name: React.Component },
+      components?: { [name]: React.Component },
       // wraps the given provider around the mdx content
       provider?: { component: React.Component, props: Record<string, unknown> },
       // made available to the arguments of any custom mdx component
@@ -116,7 +116,7 @@ This library exposes two functions, `renderToString` and `hydrate`, much like `r
     source,
     // Should be the exact same components that were passed to `renderToString`
     {
-      components: { name: React.ComponentType },
+      components: { [name]: React.ComponentType },
       provider: { component: React.ComponentType, props: Record<string, unknown> },
     }
   )
