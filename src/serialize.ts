@@ -51,7 +51,11 @@ const removeImportsExportsPlugin: Plugin = () => (tree) =>
 export async function serialize(
   /** Raw MDX contents as a string. */
   source: string,
-  { scope = {}, mdxOptions = {} }: SerializeOptions = {}
+  {
+    scope = {},
+    mdxOptions = {},
+    target = ['es2020', 'node12'],
+  }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
   mdxOptions.remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
@@ -63,7 +67,7 @@ export async function serialize(
     loader: 'jsx',
     jsxFactory: 'mdx',
     minify: true,
-    target: ['es2020', 'node12'],
+    target,
   })
 
   return {

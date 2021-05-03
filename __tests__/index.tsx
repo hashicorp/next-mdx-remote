@@ -15,6 +15,7 @@ import * as MDX from '@mdx-js/react'
 
 import { MDXRemote } from '..'
 import { serialize } from '../serialize'
+import { SerializeOptions } from '../src/types'
 
 jest.setTimeout(30000)
 
@@ -176,6 +177,19 @@ foo **bar**
 export const foo = 'bar'`)
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
+
+  test('supports target', async () => {
+    const mdx = `import foo from 'bar'
+
+    foo **bar**
+    
+    export const foo = 'bar'`
+
+    const resultA = await serialize(mdx, { target: 'esnext' })
+    const resultB = await serialize(mdx)
+
+    expect(resultA).not.toEqual(resultB)
+  })
 })
 
 afterAll(async () => {
@@ -224,13 +238,12 @@ async function renderStatic(
     components,
     scope,
     mdxOptions,
+    target,
   }: {
     components?: Record<string, React.ReactNode>
-    scope?: Record<string, unknown>
-    mdxOptions?: Record<string, unknown>
-  } = {}
+  } & SerializeOptions = {}
 ): Promise<string> {
-  const mdxSource = await serialize(mdx, { mdxOptions })
+  const mdxSource = await serialize(mdx, { mdxOptions, target })
 
   return ReactDOMServer.renderToStaticMarkup(
     <MDXRemote {...mdxSource} components={components} scope={scope} />

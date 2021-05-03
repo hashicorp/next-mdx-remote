@@ -15,6 +15,11 @@ export interface SerializeOptions {
     compilers?: Compiler[]
     filepath?: string
   }
+  /**
+   * Specify the target environment for the generated code.
+   * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
+   */
+  target?: string | string[]
 }
 
 /**
