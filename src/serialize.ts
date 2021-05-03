@@ -63,6 +63,7 @@ export async function serialize(
     loader: 'jsx',
     jsxFactory: 'mdx',
     minify: true,
+    target: ['es2020', 'node12'],
   })
 
   return {
