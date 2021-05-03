@@ -28,7 +28,7 @@ describe('hydration', () => {
 
     // server renders correctly
     expect(result).toMatch(
-      '<h1>foo</h1><div><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div></div></div>'
+      '<h1>foo</h1><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div><div>I am a dynamic component.</div></div>'
     )
   })
 
@@ -74,9 +74,7 @@ describe('hydration', () => {
 describe('serialize', () => {
   test('minimal', async () => {
     const result = await renderStatic('foo **bar**')
-    expect(result).toMatchInlineSnapshot(
-      `"<div><p>foo <strong>bar</strong></p></div>"`
-    )
+    expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 
   test('with component', async () => {
@@ -85,9 +83,7 @@ describe('serialize', () => {
         Test: ({ name }) => React.createElement('span', null, `hello ${name}`),
       },
     })
-    expect(result).toMatchInlineSnapshot(
-      `"<div><p>foo <span>hello test</span></p></div>"`
-    )
+    expect(result).toMatchInlineSnapshot(`"<p>foo <span>hello test</span></p>"`)
   })
 
   test('with options', async () => {
@@ -97,7 +93,7 @@ describe('serialize', () => {
       },
     })
     expect(result).toMatchInlineSnapshot(
-      `"<div><div class=\\"alert alert-warning g-type-body\\" role=\\"alert\\"><p>hello</p></div></div>"`
+      `"<div class=\\"alert alert-warning g-type-body\\" role=\\"alert\\"><p>hello</p></div>"`
     )
   })
 
@@ -111,7 +107,7 @@ describe('serialize', () => {
         bar: 'test',
       },
     })
-    expect(result).toMatchInlineSnapshot(`"<div><p>test</p></div>"`)
+    expect(result).toMatchInlineSnapshot(`"<p>test</p>"`)
   })
 
   test('with custom provider', async () => {
@@ -134,7 +130,7 @@ describe('serialize', () => {
       </TestContext.Provider>
     )
 
-    expect(result).toMatchInlineSnapshot(`"<div><p>provider-value</p></div>"`)
+    expect(result).toMatchInlineSnapshot(`"<p>provider-value</p>"`)
   })
 
   test('with MDXProvider providing custom components', async () => {
@@ -152,7 +148,7 @@ describe('serialize', () => {
       </MDX.MDXProvider>
     )
 
-    expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
+    expect(result).toMatchInlineSnapshot(`"<p>Hello world</p>"`)
   })
 
   test('supports component names with a .', async () => {
@@ -167,7 +163,7 @@ describe('serialize', () => {
       />
     )
 
-    expect(result).toMatchInlineSnapshot(`"<div><p>Hello world</p></div>"`)
+    expect(result).toMatchInlineSnapshot(`"<p>Hello world</p>"`)
   })
 
   test('strips imports & exports', async () => {
@@ -176,9 +172,7 @@ describe('serialize', () => {
 foo **bar**
 
 export const foo = 'bar'`)
-    expect(result).toMatchInlineSnapshot(
-      `"<div><p>foo <strong>bar</strong></p></div>"`
-    )
+    expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 })
 

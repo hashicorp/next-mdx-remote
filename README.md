@@ -233,6 +233,8 @@ export async function getStaticProps() {
 
 Lazy hydration defers hydration of the components on the client. This is an optimization technique to improve the initial load of your application, but may introduce unexpected delays in interactivity for any dynamic content within your MDX content.
 
+_Note: this will add an additional wrapping `div` around your rendered MDX, which is necessary to avoid [hydration mismatches during render](https://reactjs.org/docs/react-dom.html#hydrate)._
+
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'

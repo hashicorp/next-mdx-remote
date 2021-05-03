@@ -56,7 +56,7 @@ export function MDXRemote({
   // requestIdleCallback, since we can be fairly confident that
   // markdown - embedded components are not a high priority to get
   // to interactive compared to...anything else on the page.
-  useEffect(function () {
+  useEffect(() => {
     if (lazy) {
       const handle = window.requestIdleCallback(() => {
         setIsReadyToRender(true)
@@ -95,11 +95,12 @@ export function MDXRemote({
 
   // wrapping the content with MDXProvider will allow us to customize the standard
   // markdown components (such as "h1" or "a") with the "components" object
-  return (
-    <div>
-      <MDX.MDXProvider components={components}>
-        <Content />
-      </MDX.MDXProvider>
-    </div>
+  const content = (
+    <MDX.MDXProvider components={components}>
+      <Content />
+    </MDX.MDXProvider>
   )
+
+  // If lazy = true, we need to render a wrapping div to preserve the same markup structure that was SSR'd
+  return lazy ? <div>{content}</div> : content
 }
