@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { createContext, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { serialize } from '../../../../serialize'
 import { MDXRemote } from '../../../../'
 import Test from '../components/test'
@@ -30,6 +31,7 @@ const MDX_COMPONENTS = {
     )
   },
   strong: (props) => <strong className="custom-strong" {...props} />,
+  Dynamic: dynamic(() => import('../components/dynamic')),
 }
 
 export default function TestPage({ data, mdxSource }) {
