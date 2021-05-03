@@ -4,3 +4,4 @@ examples
 tsconfig.json
 babel.config.js
 src
+.circleci
