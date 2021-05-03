@@ -52,15 +52,17 @@ describe('hydration', () => {
 
     // wait for react to render
     await page.waitForFunction(() => {
-      return document.querySelector('button')?.innerHTML === 'Count: 1'
+      return document.querySelector('button')?.innerText === 'Count: 1'
     })
 
     // pull text for elements we're testing hydrate on
     const contextElementText = await page.$eval(
       '.context',
-      (el) => el.innerHTML
+      // @ts-expect-error -- el is typed as Element, but reasonable to assume it is an HTMLElement at this point
+      (el) => el.innerText
     )
-    const buttonText = await page.$eval('button', (el) => el.innerHTML)
+    // @ts-expect-error -- el is typed as Element, but reasonable to assume it is an HTMLElement at this point
+    const buttonText = await page.$eval('button', (el) => el.innerText)
 
     expect(buttonText).toEqual('Count: 1')
     expect(contextElementText).toEqual('Context value: "bar"')

@@ -50,12 +50,7 @@ export default function TestPage({ data, mdxSource }) {
     <>
       <h1>{data.title}</h1>
       <TestContext.Provider {...providerOptions.props}>
-        <MDXRemote
-          {...mdxSource}
-          components={MDX_COMPONENTS}
-          scope={data}
-          lazy
-        />
+        <MDXRemote {...mdxSource} components={MDX_COMPONENTS} scope={data} />
       </TestContext.Provider>
     </>
   )
