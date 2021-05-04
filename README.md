@@ -20,7 +20,6 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 - [Caveats](#caveats)
 - [Security](#security)
 - [TypeScript](#typescript)
-- [Migrating to v3](#migrating-to-v3)
 - [License](#license)
 
 ---
@@ -418,55 +417,6 @@ export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> = async ()
   const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
   return { props: { mdxSource } }
 }
-```
-
-## Migrating to v3
-
-As of v3, usage of `next-mdx-remote` is slightly different. `renderToString` has been replaced with `serialize`, and `hydrate` has been removed in favor of the `<MDXRemote />` component.
-
-Under the hood, v3 is more efficient and we've fixed a number of long-standing caveats with the way it was implemented. Most users should notice improved performance across the board!
-
-Here's what the diff looks like to migrate a simple implementation:
-
-```diff
-- import renderToString from 'next-mdx-remote/render-to-string'
-+ import { serialize } from 'next-mdx-remote/serialize'
-- import hydrate from 'next-mdx-remote/hydrate'
-+ import { MDXRemote } from 'next-mdx-remote'
-
-import Test from '../components/test'
-
-const components = { Test }
-
-export default function TestPage({ source }) {
--  const content = hydrate(source, { components })
-  return (
-    <div className="wrapper">
--      {content}
-+      <MDXRemote {...source} components={components} />
-    </div>
-  )
-}
-
-export async function getStaticProps() {
-  // MDX text - can be from a local file, database, anywhere
-  const source = 'Some **mdx** text, with a component <Test />'
--  const mdxSource = await renderToString(source, { components })
-+  const mdxSource = await serialize(source)
-  return { props: { source: mdxSource } }
-}
-```
-
-### Context
-
-Context usage and providers will now work without any additional configuration. Any contexts which are rendered higher up in the tree should be available for use within your rendered MDX. This should also fix a number of SSR-related CSS-in-JS bugs users were experiencing.
-
-### Content Hydration
-
-By default, `<MDXRemote />` will now hydrate immediately. If you wish to retain the lazy hydration behavior, pass the `lazy` prop:
-
-```jsx
-<MDXRemote {...source} lazy />
 ```
 
 ## License
