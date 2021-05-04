@@ -68,7 +68,7 @@ export function MDXRemote({
     // if we're ready to render, we can assemble the component tree and let React do its thing
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
-    const fullScope = Object.assign({ mdx: MDX.mdx }, scope)
+    const fullScope = Object.assign({ mdx: MDX.mdx, React }, scope)
     const keys = Object.keys(fullScope)
     const values = Object.values(fullScope)
 
