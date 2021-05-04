@@ -52,10 +52,9 @@ export function MDXRemote({
     !lazy || typeof window === 'undefined'
   )
 
-  // if we're on the client side, we hydrate the mdx content inside
-  // requestIdleCallback, since we can be fairly confident that
-  // markdown - embedded components are not a high priority to get
-  // to interactive compared to...anything else on the page.
+  // if we're on the client side and `lazy` is set to true, we hydrate the
+  // mdx content inside requestIdleCallback, allowing the page to get to
+  // interactive quicker, but the mdx content to hydrate slower.
   useEffect(() => {
     if (lazy) {
       const handle = window.requestIdleCallback(() => {
