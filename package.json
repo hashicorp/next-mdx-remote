@@ -81,6 +81,7 @@
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
     "release:patch": "release patch && npm publish",
+    "prepublishOnly": "npm run build",
     "test": "npm run build && jest"
   },
   "sideEffects": false,
