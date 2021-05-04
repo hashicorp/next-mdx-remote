@@ -14,11 +14,12 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 
 - [Background & Theory](#background--theory)
 - [Installation](#installation)
-- [Example Usage](#example-usage)
+- [Examples](#examples)
 - [APIs](#apis)
 - [Frontmatter & Custom Processing](#frontmatter--custom-processing)
 - [Caveats](#caveats)
 - [Security](#security)
+- [TypeScript](#typescript)
 - [License](#license)
 
 ---
@@ -46,80 +47,259 @@ npm i next-mdx-remote
 yarn add next-mdx-remote
 ```
 
-## Example Usage
+## Examples
 
 ```jsx
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
 
 import Test from '../components/test'
 
 const components = { Test }
 
 export default function TestPage({ source }) {
-  const content = hydrate(source, { components })
-  return <div className="wrapper">{content}</div>
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} />
+    </div>
+  )
 }
 
 export async function getStaticProps() {
   // MDX text - can be from a local file, database, anywhere
   const source = 'Some **mdx** text, with a component <Test />'
-  const mdxSource = await renderToString(source, { components })
+  const mdxSource = await serialize(source)
   return { props: { source: mdxSource } }
 }
 ```
 
-While it may seem strange to see these two in the same file, this is one of the cool things about next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `renderToString` will be removed from the browser bundle entirely.
+While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
+
+### Additional Examples
+
+<details>
+  <summary>Passing custom data (component)</summary>
+
+`<MDXRemote />` accepts a `scope` prop, which makes all of the values available for use in your MDX.
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+const data = { product: 'next' }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} scope={data} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source =
+    'Some **mdx** text, with a component <Test /> and some data: {product}'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>Passing custom data (serialize)</summary>
+
+You can also pass custom data into `serialize`, which will then pass the value through and make it available from its result. By spreading the result from `source` into `<MDXRemote />`, the data will be made available.
+
+Note that any scope values passed into `serialize` need to be serializable, meaning passing functions or components is not possible. If you need to pass custom scope that is not just an object, pass `scope` directly to `<MDXRemote />` where it's rendered.
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+const data = { product: 'next' }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source =
+    'Some **mdx** text, with a component <Test /> and some data: {product}'
+  const mdxSource = await serialize(source, { scope: data })
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>
+    Custom components from <code>MDXProvider</code><a id="mdx-provider"></a>
+  </summary>
+
+If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/advanced/components#mdxprovider) from `@mdx-js/react`.
+
+```jsx
+// pages/_app.jsx
+import { MDXProvider } from '@mdx-js/react'
+
+const components = { Test }
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <MDXProvider components={components}>
+      <Component {...pageProps} />
+    </MDXProvider>
+  )
+}
+```
+
+```jsx
+// pages/test.jsx
+import { MDXProvider } from '@mdx-js/react'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>
+    Component names with dot (e.g. <code>motion.div</code>)
+  </summary>
+
+Component names that contain a dot (`.`), such as those from `framer-motion`, can be rendered as long as the top-level namespace is declared in the MDX scope:
+
+```js
+import { motion } from 'framer-motion'
+
+import { MDXProvider } from '@mdx-js/react'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} scope={{ motion }} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = `Some **mdx** text, with a component:
+
+<motion.div animate={{ x: 100 }} />`
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
+
+<details>
+  <summary>Lazy hydration</summary>
+
+Lazy hydration defers hydration of the components on the client. This is an optimization technique to improve the initial load of your application, but may introduce unexpected delays in interactivity for any dynamic content within your MDX content.
+
+_Note: this will add an additional wrapping `div` around your rendered MDX, which is necessary to avoid [hydration mismatches during render](https://reactjs.org/docs/react-dom.html#hydrate)._
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+
+export default function TestPage({ source }) {
+  return (
+    <div className="wrapper">
+      <MDXRemote {...source} components={components} lazy />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source)
+  return { props: { source: mdxSource } }
+}
+```
+
+</details>
 
 ## APIs
 
-This library exposes two functions, `renderToString` and `hydrate`, much like `react-dom`. These two are purposefully isolated into their own files -- `renderToString` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `hydrate` on the other hand is intended to be run on the client side, in the browser.
+This library exposes a function and a component, `serialize` and `<MDXRemote />`. These two are purposefully isolated into their own files -- `serialize` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `<MDXRemote />` on the other hand is intended to be run on the client side, in the browser.
 
-- **`renderToString(source: string, { components?: object, mdxOptions?: object, provider?: object, scope?: object })`**
+- **`serialize(source: string, { mdxOptions?: object, scope?: object, target?: string | string[] })`**
 
-  **`renderToString`** consumes a string of MDX along with any components it utilizes in the format `{ ComponentName: ActualComponent }`. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `hydrate` directly.
+  **`serialize`** consumes a string of MDX. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
 
   ```ts
-  renderToString(
+  serialize(
     // Raw MDX contents as a string
     '# hello, world',
     // Optional parameters
     {
-      // The `name` is how you will invoke the component in your MDX
-      components?: { name: React.Component },
-      // wraps the given provider around the mdx content
-      provider?: { component: React.Component, props: Record<string, unknown> },
       // made available to the arguments of any custom mdx component
-      scope?: {},
+      scope: {},
       // MDX's available options at time of writing pulled directly from
       // https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
-      mdxOptions?: {
+      mdxOptions: {
         remarkPlugins: [],
         rehypePlugins: [],
         hastPlugins: [],
         compilers: [],
         filepath: '/some/file/path',
       },
+      // Specify the target environment for the generated code. See esbuild docs:
+      // https://esbuild.github.io/api/#target
+      target: ['esnext'],
     }
   )
   ```
 
   Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
 
-- **`hydrate(source: object, { components?: object, provider?: object })`**
+- **`<MDXRemote compiledSource={string} components?={object} scope?={object} lazy?={boolean} />`**
 
-  **`hydrate`** consumes the output of `renderToString` as well as the same components argument as `renderToString`. Its result can be rendered directly into your component. This function will initially render static content, and hydrate it when the browser isn't busy with higher priority tasks.
+  **`<MDXRemote />`** consumes the output of `serialize` as well as an optional components argument. Its result can be rendered directly into your component. To defer hydration of the content and immediately serve the static markup, pass the `lazy` prop.
 
   ```ts
-  hydrate(
-    // The direct return value of `renderToString`
-    source,
-    // Should be the exact same components that were passed to `renderToString`
-    {
-      components: { name: React.ComponentType },
-      provider: { component: React.ComponentType, props: Record<string, unknown> },
-    }
-  )
+  <MDXRemote {...source} components={components} />
   ```
 
 ## Frontmatter & Custom Processing
@@ -129,8 +309,8 @@ Markdown in general is often paired with frontmatter, and normally this means ad
 Let's walk through an example of how we could process frontmatter out of our MDX source:
 
 ```jsx
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
 
 import matter from 'gray-matter'
 
@@ -139,11 +319,10 @@ import Test from '../components/test'
 const components = { Test }
 
 export default function TestPage({ source, frontMatter }) {
-  const content = hydrate(source, { components })
   return (
     <div className="wrapper">
       <h1>{frontMatter.title}</h1>
-      {content}
+      <MDXRemote {...source} components={components} />
     </div>
   )
 }
@@ -158,51 +337,16 @@ Some **mdx** text, with a component <Test name={title}/>
   `
 
   const { content, data } = matter(source)
-  const mdxSource = await renderToString(content, { components, scope: data })
+  const mdxSource = await serialize(content, { scope: data })
   return { props: { source: mdxSource, frontMatter: data } }
 }
 ```
 
-Nice and easy - since we get the content as a string originally and have full control, we can run any extra custom processing needed before passing it into `renderToString`, and easily append extra data to the return value from `getStaticProps` without issue.
-
-### Using Providers
-
-If any of the components in your MDX file require access to the values from a provider, you need special handling for this. Remember, this library treats your mdx content as _data provided to your page_, not as a page itself, so providers in your normal scope will not naturally wrap its results.
-
-Let's look at an example of using an auth0 provider, so that you could potentially customize some of your mdx components to the user viewing them.
-
-```jsx
-import { Auth0Provider } from '@auth0/auth0-react'
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
-import Test from '../components/test'
-
-const components = { Test }
-
-// here, we build a provider config object
-const provider = {
-  component: Auth0Provider,
-  props: { domain: 'example.com', clientId: 'xxx', redirectUri: 'xxx' },
-}
-
-export default function TestPage({ source }) {
-  const content = hydrate(source, { components, provider }) // <- add the provider here
-  return <div className="wrapper">{content}</div>
-}
-
-export async function getStaticProps() {
-  // mdx text - can be from a local file, database, anywhere
-  const source = 'Some **mdx** text, with a component <Test />'
-  const mdxSource = await renderToString(source, { components, provider }) // <- add it here as well
-  return { props: { source: mdxSource } }
-}
-```
-
-That's it! The provider will be wrapped around your MDX page when hydrated and you will be able to access any of its values from within your components. For an example using a custom provider, check out the test suite.
+Nice and easy - since we get the content as a string originally and have full control, we can run any extra custom processing needed before passing it into `serialize`, and easily append extra data to the return value from `getStaticProps` without issue.
 
 ### Replacing default components
 
-Rendering will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components). 
+Rendering will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components).
 
 An example use case is rendering the content with your preferred styling library.
 
@@ -213,8 +357,9 @@ const components = { Test, h2: (props) => <Typography variant="h2" {...props} />
 ...
 ```
 
-Note: "th/td" won't work because of the "/" in the component name.
+If you prefer, you can also wrap your entire application in an `<MDXProvider />` instead of passing your components directly to `<MDXRemote />`. See the [example](#mdx-provider) above.
 
+Note: `th/td` won't work because of the "/" in the component name.
 
 ### How Can I Build A Blog With This?
 
@@ -224,75 +369,52 @@ If you really insist though, check out [our official nextjs example implementati
 
 ### Caveats
 
-There's only one caveat here, which is that `import` cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided through the second argument to the `hydrate` and `renderToString` functions.
+#### Environment Targets
 
-Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path.
+The code generated by `next-mdx-remote`, which is used to actually render the MDX, is transformed to support: `>= node 12, es2020`.
+
+#### `import` / `export`
+
+`import` and `export` statements cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided as a prop to `<MDXRemote />`.
+
+Hopefully this makes sense, since in order to work, imports must be relative to a file path, and this library allows content to be loaded from anywhere, rather than only loading local content from a set file path. As for exports, the MDX content is treated as data, not a **module**, so there is no way for us to access any value which may be exported from the MDX passed to `next-mdx-remote`.
 
 ## Security
 
-This library evaluates a string of JavaScript on the client side, which is how it hydrates the MDX content. Evaluating a string into javascript can be a dangerous practice if not done carefully, as it can enable XSS attacks. It's important to make sure that you are only passing the `mdxSource` input generated by the `render-to-string` function to `hydrate`, as instructed in the documentation. **Do not pass user input into `hydrate`.**
+This library evaluates a string of JavaScript on the client side, which is how it MDXRemotes the MDX content. Evaluating a string into javascript can be a dangerous practice if not done carefully, as it can enable XSS attacks. It's important to make sure that you are only passing the `mdxSource` input generated by the `serialize` function to `<MDXRemote />`, as instructed in the documentation. **Do not pass user input into `<MDXRemote />`.**
 
-If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize the `hydrate` function, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
+If you have a CSP on your website that disallows code evaluation via `eval` or `new Function()`, you will need to loosen that restriction in order to utilize `next-mdx-remote`, which can be done using [`unsafe-eval`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src#common_sources).
 
-### Usage Without Hydration
+## TypeScript
 
-It's also worth noting that you do not _have_ to use `hydrate` on the client side — but without it, you will get a server-rendered result, meaning no ability to react to user input, etc. To do this, pass the `renderedOutput` prop of the object returned by `renderToString` to [`dangerouslySetInnerHTML`](https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml):
+This project does include native types for TypeScript use. Both `serialize` and `<MDXRemote />` have types normally as you'd expect, and the library also exports a type which you can use to type the result of `getStaticProps`.
 
-```jsx
-import renderToString from 'next-mdx-remote/render-to-string'
+- `MDXRemoteSerializeResult<TScope = Record<string, unknown>>`: Represents the return value of `serialize`. The `TScope` generic type can be passed to represent the type of the scoped data you pass in.
 
-import Test from '../components/test'
+Below is an example of a simple implementation in TypeScript. You may not need to implement the types exactly in this way for every configuration of TypeScript - this example is just a demonstration of where the types could be applied if needed.
 
-const components = { Test }
-
-export default function TestPage({ renderedOutput }) {
-  return (
-    <div
-      className="wrapper"
-      dangerouslySetInnerHTML={{ __html: renderedOutput }}
-    />
-  )
-}
-
-export async function getStaticProps() {
-  // <Test /> will be rendered to static markup, but will be non-interactive!
-  const source = 'Some **mdx** text, with a component <Test />'
-  const { renderedOutput } = await renderToString(source, { components })
-  return { props: { renderedOutput } }
-}
-```
-
-## Typescript
-
-This project does include native types for typescript use. Both `renderToString` and `hydrate` have types normally as you'd expect, and the library also offers exports of two types that are shared between the two functions and that you may need to include in your own files. Both types can be imported from `next-mdx-remote/types` and are namespaced under `MdxRemote`. The two types are as follows:
-
-- `MdxRemote.Components` - represents the type of the "components" object referenced in the docs above, which needs to be passed to both `hydrate` and `renderToString`
-- `MdxRemote.Source` - represents the type of the return value of `renderToString`, which also must be passed into `hydrate.
-
-Below is an example of a simple implementation in typescript. You may not need to implement the types exactly in this way for every configuration of typescript - this example is just a demonstration of where the types could be applied if needed.
-
-```ts
-import renderToString from 'next-mdx-remote/render-to-string'
-import hydrate from 'next-mdx-remote/hydrate'
-import { MdxRemote } from 'next-mdx-remote/types'
+```tsx
+import { GetStaticProps } from 'next'
+import serialize from 'next-mdx-remote/serialize'
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import ExampleComponent from './example'
 
-const components: MdxRemote.Components = { ExampleComponent }
+const components = { ExampleComponent }
 
 interface Props {
-  mdxSource: MdxRemote.Source
+  mdxSource: MDXRemoteSerializeResult
 }
 
 export default function ExamplePage({ mdxSource }: Props) {
-  const content = hydrate(mdxSource, { components })
-  return <div>{content}</div>
+  return (
+    <div>
+      <MDXRemote {...mdxSource} components={components} />
+    </div>
+  )
 }
 
-export async function getStaticProps() {
-  const mdxSource = await renderToString(
-    'some *mdx* content: <ExampleComponent />',
-    { components }
-  )
+export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> = async () => {
+  const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
   return { props: { mdxSource } }
 }
 ```
