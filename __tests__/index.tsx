@@ -190,6 +190,18 @@ export const foo = 'bar'`)
 
     expect(resultA).not.toEqual(resultB)
   })
+
+  test('fragments', async () => {
+    const components = {
+      Test: ({ content }) => content,
+    }
+
+    const result = await renderStatic(
+      `<Test content={<>Rendering a fragment</>} />`,
+      { components }
+    )
+    expect(result).toMatchInlineSnapshot(`"Rendering a fragment"`)
+  })
 })
 
 afterAll(async () => {
