@@ -16,24 +16,25 @@ import { MDXRemoteSerializeResult, SerializeOptions } from './types'
  * Related: https://nextjs.org/docs/basic-features/data-fetching#reading-files-use-processcwd
  */
 function setEsbuildBinaryPath() {
-  const baseDir = pkgDir.sync() || process.cwd()
+  /**
+   * Now we have the correct path for ESBUILD (with ESBUILD_PATH), we can replace baseDir
+   */
 
+  //  const baseDir = pkgDir.sync() || process.cwd()
+  const baseDir = process.env.ESBUILD_PATH
+
+  if (!baseDir) {
+    throw new Error('next-mdx-remote(serialize): baseDir is undefined')
+  }
+
+  /**
+   * and now we'll have the correct path for ESBUILD_BINARY_PATH
+   */
   // c.f.: https://www.arcath.net/2021/03/mdx-bundler#esbuild-executable
   if (process.platform === 'win32') {
-    process.env.ESBUILD_BINARY_PATH = path.join(
-      baseDir,
-      'node_modules',
-      'esbuild',
-      'esbuild.exe'
-    )
+    process.env.ESBUILD_BINARY_PATH = path.join(baseDir, 'esbuild.exe')
   } else {
-    process.env.ESBUILD_BINARY_PATH = path.join(
-      baseDir,
-      'node_modules',
-      'esbuild',
-      'bin',
-      'esbuild'
-    )
+    process.env.ESBUILD_BINARY_PATH = path.join(baseDir, 'bin', 'esbuild')
   }
 }
 
