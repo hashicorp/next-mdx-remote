@@ -2,6 +2,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import cjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import ts from '@rollup/plugin-typescript'
+import alias from '@rollup/plugin-alias'
 
 // These extensions are not being used
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
@@ -40,6 +41,18 @@ const injectPluginConfigured = injectProcessEnv({
   ESBUILD_PATH: getEsbuildModulePath(),
 })
 
+/**
+ * And finally this approach solves duplicated react version.
+ * Here we use `alias` strategy combined with node require.resolve
+ * to the users versions of `react` and `react-dom`.
+ */
+const aliasPluginConfigured = alias({
+  entires: {
+    react: require.resolve('react'),
+    'react-dom': require.resolve('react-dom'),
+  },
+})
+
 export default [
   {
     input: './src/index.tsx',
@@ -50,6 +63,7 @@ export default [
     external: ['react', '@mdx-js/react'],
     plugins: [
       injectPluginConfigured,
+      aliasPluginConfigured,
       ts({
         tsconfig: './tsconfig.json',
         declaration: true,
@@ -77,6 +91,7 @@ export default [
     external: ['@mdx-js/mdx', 'esbuild', 'pkg-dir'],
     plugins: [
       injectPluginConfigured,
+      aliasPluginConfigured,
       ts({
         tsconfig: './tsconfig.json',
         declaration: true,
