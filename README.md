@@ -395,7 +395,7 @@ Below is an example of a simple implementation in TypeScript. You may not need t
 
 ```tsx
 import { GetStaticProps } from 'next'
-import serialize from 'next-mdx-remote/serialize'
+import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import ExampleComponent from './example'
 
