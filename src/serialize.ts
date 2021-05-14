@@ -16,7 +16,7 @@ import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 const requireResolve =
   // @ts-expect-error -- check if we're in a webpack context
   typeof __non_webpack_require__ === 'function'
-    ? // @ts-expect-error -- check if we're in a webpack context
+    ? // @ts-expect-error -- __non_webpack_require__ === require at this point
       __non_webpack_require__.resolve
     : require.resolve
 
