@@ -78,9 +78,15 @@ While it may seem strange to see these two in the same file, this is one of the 
 ### Additional Examples
 
 <details>
-  <summary>Passing custom data (component)</summary>
+  <summary>Passing custom data to a component with `scope`</summary>
 
 `<MDXRemote />` accepts a `scope` prop, which makes all of the values available for use in your MDX.
+
+Each key/value pair in the `scope` argument will be exposed as a javascript variable. So, for example, you could imagine if you had a scope like `{ foo: 'bar' }`, it would be interpreted as `const foo = 'bar'`.
+
+This specifically means that you need to make sure that key names in your `scope` argument are valid javascript variable names. For example, passing in `{ 'my-variable-name': 'bar' }` would generate an _error_, because the key name is not a valid javascript variable name.
+
+It's also important to note that `scope` variables must be consumed as _arguments to a component_, they cannot be rendered in the middle of text. This is shown in the example below.
 
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
@@ -102,7 +108,7 @@ export default function TestPage({ source }) {
 export async function getStaticProps() {
   // MDX text - can be from a local file, database, anywhere
   const source =
-    'Some **mdx** text, with a component <Test /> and some data: {product}'
+    'Some **mdx** text, with a component using a scope variable <Test product={product} />'
   const mdxSource = await serialize(source)
   return { props: { source: mdxSource } }
 }
@@ -111,11 +117,11 @@ export async function getStaticProps() {
 </details>
 
 <details>
-  <summary>Passing custom data (serialize)</summary>
+  <summary>Passing `scope` into the `serialize` function instead</summary>
 
 You can also pass custom data into `serialize`, which will then pass the value through and make it available from its result. By spreading the result from `source` into `<MDXRemote />`, the data will be made available.
 
-Note that any scope values passed into `serialize` need to be serializable, meaning passing functions or components is not possible. If you need to pass custom scope that is not just an object, pass `scope` directly to `<MDXRemote />` where it's rendered.
+Note that any scope values passed into `serialize` need to be serializable, meaning passing functions or components is not possible. Additionally, any key named in the `scope` argument must be valid javascript variable names. If you need to pass custom scope that is not serializable, you can pass `scope` directly to `<MDXRemote />` where it's rendered. There is an example of how to do this above this section.
 
 ```jsx
 import { serialize } from 'next-mdx-remote/serialize'
@@ -137,7 +143,7 @@ export default function TestPage({ source }) {
 export async function getStaticProps() {
   // MDX text - can be from a local file, database, anywhere
   const source =
-    'Some **mdx** text, with a component <Test /> and some data: {product}'
+    'Some **mdx** text, with a component <Test product={product} />'
   const mdxSource = await serialize(source, { scope: data })
   return { props: { source: mdxSource } }
 }
