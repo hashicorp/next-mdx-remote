@@ -1,6 +1,6 @@
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
-import * as MDX from '@mdx-js/react'
+import { MDXProvider, mdx } from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 
 // requestIdleCallback types found here: https://github.com/microsoft/TypeScript/issues/21309
@@ -68,7 +68,7 @@ export function MDXRemote({
     // if we're ready to render, we can assemble the component tree and let React do its thing
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
-    const fullScope = Object.assign({ mdx: MDX.mdx, React }, scope)
+    const fullScope = Object.assign({ mdx, React }, scope)
     const keys = Object.keys(fullScope)
     const values = Object.values(fullScope)
 
@@ -95,9 +95,9 @@ export function MDXRemote({
   // wrapping the content with MDXProvider will allow us to customize the standard
   // markdown components (such as "h1" or "a") with the "components" object
   const content = (
-    <MDX.MDXProvider components={components}>
+    <MDXProvider components={components}>
       <Content />
-    </MDX.MDXProvider>
+    </MDXProvider>
   )
 
   // If lazy = true, we need to render a wrapping div to preserve the same markup structure that was SSR'd

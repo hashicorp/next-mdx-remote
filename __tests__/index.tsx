@@ -169,7 +169,7 @@ describe('serialize', () => {
     expect(result).toMatchInlineSnapshot(`"<p>Hello world</p>"`)
   })
 
-  test('strips imports & exports', async () => {
+  test.only('strips imports & exports', async () => {
     const result = await renderStatic(`import foo from 'bar'
 
 foo **bar**
@@ -256,7 +256,6 @@ async function renderStatic(
   } & SerializeOptions = {}
 ): Promise<string> {
   const mdxSource = await serialize(mdx, { mdxOptions, target })
-
   return ReactDOMServer.renderToStaticMarkup(
     <MDXRemote {...mdxSource} components={components} scope={scope} />
   )
