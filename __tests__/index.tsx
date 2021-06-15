@@ -20,9 +20,9 @@ import { SerializeOptions } from '../src/types'
 jest.setTimeout(30000)
 
 describe('hydration', () => {
-  beforeAll(() => {
-    buildFixture('basic')
-  })
+  // beforeAll(() => {
+  //   buildFixture('basic')
+  // })
 
   test('server rendered output', () => {
     const result = readOutputFile('basic', 'index')
