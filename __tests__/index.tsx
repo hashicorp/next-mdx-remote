@@ -28,7 +28,7 @@ describe('hydration', () => {
     const result = readOutputFile('basic', 'index')
 
     // server renders correctly
-    expect(result).toMatch(
+    expect(result.replace(/(\r\n|\n|\r)/gm, '')).toContain(
       '<h1>foo</h1><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div><div>I am a dynamic component.</div></div>'
     )
   })
@@ -170,7 +170,7 @@ describe('serialize', () => {
   })
 
   test('strips imports & exports', async () => {
-    const result = await renderStatic(`import foo from 'bar'
+    const result = await renderStatic(`import foobar from 'bar'
 
 foo **bar**
 
