@@ -12,30 +12,17 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 
 ---
 
-- [Background & Theory](#background--theory)
 - [Installation](#installation)
 - [Examples](#examples)
 - [APIs](#apis)
 - [Frontmatter & Custom Processing](#frontmatter--custom-processing)
+- [Background & Theory](#background--theory)
 - [Caveats](#caveats)
 - [Security](#security)
 - [TypeScript](#typescript)
 - [License](#license)
 
 ---
-
-## Background & Theory
-
-If you are using MDX within a Next.js app, you are probably using the Webpack loader. This means that you have your MDX files locally and are probably using [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
-
-This workflow is fine, but introduces a few limitations that we aim to remove with `next-mdx-remote`:
-
-- **The file content must be local.** You cannot store MDX files in another repo, a database, etc. For a large enough operation, there will end up being a split between those authoring content and those working on presentation of the content. Overlapping these two concerns in the same repo makes a more difficult workflow for everyone.
-- **You are bound to filesystem-based routing.** Your pages are generated with urls according to their locations. Or maybe you remap them using `exportPathMap`, which creates confusion for authors. Regardless, moving pages around in any way breaks things -- either the page's url or your `exportPathMap` configuration.
-- **You will end up running into performance issues.** Webpack is a JavaScript bundler, forcing it to load hundreds/thousands of pages of text content will blow out your memory requirements. Webpack stores each page as a distinct object with a large amount of metadata. One of our implementations with a couple hundred pages hit more than 8GB of memory required to compile the site. Builds took more than 25 minutes.
-- **You will be limited in the ways you are able to structure relational data.** Organizing content into dynamic, related categories is difficult when your entire data structure is front matter parsed into javascript objects and held in memory.
-
-So, `next-mdx-remote` changes the entire pattern so that you load your MDX content not through an import, but rather through `getStaticProps` or `getServerProps` -- you know, the same way you would load any other data. The library provides the tools to serialize and hydrate the MDX content in a manner that is performant. This removes all of the limitations listed above, and does so at a significantly lower cost -- `next-mdx-enhanced` is a very heavy library with a lot of custom logic and [some annoying limitations](https://github.com/hashicorp/next-mdx-enhanced/issues/17). Early testing has shown build times reduced by 50% or more.
 
 ## Installation
 
@@ -367,19 +354,34 @@ If you prefer, you can also wrap your entire application in an `<MDXProvider />`
 
 Note: `th/td` won't work because of the "/" in the component name.
 
+## Background & Theory
+
+There isn't really a good default way to load mdx files in a Next.js app. Previously, we wrote [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
+
+This workflow from mdx-enhanced was fine, but introduced a few limitations that we have removed with `next-mdx-remote`:
+
+- **The file content must be local.** You cannot store MDX files in another repo, a database, etc. For a large enough operation, there will end up being a split between those authoring content and those working on presentation of the content. Overlapping these two concerns in the same repo makes a more difficult workflow for everyone.
+- **You are bound to filesystem-based routing.** Your pages are generated with urls according to their locations. Or maybe you remap them using `exportPathMap`, which creates confusion for authors. Regardless, moving pages around in any way breaks things -- either the page's url or your `exportPathMap` configuration.
+- **You will end up running into performance issues.** Webpack is a JavaScript bundler, forcing it to load hundreds/thousands of pages of text content will blow out your memory requirements. Webpack stores each page as a distinct object with a large amount of metadata. One of our implementations with a couple hundred pages hit more than 8GB of memory required to compile the site. Builds took more than 25 minutes.
+- **You will be limited in the ways you are able to structure relational data.** Organizing content into dynamic, related categories is difficult when your entire data structure is front matter parsed into javascript objects and held in memory.
+
+So, `next-mdx-remote` changes the entire pattern so that you load your MDX content not through an import, but rather through `getStaticProps` or `getServerProps` -- you know, the same way you would load any other data. The library provides the tools to serialize and hydrate the MDX content in a manner that is performant. This removes all of the limitations listed above, and does so at a significantly lower cost -- `next-mdx-enhanced` is a very heavy library with a lot of custom logic and [some annoying limitations](https://github.com/hashicorp/next-mdx-enhanced/issues/17). Our informal testing has shown build times reduced by 50% or more.
+
+Since this project was initially created, Kent C Dodds has made a similar project, [`mdx-bundler`](https://github.com/kentcdodds/mdx-bundler). This library supports imports and exports within a mdx file (as long as you manually read each imported file and pass its contents) and automatically processes frontmatter. If you have a lot of files that all import and use different components, you may benefit from using `mdx-bundler`, as `next-mdx-remote` currently only allows components to be imported and made available across all pages. It's important to note that this functionality comes with a cost though - `mdx-bundler`'s output is at least 400% larger than the output from `next-mdx-remote` for basic markdown content.
+
 ### How Can I Build A Blog With This?
 
 Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal html and css. You definitely do not need to be using a heavy full-stack javascript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
 
 If you really insist though, check out [our official nextjs example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
 
-### Caveats
+## Caveats
 
-#### Environment Targets
+### Environment Targets
 
 The code generated by `next-mdx-remote`, which is used to actually render the MDX, is transformed to support: `>= node 12, es2020`.
 
-#### `import` / `export`
+### `import` / `export`
 
 `import` and `export` statements cannot be used **inside** an MDX file. If you need to use components in your MDX files, they should be provided as a prop to `<MDXRemote />`.
 
