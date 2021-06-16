@@ -356,7 +356,7 @@ Note: `th/td` won't work because of the "/" in the component name.
 
 ## Background & Theory
 
-There isn't really a good default way to load mdx files in a nextjs app. Previously, we wrote [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
+There isn't really a good default way to load mdx files in a Next.js app. Previously, we wrote [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
 
 This workflow from mdx-enhanced was fine, but introduced a few limitations that we have removed with `next-mdx-remote`:
 
