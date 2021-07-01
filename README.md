@@ -12,18 +12,6 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 
 ---
 
-- [Installation](#installation)
-- [Examples](#examples)
-- [APIs](#apis)
-- [Frontmatter & Custom Processing](#frontmatter--custom-processing)
-- [Background & Theory](#background--theory)
-- [Caveats](#caveats)
-- [Security](#security)
-- [TypeScript](#typescript)
-- [License](#license)
-
----
-
 ## Installation
 
 ```sh
@@ -426,6 +414,10 @@ export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> = async ()
   return { props: { mdxSource } }
 }
 ```
+
+## Migrating from v2 to v3
+
+See https://github.com/hashicorp/next-mdx-remote/releases/tag/3.0.0
 
 ## License
 
