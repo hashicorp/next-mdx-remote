@@ -7,8 +7,8 @@
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^1.6.22",
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/mdx": "^2.0.0-next.9",
+    "@mdx-js/react": "^2.0.0-next.9",
     "esbuild": "^0.11.12",
     "pkg-dir": "^5.0.0"
   },

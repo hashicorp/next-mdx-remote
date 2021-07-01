@@ -1,4 +1,4 @@
-import { Pluggable, Compiler } from 'unified'
+import mdx from '@mdx-js/mdx'
 export interface SerializeOptions {
   /**
    * Pass-through variables for use in the MDX content
@@ -8,13 +8,7 @@ export interface SerializeOptions {
    * These options are passed to the MDX compiler.
    * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
    */
-  mdxOptions?: {
-    remarkPlugins?: Pluggable[]
-    rehypePlugins?: Pluggable[]
-    hastPlugins?: Pluggable[]
-    compilers?: Compiler[]
-    filepath?: string
-  }
+  mdxOptions?: mdx.Options
   /**
    * Specify the target environment for the generated code.
    * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
