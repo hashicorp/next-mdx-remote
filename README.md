@@ -50,6 +50,8 @@ export async function getStaticProps() {
 
 While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
 
+> **IMPORTANT**: Be very careful about putting any `mdx-remote` code into a separate "utilities" file. Doing so will likely cause issues with nextjs' code splitting abilities - it must be able to cleanly determine what is used only on the server side and what should be left in the client bundle. If you put `mdx-remote` code into an external utilities file and something is broken, remove it and start from the simple example above before filing an issue.
+
 ### Additional Examples
 
 <details>
