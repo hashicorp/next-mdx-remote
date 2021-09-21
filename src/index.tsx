@@ -4,9 +4,9 @@ import * as MDX from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 
 // requestIdleCallback types found here: https://github.com/microsoft/TypeScript/issues/21309
-type RequestIdleCallbackHandle = any
+type RequestIdleCallbackHandle = number
 type RequestIdleCallbackOptions = {
-  timeout: number
+  timeout?: number
 }
 type RequestIdleCallbackDeadline = {
   readonly didTimeout: boolean
