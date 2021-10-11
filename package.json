@@ -1,7 +1,7 @@
 {
   "name": "next-mdx-remote",
   "description": "utilities for loading mdx from any remote source as data, rather than as a local import",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "author": "Jeff Escalante",
   "bugs": {
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
