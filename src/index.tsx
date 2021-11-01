@@ -1,6 +1,6 @@
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
-import * as MDX from '@mdx-js/react'
+import * as mdx from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 
 // requestIdleCallback types found here: https://github.com/microsoft/TypeScript/issues/21309
@@ -30,7 +30,7 @@ type MDXRemoteProps = MDXRemoteSerializeResult & {
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
    */
-  components?: Record<string, React.ReactNode>
+  components?: Pick<React.ComponentProps<typeof mdx.MDXProvider>, 'components'>
   /**
    * Determines whether or not the content should be hydrated asynchronously, or "lazily"
    */
@@ -64,11 +64,11 @@ export function MDXRemote({
     }
   }, [])
 
-  const Content = useMemo(() => {
+  const Content: React.ElementType = useMemo(() => {
     // if we're ready to render, we can assemble the component tree and let React do its thing
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
-    const fullScope = Object.assign({ mdx: MDX.mdx, React }, scope)
+    const fullScope = Object.assign({ mdx, React }, scope)
     const keys = Object.keys(fullScope)
     const values = Object.values(fullScope)
 
@@ -82,7 +82,7 @@ export function MDXRemote({
       keys.concat(`${compiledSource}; return MDXContent;`)
     )
 
-    return hydrateFn.apply(hydrateFn, values)
+    return hydrateFn.apply(hydrateFn, values).default
   }, [scope, compiledSource])
 
   if (!isReadyToRender) {
@@ -95,9 +95,9 @@ export function MDXRemote({
   // wrapping the content with MDXProvider will allow us to customize the standard
   // markdown components (such as "h1" or "a") with the "components" object
   const content = (
-    <MDX.MDXProvider components={components}>
+    <mdx.MDXProvider components={components}>
       <Content />
-    </MDX.MDXProvider>
+    </mdx.MDXProvider>
   )
 
   // If lazy = true, we need to render a wrapping div to preserve the same markup structure that was SSR'd

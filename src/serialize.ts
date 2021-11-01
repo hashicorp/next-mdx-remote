@@ -1,4 +1,4 @@
-import mdx from '@mdx-js/mdx'
+import { compile } from '@mdx-js/mdx'
 import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
@@ -9,18 +9,6 @@ import { Plugin } from 'unified'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 
 /**
- * Ensure we use node's native require.resolve method,
- * webpack overrides require.resolve by default and returns the module ID
- * instead of the resolved path
- */
-const requireResolve =
-  // @ts-expect-error -- check if we're in a webpack context
-  typeof __non_webpack_require__ === 'function'
-    ? // @ts-expect-error -- __non_webpack_require__ === require at this point
-      __non_webpack_require__.resolve
-    : require.resolve
-
-/**
  * Due to the way Next.js is built and deployed, esbuild's internal use of
  * __dirname to derive the path to its binary does not work. This function
  * gets around that by explicitly setting the path based on the CWD.
@@ -28,7 +16,14 @@ const requireResolve =
  * Related: https://nextjs.org/docs/basic-features/data-fetching#reading-files-use-processcwd
  */
 function setEsbuildBinaryPath() {
-  const esbuildDir = pkgDir.sync(requireResolve('esbuild'))
+  /**
+   * Ensure we use node's native require.resolve method,
+   * webpack overrides require.resolve by default and returns the module ID
+   * instead of the resolved path
+   */
+  const esbuildDir = pkgDir.sync(
+    new Function('return require.resolve')('esbuild')
+  )
 
   if (!esbuildDir)
     throw new Error(
@@ -48,8 +43,9 @@ setEsbuildBinaryPath()
 /**
  * remark plugin which removes all import and export statements
  */
-const removeImportsExportsPlugin: Plugin = () => (tree) =>
-  remove(tree, ['import', 'export'])
+function removeImportsExportsPlugin(): Plugin {
+  return (tree) => remove(tree, 'mdxjsEsm')
+}
 
 /**
  * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
@@ -68,12 +64,17 @@ export async function serialize(
     removeImportsExportsPlugin,
   ]
 
-  const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
-  const transformResult = await transform(compiledMdx, {
+  const compiledMdx = await compile(source, {
+    ...mdxOptions,
+    jsx: true,
+    outputFormat: 'function-body',
+    providerImportSource: '@mdx-js/react',
+  })
+  const transformResult = await transform(String(compiledMdx), {
     loader: 'jsx',
-    jsxFactory: 'mdx',
     minify: true,
     target,
+    jsx: 'transform',
   })
 
   return {
