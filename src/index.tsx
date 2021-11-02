@@ -1,5 +1,6 @@
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
+import * as runtime from 'react/jsx-runtime'
 import * as mdx from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 
@@ -68,7 +69,7 @@ export function MDXRemote({
     // if we're ready to render, we can assemble the component tree and let React do its thing
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
-    const fullScope = Object.assign({ mdx, React }, scope)
+    const fullScope = Object.assign({ opts: { ...mdx, ...runtime } }, scope)
     const keys = Object.keys(fullScope)
     const values = Object.values(fullScope)
 
@@ -79,7 +80,7 @@ export function MDXRemote({
     // function with the actual values.
     const hydrateFn = Reflect.construct(
       Function,
-      keys.concat(`${compiledSource}; return MDXContent;`)
+      keys.concat(`${compiledSource}`)
     )
 
     return hydrateFn.apply(hydrateFn, values).default

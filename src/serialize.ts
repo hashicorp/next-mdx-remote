@@ -55,6 +55,7 @@ export async function serialize(
     scope = {},
     mdxOptions = {},
     target = ['es2020', 'node12'],
+    minify = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
   mdxOptions.remarkPlugins = [
@@ -64,19 +65,24 @@ export async function serialize(
 
   const compiledMdx = await compile(source, {
     ...mdxOptions,
-    jsx: true,
     outputFormat: 'function-body',
     providerImportSource: '@mdx-js/react',
   })
-  const transformResult = await transform(String(compiledMdx), {
-    loader: 'jsx',
-    minify: true,
-    target,
-    jsx: 'transform',
-  })
+
+  let compiledSource = String(compiledMdx)
+
+  if (minify) {
+    const transformResult = await transform(compiledSource, {
+      loader: 'jsx',
+      minify: true,
+      target,
+    })
+
+    compiledSource = transformResult.code
+  }
 
   return {
-    compiledSource: transformResult.code,
+    compiledSource,
     scope,
   }
 }

@@ -20,6 +20,10 @@ export interface SerializeOptions {
    * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
    */
   target?: string | string[]
+  /**
+   * Specify whether or not to run the generated code through a minifier. Defaults to false
+   */
+  minify?: boolean
 }
 
 /**

@@ -181,14 +181,14 @@ export const bar = 'bar'`)
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 
-  test('supports target', async () => {
+  test('minifies when minify: true', async () => {
     const mdx = `import fooBar from 'bar'
 
     foo **bar**
     
     export const bar = 'foo'`
 
-    const resultA = await serialize(mdx, { target: 'esnext' })
+    const resultA = await serialize(mdx, { minify: true })
     const resultB = await serialize(mdx)
 
     expect(resultA).not.toEqual(resultB)
