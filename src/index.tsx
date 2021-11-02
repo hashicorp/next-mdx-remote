@@ -23,14 +23,14 @@ declare global {
   }
 }
 
-type MDXRemoteProps = MDXRemoteSerializeResult & {
+export type MDXRemoteProps = MDXRemoteSerializeResult & {
   /**
    * A object mapping names to React components.
    * The key used will be the name accessible to MDX.
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
    */
-  components?: Pick<React.ComponentProps<typeof mdx.MDXProvider>, 'components'>
+  components?: React.ComponentProps<typeof mdx.MDXProvider>['components']
   /**
    * Determines whether or not the content should be hydrated asynchronously, or "lazily"
    */

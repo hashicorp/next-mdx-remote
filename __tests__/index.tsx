@@ -12,9 +12,10 @@ import ReactDOMServer from 'react-dom/server'
 import React from 'react'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
+import * as cheerio from 'cheerio'
 
-import { MDXRemote } from '..'
-import { serialize } from '../serialize'
+import { MDXRemote, MDXRemoteProps } from '../src/index'
+import { serialize } from '../src/serialize'
 import { SerializeOptions } from '../src/types'
 
 jest.setTimeout(30000)
@@ -26,11 +27,15 @@ describe('hydration', () => {
 
   test('server rendered output', () => {
     const result = readOutputFile('basic', 'index')
+    const $ = cheerio.load(result)
 
     // server renders correctly
-    expect(result).toMatch(
-      '<h1>foo</h1><h1>Headline</h1><p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button><p class="context">Context value: &quot;<!-- -->foo<!-- -->&quot;</p><p>Some <strong class="custom-strong">markdown</strong> content</p><div class="alert alert-warning g-type-body" role="alert"><p>Alert</p></div><div>I am a dynamic component.</div></div>'
-    )
+    expect($('#__next').html()).toEqual(`<h1>foo</h1><h1>Headline</h1>
+<p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button>
+<p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"</p>
+<p>Some <strong class=\"custom-strong\">markdown</strong> content</p>
+<div class=\"alert alert-warning g-type-body\" role=\"alert\"><p>Alert</p></div>
+<div>I am a dynamic component.</div>`)
   })
 
   test('rehydrates correctly in browser', async () => {
@@ -137,8 +142,6 @@ describe('serialize', () => {
   })
 
   test('with MDXProvider providing custom components', async () => {
-    const TestContext = React.createContext(null)
-
     const mdxSource = await serialize('<Test />')
 
     const result = ReactDOMServer.renderToStaticMarkup(
@@ -160,7 +163,7 @@ describe('serialize', () => {
     const result = ReactDOMServer.renderToStaticMarkup(
       <MDXRemote
         {...mdxSource}
-        scope={{
+        components={{
           motion: { p: () => <p>Hello world</p> },
         }}
       />
@@ -174,16 +177,16 @@ describe('serialize', () => {
 
 foo **bar**
 
-export const foo = 'bar'`)
+export const bar = 'bar'`)
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 
   test('supports target', async () => {
-    const mdx = `import foo from 'bar'
+    const mdx = `import fooBar from 'bar'
 
     foo **bar**
     
-    export const foo = 'bar'`
+    export const bar = 'foo'`
 
     const resultA = await serialize(mdx, { target: 'esnext' })
     const resultB = await serialize(mdx)
@@ -251,9 +254,7 @@ async function renderStatic(
     scope,
     mdxOptions,
     target,
-  }: {
-    components?: Record<string, React.ReactNode>
-  } & SerializeOptions = {}
+  }: SerializeOptions & Pick<MDXRemoteProps, 'components'> = {}
 ): Promise<string> {
   const mdxSource = await serialize(mdx, { mdxOptions, target })
 

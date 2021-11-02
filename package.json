@@ -30,7 +30,9 @@
     "@types/react": "^17.0.4",
     "@types/rmfr": "^2.0.0",
     "@types/serve-handler": "^6.1.0",
+    "cheerio": "^1.0.0-rc.10",
     "cross-spawn": "^7.0.3",
+    "esbuild-jest": "^0.5.0",
     "gray-matter": "^4.0.2",
     "husky": "^4.3.6",
     "jest": "^27.3.1",
@@ -61,9 +63,23 @@
     "transformIgnorePatterns": [
       "/node_modules/(?!(@mdx-js|unist-|unified|bail|is-plain-obj|trough|vfile|remark-|micromark-|micromark|estree-util-|parse-entities|character-entities|mdast-util-|character-reference-invalid|is-|stringify-entities|periscopic|hast-util-|comma-separated-tokens|property-information|space-separated-tokens|zwitch))"
     ],
-    "extensionsToTreatAsEsm": [
-      ".ts",
-      ".tsx"
+    "transform": {
+      "\\.m?[jt]sx?$": [
+        "esbuild-jest",
+        {
+          "sourcemap": true,
+          "loaders": {
+            ".mjs": "jsx"
+          }
+        }
+      ]
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "mjs"
     ],
     "verbose": true
   },

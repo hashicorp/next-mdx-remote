@@ -21,9 +21,7 @@ function setEsbuildBinaryPath() {
    * webpack overrides require.resolve by default and returns the module ID
    * instead of the resolved path
    */
-  const esbuildDir = pkgDir.sync(
-    new Function('return require.resolve')('esbuild')
-  )
+  const esbuildDir = pkgDir.sync(eval('require.resolve')('esbuild'))
 
   if (!esbuildDir)
     throw new Error(
