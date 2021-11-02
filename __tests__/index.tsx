@@ -34,7 +34,7 @@ describe('hydration', () => {
 <p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button>
 <p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"</p>
 <p>Some <strong class=\"custom-strong\">markdown</strong> content</p>
-<div class=\"alert alert-warning g-type-body\" role=\"alert\"><p>Alert</p></div>
+<div class=\"alert alert-warning g-type-body\"><p>Alert</p></div>
 <div>I am a dynamic component.</div>`)
   })
 
@@ -101,7 +101,7 @@ describe('serialize', () => {
       },
     })
     expect(result).toMatchInlineSnapshot(
-      `"<div class=\\"alert alert-warning g-type-body\\" role=\\"alert\\"><p>hello</p></div>"`
+      `"<div class=\\"alert alert-warning g-type-body\\"><p>hello</p></div>"`
     )
   })
 
