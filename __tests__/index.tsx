@@ -90,14 +90,16 @@ describe('serialize', () => {
   })
 
   test('with options', async () => {
-    const result = await renderStatic('~> hello', {
+    const options = {
       mdxOptions: {
         remarkPlugins: [paragraphCustomAlerts],
       },
-    })
+    }
+    const result = await renderStatic('~> hello', options)
     expect(result).toMatchInlineSnapshot(
       `"<div class=\\"alert alert-warning g-type-body\\" role=\\"alert\\"><p>hello</p></div>"`
     )
+    expect(options.mdxOptions.remarkPlugins.length).toBe(1)
   })
 
   test('with scope', async () => {
@@ -182,7 +184,7 @@ export const foo = 'bar'`)
     const mdx = `import foo from 'bar'
 
     foo **bar**
-    
+
     export const foo = 'bar'`
 
     const resultA = await serialize(mdx, { target: 'esnext' })
