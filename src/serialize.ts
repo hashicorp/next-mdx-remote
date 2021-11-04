@@ -3,10 +3,38 @@ import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
 import { remove } from 'unist-util-remove'
+import { codeFrameColumns } from '@babel/code-frame'
 
 // types
 import { Plugin } from 'unified'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+
+/**
+ * Prints a nicely formatted error message from an error caught during MDX compilation.
+ *
+ * @param error - Error caught from the mdx compiler
+ * @param source - Raw MDX string
+ * @returns Error
+ */
+function createFormattedMDXError(error: any, source: string) {
+  const codeFrames = error?.position
+    ? codeFrameColumns(source, {
+        start: {
+          line: error.position.start.line,
+          column: error.position.start.column ?? 0,
+        },
+      })
+    : ''
+
+  const formattedError = new Error(`[next-mdx-remote] error compiling MDX:
+${error?.message}
+${codeFrames ? '\n' + codeFrames + '\n' : ''}
+More information: https://v2.mdxjs.com/docs/troubleshooting-mdx`)
+
+  formattedError.stack = error.stack
+
+  return formattedError
+}
 
 /**
  * Due to the way Next.js is built and deployed, esbuild's internal use of
@@ -63,11 +91,19 @@ export async function serialize(
     removeImportsExportsPlugin,
   ]
 
-  const compiledMdx = await compile(source, {
-    ...mdxOptions,
-    outputFormat: 'function-body',
-    providerImportSource: '@mdx-js/react',
-  })
+  let compiledMdx
+
+  try {
+    compiledMdx = await compile(source, {
+      ...mdxOptions,
+      outputFormat: 'function-body',
+      providerImportSource: '@mdx-js/react',
+    })
+  } catch (error: any) {
+    const errorToThrow = createFormattedMDXError(error, source)
+
+    throw errorToThrow
+  }
 
   let compiledSource = String(compiledMdx)
 
