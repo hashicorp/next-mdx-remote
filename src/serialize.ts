@@ -63,10 +63,16 @@ export async function serialize(
     target = ['es2020', 'node12'],
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
-  mdxOptions.remarkPlugins = [
+  // don't modify the original object when adding our own plugin
+  // this allows code to reuse the same options object
+  const remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
     removeImportsExportsPlugin,
   ]
+  mdxOptions = {
+    ...mdxOptions,
+    remarkPlugins,
+  }
 
   const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
   const transformResult = await transform(compiledMdx, {
