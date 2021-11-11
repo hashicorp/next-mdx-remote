@@ -13,6 +13,7 @@
     "pkg-dir": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/code-frame": "^7.16.0",
     "@hashicorp/remark-plugins": "^3.2.1",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
@@ -104,5 +105,6 @@
     "test": "jest"
   },
   "sideEffects": false,
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "type": "module"
 }

@@ -17,6 +17,7 @@ import * as cheerio from 'cheerio'
 import { MDXRemote, MDXRemoteProps } from '../src/index'
 import { serialize } from '../src/serialize'
 import { SerializeOptions } from '../src/types'
+import remarkParse from 'remark-parse'
 
 jest.setTimeout(30000)
 
@@ -30,7 +31,7 @@ describe('hydration', () => {
     const $ = cheerio.load(result)
 
     // server renders correctly
-    expect($('#__next').html()).toEqual(`<h1>foo</h1><h1>Headline</h1>
+    expect($('#__next').html()).toContain(`<h1>foo</h1><h1>Headline</h1>
 <p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button>
 <p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"</p>
 <p>Some <strong class=\"custom-strong\">markdown</strong> content</p>

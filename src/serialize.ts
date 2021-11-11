@@ -3,7 +3,7 @@ import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
 import { remove } from 'unist-util-remove'
-import { codeFrameColumns } from '@babel/code-frame'
+// import { codeFrameColumns } from '@babel/code-frame'
 
 // types
 import { Plugin } from 'unified'
@@ -16,25 +16,25 @@ import { MDXRemoteSerializeResult, SerializeOptions } from './types'
  * @param source - Raw MDX string
  * @returns Error
  */
-function createFormattedMDXError(error: any, source: string) {
-  const codeFrames = error?.position
-    ? codeFrameColumns(source, {
-        start: {
-          line: error.position.start.line,
-          column: error.position.start.column ?? 0,
-        },
-      })
-    : ''
+// function createFormattedMDXError(error: any, source: string) {
+//   const codeFrames = error?.position
+//     ? codeFrameColumns(source, {
+//         start: {
+//           line: error.position.start.line,
+//           column: error.position.start.column ?? 0,
+//         },
+//       })
+//     : ''
 
-  const formattedError = new Error(`[next-mdx-remote] error compiling MDX:
-${error?.message}
-${codeFrames ? '\n' + codeFrames + '\n' : ''}
-More information: https://v2.mdxjs.com/docs/troubleshooting-mdx`)
+//   const formattedError = new Error(`[next-mdx-remote] error compiling MDX:
+// ${error?.message}
+// ${codeFrames ? '\n' + codeFrames + '\n' : ''}
+// More information: https://v2.mdxjs.com/docs/troubleshooting-mdx`)
 
-  formattedError.stack = error.stack
+//   formattedError.stack = error.stack
 
-  return formattedError
-}
+//   return formattedError
+// }
 
 /**
  * Due to the way Next.js is built and deployed, esbuild's internal use of
@@ -100,9 +100,9 @@ export async function serialize(
       providerImportSource: '@mdx-js/react',
     })
   } catch (error: any) {
-    const errorToThrow = createFormattedMDXError(error, source)
+    // const errorToThrow = createFormattedMDXError(error, source)
 
-    throw errorToThrow
+    throw error
   }
 
   let compiledSource = String(compiledMdx)
@@ -113,7 +113,6 @@ export async function serialize(
       minify: true,
       target,
     })
-
     compiledSource = transformResult.code
   }
 
