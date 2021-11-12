@@ -3,38 +3,13 @@ import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
 import { remove } from 'unist-util-remove'
-// import { codeFrameColumns } from '@babel/code-frame'
+
+// TODO: Decide if we want to enable this
+// import { createFormattedMDXError } from './format-mdx-error'
 
 // types
 import { Plugin } from 'unified'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
-
-/**
- * Prints a nicely formatted error message from an error caught during MDX compilation.
- *
- * @param error - Error caught from the mdx compiler
- * @param source - Raw MDX string
- * @returns Error
- */
-// function createFormattedMDXError(error: any, source: string) {
-//   const codeFrames = error?.position
-//     ? codeFrameColumns(source, {
-//         start: {
-//           line: error.position.start.line,
-//           column: error.position.start.column ?? 0,
-//         },
-//       })
-//     : ''
-
-//   const formattedError = new Error(`[next-mdx-remote] error compiling MDX:
-// ${error?.message}
-// ${codeFrames ? '\n' + codeFrames + '\n' : ''}
-// More information: https://v2.mdxjs.com/docs/troubleshooting-mdx`)
-
-//   formattedError.stack = error.stack
-
-//   return formattedError
-// }
 
 /**
  * Due to the way Next.js is built and deployed, esbuild's internal use of
@@ -64,6 +39,7 @@ function setEsbuildBinaryPath() {
   }
 }
 
+// TODO: We'll probably want to make this optional, as use of esbuild is now opt-in
 setEsbuildBinaryPath()
 
 /**
@@ -86,9 +62,11 @@ export async function serialize(
     minify = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
+  const areImportsEnabled = mdxOptions?.useDynamicImport
+
   mdxOptions.remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
-    removeImportsExportsPlugin,
+    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
   ]
 
   let compiledMdx
