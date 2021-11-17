@@ -7,8 +7,8 @@
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^2.0.0-rc.1",
-    "@mdx-js/react": "^2.0.0-rc.1",
+    "@mdx-js/mdx": "^2.0.0-rc.2",
+    "@mdx-js/react": "^2.0.0-rc.2",
     "esbuild": "^0.12.9",
     "pkg-dir": "^5.0.0"
   },
@@ -22,7 +22,6 @@
     "@types/babel__code-frame": "^7.0.3",
     "@types/cross-spawn": "^6.0.2",
     "@types/jest": "^27.0.2",
-    "@types/mdx-js__react": "^1.5.3",
     "@types/node": "^16.11.6",
     "@types/puppeteer": "^5.4.4",
     "@types/react": "^17.0.33",
@@ -34,7 +33,7 @@
     "gray-matter": "^4.0.3",
     "husky": "^4.3.6",
     "jest": "^27.3.1",
-    "next": "^12.0.2",
+    "next": "^12.0.4",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
     "puppeteer": "^10.4.0",
