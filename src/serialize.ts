@@ -64,16 +64,23 @@ export async function serialize(
 ): Promise<MDXRemoteSerializeResult> {
   const areImportsEnabled = mdxOptions?.useDynamicImport
 
-  mdxOptions.remarkPlugins = [
+  // don't modify the original object when adding our own plugin
+  // this allows code to reuse the same options object
+  const remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
     ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
   ]
+
+  const compileOptions = {
+    ...mdxOptions,
+    remarkPlugins,
+  }
 
   let compiledMdx
 
   try {
     compiledMdx = await compile(source, {
-      ...mdxOptions,
+      ...compileOptions,
       outputFormat: 'function-body',
       providerImportSource: '@mdx-js/react',
     })

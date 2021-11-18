@@ -10,7 +10,7 @@ export interface SerializeOptions {
    * These options are passed to the MDX compiler.
    * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
    */
-  mdxOptions?: CompileOptions
+  mdxOptions?: Omit<CompileOptions, 'outputFormat' | 'providerImportSource'>
   /**
    * Specify the target environment for the generated code.
    * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
