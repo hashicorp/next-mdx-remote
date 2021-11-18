@@ -5,7 +5,7 @@ import pkgDir from 'pkg-dir'
 import { remove } from 'unist-util-remove'
 
 // TODO: Decide if we want to enable this
-// import { createFormattedMDXError } from './format-mdx-error'
+import { createFormattedMDXError } from './format-mdx-error'
 
 // types
 import { Plugin } from 'unified'
@@ -78,9 +78,9 @@ export async function serialize(
       providerImportSource: '@mdx-js/react',
     })
   } catch (error: any) {
-    // const errorToThrow = createFormattedMDXError(error, source)
+    const errorToThrow = createFormattedMDXError(error, source)
 
-    throw error
+    throw errorToThrow
   }
 
   let compiledSource = String(compiledMdx)
