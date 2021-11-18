@@ -24,8 +24,6 @@ function parsePositionInformationFromErrorMessage(
       },
     }
   }
-
-  return
 }
 
 /**
