@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, brk.feat/mdx-v2-rc]
+    branches: [main]
 
 jobs:
   test:
