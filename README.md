@@ -55,6 +55,48 @@ While it may seem strange to see these two in the same file, this is one of the 
 ### Additional Examples
 
 <details>
+  <summary>Parsing Frontmatter</summary>
+
+Markdown in general is often paired with frontmatter, and normally this means adding some extra custom processing to the way markdown is handled. To address this, `next-mdx-remote` comes with optional parsing of frontmatter, which can be enabled by passing `parseFrontmatter: true` to `serialize`.
+
+Here's what that looks like:
+
+```jsx
+import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+
+export default function TestPage({ mdxSource }) {
+  return (
+    <div className="wrapper">
+      <h1>{mdxSource.frontmatter.title}</h1>
+      <MDXRemote {...mdxSource} components={components} />
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = `---
+title: Test
+---
+
+Some **mdx** text, with a component <Test name={title}/>
+  `
+
+  const mdxSource = await serialize(source, { parseFrontmatter: true })
+  return { props: { mdxSource } }
+}
+```
+
+_[`vfile-matter`](https://github.com/vfile/vfile-matter) is used to parse the frontmatter._
+
+</details>
+
+<details>
   <summary>Passing custom data to a component with `scope`</summary>
 
 `<MDXRemote />` accepts a `scope` prop, which makes all of the values available for use in your MDX.
@@ -133,7 +175,7 @@ export async function getStaticProps() {
     Custom components from <code>MDXProvider</code><a id="mdx-provider"></a>
   </summary>
 
-If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/advanced/components#mdxprovider) from `@mdx-js/react`.
+If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/docs/using-mdx/#mdx-provider) from `@mdx-js/react`.
 
 ```jsx
 // pages/_app.jsx
@@ -181,7 +223,7 @@ export async function getStaticProps() {
     Component names with dot (e.g. <code>motion.div</code>)
   </summary>
 
-Component names that contain a dot (`.`), such as those from `framer-motion`, can be rendered as long as the top-level namespace is declared in the MDX scope:
+Component names that contain a dot (`.`), such as those from `framer-motion`, can be rendered the same way as other custom components, just pass `motion` in your components object.
 
 ```js
 import { motion } from 'framer-motion'
@@ -193,7 +235,7 @@ import { MDXRemote } from 'next-mdx-remote'
 export default function TestPage({ source }) {
   return (
     <div className="wrapper">
-      <MDXRemote {...source} scope={{ motion }} />
+      <MDXRemote {...source} components={{ motion }} />
     </div>
   )
 }
@@ -247,9 +289,9 @@ export async function getStaticProps() {
 
 This library exposes a function and a component, `serialize` and `<MDXRemote />`. These two are purposefully isolated into their own files -- `serialize` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `<MDXRemote />` on the other hand is intended to be run on the client side, in the browser.
 
-- **`serialize(source: string, { mdxOptions?: object, scope?: object, target?: string | string[] })`**
+- **`serialize(source: string, { mdxOptions?: object, scope?: object, parseFrontmatter?: boolean, minify?: boolean, minifyOptions: { target?: string | string[] } })`**
 
-  **`serialize`** consumes a string of MDX. It also can optionally be passed options which are [passed directly to MDX](https://mdxjs.com/advanced/plugins), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
+  **`serialize`** consumes a string of MDX. It can also optionally be passed options which are [passed directly to MDX](https://mdxjs.com/docs/extending-mdx/), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
 
   ```ts
   serialize(
@@ -268,9 +310,15 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
         compilers: [],
         filepath: '/some/file/path',
       },
-      // Specify the target environment for the generated code. See esbuild docs:
-      // https://esbuild.github.io/api/#target
-      target: ['esnext'],
+      // Indicate whether or not to minify the mdx output using esbuild
+      minify: false,
+      minifyOptions: {
+        // Specify the target environment for the generated code. See esbuild docs:
+        // https://esbuild.github.io/api/#target
+        target: ['esnext'],
+      },
+      // Indicates whether or not to parse the frontmatter from the mdx source
+      parseFrontmatter: false,
     }
   )
   ```
@@ -285,51 +333,9 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
   <MDXRemote {...source} components={components} />
   ```
 
-## Frontmatter & Custom Processing
-
-Markdown in general is often paired with frontmatter, and normally this means adding some extra custom processing to the way markdown is handled. Luckily, this can be done entirely independently of `next-mdx-remote`, along with any extra custom processing necessary.
-
-Let's walk through an example of how we could process frontmatter out of our MDX source:
-
-```jsx
-import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote } from 'next-mdx-remote'
-
-import matter from 'gray-matter'
-
-import Test from '../components/test'
-
-const components = { Test }
-
-export default function TestPage({ source, frontMatter }) {
-  return (
-    <div className="wrapper">
-      <h1>{frontMatter.title}</h1>
-      <MDXRemote {...source} components={components} />
-    </div>
-  )
-}
-
-export async function getStaticProps() {
-  // MDX text - can be from a local file, database, anywhere
-  const source = `---
-title: Test
----
-
-Some **mdx** text, with a component <Test name={title}/>
-  `
-
-  const { content, data } = matter(source)
-  const mdxSource = await serialize(content, { scope: data })
-  return { props: { source: mdxSource, frontMatter: data } }
-}
-```
-
-Nice and easy - since we get the content as a string originally and have full control, we can run any extra custom processing needed before passing it into `serialize`, and easily append extra data to the return value from `getStaticProps` without issue.
-
 ### Replacing default components
 
-Rendering will use [`MDXProvider`](https://mdxjs.com/getting-started#mdxprovider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components).
+Rendering will use [`MDXProvider`](https://mdxjs.com/docs/using-mdx/#mdx-provider) under the hood. This means you can replace HTML tags by custom components. Those components are listed in MDXJS [Table of components](https://mdxjs.com/table-of-components/).
 
 An example use case is rendering the content with your preferred styling library.
 
@@ -369,7 +375,7 @@ If you really insist though, check out [our official nextjs example implementati
 
 ### Environment Targets
 
-The code generated by `next-mdx-remote`, which is used to actually render the MDX, is transformed to support: `>= node 12, es2020`.
+The code generated by `next-mdx-remote`, which is used to actually render the MDX targets browsers with module support. If you need to support older browsers, consider transpiling the `compiledSource` output from `serialize`.
 
 ### `import` / `export`
 
@@ -411,10 +417,13 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> = async () => {
-  const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
-  return { props: { mdxSource } }
-}
+export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> =
+  async () => {
+    const mdxSource = await serialize(
+      'some *mdx* content: <ExampleComponent />'
+    )
+    return { props: { mdxSource } }
+  }
 ```
 
 ## Migrating from v2 to v3
