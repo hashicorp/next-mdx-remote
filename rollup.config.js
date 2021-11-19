@@ -38,7 +38,7 @@ export default [
       dir: './dist',
       format: 'es',
     },
-    external: ['@mdx-js/mdx', 'esbuild', 'pkg-dir'],
+    external: ['@mdx-js/mdx', 'esbuild', 'pkg-dir', 'vfile', 'vfile-matter'],
     plugins: [
       ts({
         tsconfig: './tsconfig.json',

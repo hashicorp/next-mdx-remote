@@ -1,14 +1,16 @@
-import { compile } from '@mdx-js/mdx'
+import { compile, CompileOptions } from '@mdx-js/mdx'
 import { transform } from 'esbuild'
 import path from 'path'
 import pkgDir from 'pkg-dir'
-import { remove } from 'unist-util-remove'
+import { VFile } from 'vfile'
+import { matter } from 'vfile-matter'
 
 // TODO: Decide if we want to enable this
 import { createFormattedMDXError } from './format-mdx-error'
 
+import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
+
 // types
-import { Plugin } from 'unified'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 
 /**
@@ -42,11 +44,24 @@ function setEsbuildBinaryPath() {
 // TODO: We'll probably want to make this optional, as use of esbuild is now opt-in
 setEsbuildBinaryPath()
 
-/**
- * remark plugin which removes all import and export statements
- */
-function removeImportsExportsPlugin(): Plugin {
-  return (tree) => remove(tree, 'mdxjsEsm')
+function getCompileOptions(
+  mdxOptions: SerializeOptions['mdxOptions'] = {}
+): CompileOptions {
+  const areImportsEnabled = mdxOptions?.useDynamicImport
+
+  // don't modify the original object when adding our own plugin
+  // this allows code to reuse the same options object
+  const remarkPlugins = [
+    ...(mdxOptions.remarkPlugins || []),
+    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
+  ]
+
+  return {
+    ...mdxOptions,
+    remarkPlugins,
+    outputFormat: 'function-body',
+    providerImportSource: '@mdx-js/react',
+  }
 }
 
 /**
@@ -58,40 +73,29 @@ export async function serialize(
   {
     scope = {},
     mdxOptions = {},
-    target = ['es2020', 'node12'],
     minify = false,
+    minifyOptions: { target = ['es2020', 'node12'] } = {},
+    parseFrontmatter = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
-  const areImportsEnabled = mdxOptions?.useDynamicImport
+  const vfile = new VFile({ value: source })
 
-  // don't modify the original object when adding our own plugin
-  // this allows code to reuse the same options object
-  const remarkPlugins = [
-    ...(mdxOptions.remarkPlugins || []),
-    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
-  ]
-
-  const compileOptions = {
-    ...mdxOptions,
-    remarkPlugins,
+  // makes frontmatter available via vfile.data.matter
+  if (parseFrontmatter) {
+    matter(vfile, { strip: true })
   }
 
-  let compiledMdx
+  let compiledMdx: VFile
 
   try {
-    compiledMdx = await compile(source, {
-      ...compileOptions,
-      outputFormat: 'function-body',
-      providerImportSource: '@mdx-js/react',
-    })
+    compiledMdx = await compile(vfile, getCompileOptions(mdxOptions))
   } catch (error: any) {
-    const errorToThrow = createFormattedMDXError(error, source)
-
-    throw errorToThrow
+    throw createFormattedMDXError(error, String(vfile))
   }
 
   let compiledSource = String(compiledMdx)
 
+  // Minify the output from MDX using esbuild. Results in smaller generated code, but depends on esbuild
   if (minify) {
     const transformResult = await transform(compiledSource, {
       loader: 'jsx',
@@ -103,6 +107,8 @@ export async function serialize(
 
   return {
     compiledSource,
+    frontmatter:
+      (vfile.data.matter as Record<string, string> | undefined) ?? {},
     scope,
   }
 }

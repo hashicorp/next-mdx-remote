@@ -134,4 +134,30 @@ export const bar = 'bar'`)
     )
     expect(result).toMatchInlineSnapshot(`"Rendering a fragment"`)
   })
+
+  test('parses frontmatter - serialize result', async () => {
+    const result = await serialize(
+      `---
+hello: world
+---
+
+# Hello`,
+      { parseFrontmatter: true }
+    )
+
+    expect(result.frontmatter.hello).toEqual('world')
+  })
+
+  test('parses frontmatter - rendered result', async () => {
+    const result = await renderStatic(
+      `---
+hello: world
+---
+
+# Hello {frontmatter.hello}`,
+      { parseFrontmatter: true }
+    )
+
+    expect(result).toMatchInlineSnapshot(`"<h1>Hello world</h1>"`)
+  })
 })

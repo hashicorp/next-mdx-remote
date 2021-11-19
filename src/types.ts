@@ -12,14 +12,23 @@ export interface SerializeOptions {
    */
   mdxOptions?: Omit<CompileOptions, 'outputFormat' | 'providerImportSource'>
   /**
-   * Specify the target environment for the generated code.
-   * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
-   */
-  target?: string | string[]
-  /**
    * Specify whether or not to run the generated code through a minifier. Defaults to false
    */
   minify?: boolean
+  /**
+   * Options to pass to the minifier (esbuild)
+   */
+  minifyOptions?: {
+    /**
+     * Specify the target environment for the generated code.
+     * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
+     */
+    target?: string | string[]
+  }
+  /**
+   * Indicate whether or not frontmatter should be parsed out of the MDX. Defaults to false
+   */
+  parseFrontmatter?: boolean
 }
 
 /**
@@ -37,4 +46,8 @@ export type MDXRemoteSerializeResult<TScope = Record<string, unknown>> = {
    * you could provide scope as `{ name: "Some name" }`.
    */
   scope?: TScope
+  /**
+   * If parseFrontmatter was set to true, contains any parsed frontmatter found in the MDX source.
+   */
+  frontmatter?: Record<string, string>
 }

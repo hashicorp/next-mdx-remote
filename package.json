@@ -10,7 +10,9 @@
     "@mdx-js/mdx": "^2.0.0-rc.2",
     "@mdx-js/react": "^2.0.0-rc.2",
     "esbuild": "^0.12.9",
-    "pkg-dir": "^5.0.0"
+    "pkg-dir": "^5.0.0",
+    "vfile": "^5.2.0",
+    "vfile-matter": "^3.0.1"
   },
   "devDependencies": {
     "@babel/code-frame": "^7.16.0",
@@ -30,7 +32,6 @@
     "cheerio": "^1.0.0-rc.10",
     "cross-spawn": "^7.0.3",
     "esbuild-jest": "^0.5.0",
-    "gray-matter": "^4.0.3",
     "husky": "^4.3.6",
     "jest": "^27.3.1",
     "next": "^12.0.4",
@@ -90,6 +91,10 @@
   "peerDependencies": {
     "react": ">=16.x <=17.x",
     "react-dom": ">=16.x <=17.x"
+  },
+  "engines": {
+    "node": ">=16",
+    "npm": ">=7"
   },
   "repository": {
     "type": "git",

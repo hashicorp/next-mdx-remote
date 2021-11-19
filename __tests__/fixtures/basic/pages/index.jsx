@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import matter from 'gray-matter'
 import { createContext, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { serialize } from '../../../../serialize'
@@ -34,7 +33,7 @@ const MDX_COMPONENTS = {
   Dynamic: dynamic(() => import('../components/dynamic')),
 }
 
-export default function TestPage({ data, mdxSource }) {
+export default function TestPage({ mdxSource }) {
   const [providerOptions, setProviderOptions] = useState(PROVIDER)
 
   useEffect(() => {
@@ -48,9 +47,9 @@ export default function TestPage({ data, mdxSource }) {
 
   return (
     <>
-      <h1>{data.title}</h1>
+      <h1>{mdxSource.frontmatter.title}</h1>
       <TestContext.Provider {...providerOptions.props}>
-        <MDXRemote {...mdxSource} components={MDX_COMPONENTS} scope={data} />
+        <MDXRemote {...mdxSource} components={MDX_COMPONENTS} />
       </TestContext.Provider>
     </>
   )
@@ -58,9 +57,12 @@ export default function TestPage({ data, mdxSource }) {
 
 export async function getStaticProps() {
   const fixturePath = path.join(process.cwd(), 'mdx/test.mdx')
-  const { data, content } = matter(fs.readFileSync(fixturePath, 'utf8'))
-  const mdxSource = await serialize(content, {
+  const source = await fs.promises.readFile(fixturePath, 'utf8')
+
+  const mdxSource = await serialize(source, {
     mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
+    parseFrontmatter: true,
   })
-  return { props: { mdxSource, data } }
+
+  return { props: { mdxSource } }
 }

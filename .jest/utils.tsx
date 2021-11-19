@@ -11,10 +11,15 @@ export async function renderStatic(
     components,
     scope,
     mdxOptions,
-    target,
+    minifyOptions,
+    parseFrontmatter,
   }: SerializeOptions & Pick<MDXRemoteProps, 'components'> = {}
 ): Promise<string> {
-  const mdxSource = await serialize(mdx, { mdxOptions, target })
+  const mdxSource = await serialize(mdx, {
+    mdxOptions,
+    minifyOptions,
+    parseFrontmatter,
+  })
 
   return ReactDOMServer.renderToStaticMarkup(
     <MDXRemote {...mdxSource} components={components} scope={scope} />
