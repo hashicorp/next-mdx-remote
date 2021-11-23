@@ -139,6 +139,8 @@ If you want to make components available to any `<MDXRemote />` being rendered i
 // pages/_app.jsx
 import { MDXProvider } from '@mdx-js/react'
 
+import Test from '../components/test'
+
 const components = { Test }
 
 export default function MyApp({ Component, pageProps }) {
@@ -152,11 +154,8 @@ export default function MyApp({ Component, pageProps }) {
 
 ```jsx
 // pages/test.jsx
-import { MDXProvider } from '@mdx-js/react'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
-
-import Test from '../components/test'
 
 export default function TestPage({ source }) {
   return (
