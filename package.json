@@ -93,7 +93,7 @@
     "react-dom": ">=16.x <=17.x"
   },
   "engines": {
-    "node": ">=16",
+    "node": ">=14",
     "npm": ">=7"
   },
   "repository": {
