@@ -37,8 +37,6 @@ export async function serialize(
   {
     scope = {},
     mdxOptions = {},
-    minify = false,
-    minifyOptions: { target = ['es2020', 'node12'] } = {},
     parseFrontmatter = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
