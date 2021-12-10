@@ -12,20 +12,6 @@ export interface SerializeOptions {
    */
   mdxOptions?: Omit<CompileOptions, 'outputFormat' | 'providerImportSource'>
   /**
-   * Specify whether or not to run the generated code through a minifier. Defaults to false
-   */
-  minify?: boolean
-  /**
-   * Options to pass to the minifier (esbuild)
-   */
-  minifyOptions?: {
-    /**
-     * Specify the target environment for the generated code.
-     * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
-     */
-    target?: string | string[]
-  }
-  /**
    * Indicate whether or not frontmatter should be parsed out of the MDX. Defaults to false
    */
   parseFrontmatter?: boolean

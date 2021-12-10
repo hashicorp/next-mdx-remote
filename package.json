@@ -9,8 +9,6 @@
   "dependencies": {
     "@mdx-js/mdx": "^2.0.0-rc.2",
     "@mdx-js/react": "^2.0.0-rc.2",
-    "esbuild": "^0.12.9",
-    "pkg-dir": "^5.0.0",
     "vfile": "^5.2.0",
     "vfile-matter": "^3.0.1"
   },

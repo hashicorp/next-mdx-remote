@@ -289,7 +289,7 @@ export async function getStaticProps() {
 
 This library exposes a function and a component, `serialize` and `<MDXRemote />`. These two are purposefully isolated into their own files -- `serialize` is intended to be run **server-side**, so within `getStaticProps`, which runs on the server/at build time. `<MDXRemote />` on the other hand is intended to be run on the client side, in the browser.
 
-- **`serialize(source: string, { mdxOptions?: object, scope?: object, parseFrontmatter?: boolean, minify?: boolean, minifyOptions: { target?: string | string[] } })`**
+- **`serialize(source: string, { mdxOptions?: object, scope?: object, parseFrontmatter?: boolean })`**
 
   **`serialize`** consumes a string of MDX. It can also optionally be passed options which are [passed directly to MDX](https://mdxjs.com/docs/extending-mdx/), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
 
@@ -309,13 +309,6 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
         hastPlugins: [],
         compilers: [],
         filepath: '/some/file/path',
-      },
-      // Indicate whether or not to minify the mdx output using esbuild
-      minify: false,
-      minifyOptions: {
-        // Specify the target environment for the generated code. See esbuild docs:
-        // https://esbuild.github.io/api/#target
-        target: ['esnext'],
       },
       // Indicates whether or not to parse the frontmatter from the mdx source
       parseFrontmatter: false,
