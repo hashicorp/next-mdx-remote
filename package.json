@@ -6,6 +6,7 @@
   "bugs": {
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
+  "main": "index.js",
   "dependencies": {
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^1.6.22",
