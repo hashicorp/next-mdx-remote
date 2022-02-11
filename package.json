@@ -6,6 +6,10 @@
   "bugs": {
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
+  "exports": {
+    ".": "./index.js",
+    "./serialize": "./serialize.js"
+  },
   "dependencies": {
     "@mdx-js/mdx": "^2.0.0",
     "@mdx-js/react": "^2.0.0",
