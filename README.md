@@ -409,7 +409,7 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export const getStaticProps: GetStaticProps<MDXRemoteSerializeResult> =
+export const getStaticProps: GetStaticProps<{mdxSource: MDXRemoteSerializeResult}> =
   async () => {
     const mdxSource = await serialize(
       'some *mdx* content: <ExampleComponent />'
