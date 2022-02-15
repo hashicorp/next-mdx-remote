@@ -1,1 +1,3 @@
-module.exports = require('./dist/serialize')
+import { serialize } from './dist/serialize.js'
+
+export { serialize }

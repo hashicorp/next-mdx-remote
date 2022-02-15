@@ -10,9 +10,9 @@ export default [
     input: './src/index.tsx',
     output: {
       dir: './dist',
-      format: 'cjs',
+      format: 'es',
     },
-    external: ['react', '@mdx-js/react'],
+    external: ['react', '@mdx-js/react', 'react/jsx-runtime.js'],
     plugins: [
       ts({
         tsconfig: './tsconfig.json',
@@ -36,9 +36,9 @@ export default [
     input: './src/serialize.ts',
     output: {
       dir: './dist',
-      format: 'cjs',
+      format: 'es',
     },
-    external: ['@mdx-js/mdx', 'esbuild', 'pkg-dir'],
+    external: ['@mdx-js/mdx', 'vfile', 'vfile-matter'],
     plugins: [
       ts({
         tsconfig: './tsconfig.json',

@@ -1,55 +1,32 @@
-import mdx from '@mdx-js/mdx'
-import { transform } from 'esbuild'
-import path from 'path'
-import pkgDir from 'pkg-dir'
-import { remove } from 'unist-util-remove'
+import { compile, CompileOptions } from '@mdx-js/mdx'
+import { VFile } from 'vfile'
+import { matter } from 'vfile-matter'
+
+import { createFormattedMDXError } from './format-mdx-error'
+import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
 
 // types
-import { Plugin } from 'unified'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 
-/**
- * Ensure we use node's native require.resolve method,
- * webpack overrides require.resolve by default and returns the module ID
- * instead of the resolved path
- */
-const requireResolve =
-  // @ts-expect-error -- check if we're in a webpack context
-  typeof __non_webpack_require__ === 'function'
-    ? // @ts-expect-error -- __non_webpack_require__ === require at this point
-      __non_webpack_require__.resolve
-    : require.resolve
+function getCompileOptions(
+  mdxOptions: SerializeOptions['mdxOptions'] = {}
+): CompileOptions {
+  const areImportsEnabled = mdxOptions?.useDynamicImport
 
-/**
- * Due to the way Next.js is built and deployed, esbuild's internal use of
- * __dirname to derive the path to its binary does not work. This function
- * gets around that by explicitly setting the path based on the CWD.
- *
- * Related: https://nextjs.org/docs/basic-features/data-fetching#reading-files-use-processcwd
- */
-function setEsbuildBinaryPath() {
-  const esbuildDir = pkgDir.sync(requireResolve('esbuild'))
+  // don't modify the original object when adding our own plugin
+  // this allows code to reuse the same options object
+  const remarkPlugins = [
+    ...(mdxOptions.remarkPlugins || []),
+    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
+  ]
 
-  if (!esbuildDir)
-    throw new Error(
-      '[next-mdx-remote] unable to determine path to esbuild, try setting process.env.ESBUILD_BINARY_PATH manually.'
-    )
-
-  // c.f.: https://www.arcath.net/2021/03/mdx-bundler#esbuild-executable
-  if (process.platform === 'win32') {
-    process.env.ESBUILD_BINARY_PATH = path.join(esbuildDir, 'esbuild.exe')
-  } else {
-    process.env.ESBUILD_BINARY_PATH = path.join(esbuildDir, 'bin', 'esbuild')
+  return {
+    ...mdxOptions,
+    remarkPlugins,
+    outputFormat: 'function-body',
+    providerImportSource: '@mdx-js/react',
   }
 }
-
-setEsbuildBinaryPath()
-
-/**
- * remark plugin which removes all import and export statements
- */
-const removeImportsExportsPlugin: Plugin = () => (tree) =>
-  remove(tree, ['import', 'export'])
 
 /**
  * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
@@ -60,30 +37,30 @@ export async function serialize(
   {
     scope = {},
     mdxOptions = {},
-    target = ['es2020', 'node12'],
+    parseFrontmatter = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
-  // don't modify the original object when adding our own plugin
-  // this allows code to reuse the same options object
-  const remarkPlugins = [
-    ...(mdxOptions.remarkPlugins || []),
-    removeImportsExportsPlugin,
-  ]
-  mdxOptions = {
-    ...mdxOptions,
-    remarkPlugins,
+  const vfile = new VFile({ value: source })
+
+  // makes frontmatter available via vfile.data.matter
+  if (parseFrontmatter) {
+    matter(vfile, { strip: true })
   }
 
-  const compiledMdx = await mdx(source, { ...mdxOptions, skipExport: true })
-  const transformResult = await transform(compiledMdx, {
-    loader: 'jsx',
-    jsxFactory: 'mdx',
-    minify: true,
-    target,
-  })
+  let compiledMdx: VFile
+
+  try {
+    compiledMdx = await compile(vfile, getCompileOptions(mdxOptions))
+  } catch (error: any) {
+    throw createFormattedMDXError(error, String(vfile))
+  }
+
+  let compiledSource = String(compiledMdx)
 
   return {
-    compiledSource: transformResult.code,
+    compiledSource,
+    frontmatter:
+      (vfile.data.matter as Record<string, string> | undefined) ?? {},
     scope,
   }
 }

@@ -1,4 +1,6 @@
 import { Pluggable, Compiler } from 'unified'
+import { CompileOptions } from '@mdx-js/mdx'
+
 export interface SerializeOptions {
   /**
    * Pass-through variables for use in the MDX content
@@ -8,18 +10,11 @@ export interface SerializeOptions {
    * These options are passed to the MDX compiler.
    * See [the MDX docs.](https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js).
    */
-  mdxOptions?: {
-    remarkPlugins?: Pluggable[]
-    rehypePlugins?: Pluggable[]
-    hastPlugins?: Pluggable[]
-    compilers?: Compiler[]
-    filepath?: string
-  }
+  mdxOptions?: Omit<CompileOptions, 'outputFormat' | 'providerImportSource'>
   /**
-   * Specify the target environment for the generated code.
-   * See the [esbuild docs](https://esbuild.github.io/api/#target) for additional information on possible values.
+   * Indicate whether or not frontmatter should be parsed out of the MDX. Defaults to false
    */
-  target?: string | string[]
+  parseFrontmatter?: boolean
 }
 
 /**
@@ -37,4 +32,8 @@ export type MDXRemoteSerializeResult<TScope = Record<string, unknown>> = {
    * you could provide scope as `{ name: "Some name" }`.
    */
   scope?: TScope
+  /**
+   * If parseFrontmatter was set to true, contains any parsed frontmatter found in the MDX source.
+   */
+  frontmatter?: Record<string, string>
 }
