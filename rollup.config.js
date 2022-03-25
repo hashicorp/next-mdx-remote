@@ -12,7 +12,7 @@ export default [
       dir: './dist',
       format: 'es',
     },
-    external: ['react', '@mdx-js/react', 'react/jsx-runtime'],
+    external: ['react', '@mdx-js/react', 'react/jsx-runtime.js'],
     plugins: [
       ts({
         tsconfig: './tsconfig.json',
