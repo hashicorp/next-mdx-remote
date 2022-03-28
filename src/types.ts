@@ -35,5 +35,18 @@ export type MDXRemoteSerializeResult<TScope = Record<string, unknown>> = {
   /**
    * If parseFrontmatter was set to true, contains any parsed frontmatter found in the MDX source.
    */
-  frontmatter?: Record<string, string>
+  frontmatter?: Frontmatter
 }
+
+type Frontmatter =
+  | null
+  | boolean
+  | number
+  | string
+  | FrontmatterArray
+  | FrontmatterObject
+
+// Older versions of typescript do not support recursive inline types; this is a workaround for that.
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases
+type FrontmatterArray = Array<Frontmatter>;
+type FrontmatterObject = { [key: string]: Frontmatter }
