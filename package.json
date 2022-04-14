@@ -28,7 +28,7 @@
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@types/puppeteer": "^5.4.4",
-    "@types/react": "^17.0.33",
+    "@types/react": "^18.0.5",
     "@types/rmfr": "^2.0.1",
     "@types/serve-handler": "^6.1.1",
     "cheerio": "^1.0.0-rc.10",
@@ -36,12 +36,12 @@
     "esbuild-jest": "^0.5.0",
     "husky": "^4.3.6",
     "jest": "^27.3.1",
-    "next": "^12.0.10",
+    "next": "^12.1.5",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
     "puppeteer": "^10.4.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "release": "^6.3.0",
     "rmfr": "^2.0.0",
     "rollup": "^2.59.0",
@@ -91,8 +91,8 @@
   ],
   "license": "MPL-2.0",
   "peerDependencies": {
-    "react": ">=16.x <=17.x",
-    "react-dom": ">=16.x <=17.x"
+    "react": ">= 16.x <= 18.x",
+    "react-dom": ">= 16.x <= 18.x"
   },
   "engines": {
     "node": ">=14",
