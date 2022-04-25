@@ -21,13 +21,15 @@ describe('hydration', () => {
     const result = readOutputFile('basic', 'index')
     const $ = cheerio.load(result)
 
+    const htmlOutput = $('#__next').html()
+
     // server renders correctly
-    expect($('#__next').html()).toContain(`<h1>foo</h1><h1>Headline</h1>
-<p>hello <!-- -->jeff</p><button>Count: <!-- -->0</button>
-<p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"</p>
-<p>Some <strong class=\"custom-strong\">markdown</strong> content</p>
-<div class=\"alert alert-warning g-type-body\"><p>Alert</p></div>
-<div>I am a dynamic component.</div>`)
+    expect(htmlOutput).toContain(`<h1>foo</h1><h1>Headline</h1>
+<!-- --><p>hello <!-- -->jeff<!-- --></p><button>Count: <!-- -->0<!-- --></button>
+<!-- --><p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"<!-- --></p>
+<!-- --><p>Some <!-- --><strong class=\"custom-strong\">markdown</strong> content<!-- --></p>
+<!-- --><div class=\"alert alert-warning g-type-body\"><p>Alert</p></div>
+<!-- --><div>I am a dynamic component.</div>`)
   })
 
   test('rehydrates correctly in browser', async () => {
