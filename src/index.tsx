@@ -1,6 +1,6 @@
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
-import * as runtime from 'react/jsx-runtime.js'
+import { jsxRuntime } from './jsx-runtime.cjs'
 import * as mdx from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 
@@ -71,7 +71,7 @@ export function MDXRemote({
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
     const fullScope = Object.assign(
-      { opts: { ...mdx, ...runtime } },
+      { opts: { ...mdx, ...jsxRuntime } },
       { frontmatter },
       scope
     )
