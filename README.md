@@ -300,14 +300,12 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
     {
       // made available to the arguments of any custom mdx component
       scope: {},
-      // MDX's available options at time of writing pulled directly from
-      // https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js
+      // MDX's available options, see the MDX docs for more info.
+      // https://mdxjs.com/packages/mdx/#compilefile-options
       mdxOptions: {
         remarkPlugins: [],
         rehypePlugins: [],
-        hastPlugins: [],
-        compilers: [],
-        filepath: '/some/file/path',
+        format: 'mdx'
       },
       // Indicates whether or not to parse the frontmatter from the mdx source
       parseFrontmatter: false,
@@ -315,7 +313,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
   )
   ```
 
-  Visit <https://github.com/mdx-js/mdx/blob/master/packages/mdx/index.js> for available `mdxOptions`.
+  Visit <https://mdxjs.com/packages/mdx/#compilefile-options> for available `mdxOptions`.
 
 - **`<MDXRemote compiledSource={string} components?={object} scope?={object} lazy?={boolean} />`**
 
