@@ -109,3 +109,5 @@ export function MDXRemote({
   // If lazy = true, we need to render a wrapping div to preserve the same markup structure that was SSR'd
   return lazy ? <div>{content}</div> : content
 }
+
+export const MDXProvider = mdx.MDXProvider
