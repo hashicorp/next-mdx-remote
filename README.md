@@ -175,11 +175,11 @@ export async function getStaticProps() {
     Custom components from <code>MDXProvider</code><a id="mdx-provider"></a>
   </summary>
 
-If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/docs/using-mdx/#mdx-provider) from `@mdx-js/react`.
+If you want to make components available to any `<MDXRemote />` being rendered in your application, you can use [`<MDXProvider />`](https://mdxjs.com/docs/using-mdx/#mdx-provider) directly from `next-mdx-remote`.
 
 ```jsx
 // pages/_app.jsx
-import { MDXProvider } from '@mdx-js/react'
+import { MDXProvider } from 'next-mdx-remote'
 
 import Test from '../components/test'
 
@@ -305,7 +305,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
       mdxOptions: {
         remarkPlugins: [],
         rehypePlugins: [],
-        format: 'mdx'
+        format: 'mdx',
       },
       // Indicates whether or not to parse the frontmatter from the mdx source
       parseFrontmatter: false,
@@ -407,13 +407,12 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export const getStaticProps: GetStaticProps<{mdxSource: MDXRemoteSerializeResult}> =
-  async () => {
-    const mdxSource = await serialize(
-      'some *mdx* content: <ExampleComponent />'
-    )
-    return { props: { mdxSource } }
-  }
+export const getStaticProps: GetStaticProps<{
+  mdxSource: MDXRemoteSerializeResult
+}> = async () => {
+  const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
+  return { props: { mdxSource } }
+}
 ```
 
 ## Migrating from v2 to v3
