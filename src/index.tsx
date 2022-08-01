@@ -26,7 +26,7 @@ declare global {
 
 export type MDXRemoteProps = MDXRemoteSerializeResult & {
   /**
-   * A object mapping names to React components.
+   * An object mapping names to React components.
    * The key used will be the name accessible to MDX.
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
