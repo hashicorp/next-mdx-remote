@@ -11,13 +11,11 @@ export async function renderStatic(
     components,
     scope,
     mdxOptions,
-    minifyOptions,
     parseFrontmatter,
   }: SerializeOptions & Pick<MDXRemoteProps, 'components'> = {}
 ): Promise<string> {
   const mdxSource = await serialize(mdx, {
     mdxOptions,
-    minifyOptions,
     parseFrontmatter,
   })
 
