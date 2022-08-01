@@ -47,6 +47,18 @@ describe('serialize', () => {
     expect(result).toMatchInlineSnapshot(`"<p>test</p>"`)
   })
 
+  test('with scope props', async () => {
+    const result = await renderStatic('<p>{props.baz}</p>', {
+      scope: {
+        bar: 'test',
+        props: {
+          baz: 'test2',
+        },
+      },
+    })
+    expect(result).toMatchInlineSnapshot(`"<p>test2</p>"`)
+  })
+
   test('with custom provider', async () => {
     const TestContext = React.createContext(null)
 
