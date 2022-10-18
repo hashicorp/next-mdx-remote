@@ -22,7 +22,7 @@ export interface SerializeOptions {
  */
 export type MDXRemoteSerializeResult<
   TScope = Record<string, unknown>,
-  TFrontmatter = Record<string, string>
+  TFrontmatter = Record<string, any>
 > = {
   /**
    * The compiledSource, generated from next-mdx-remote/serialize
