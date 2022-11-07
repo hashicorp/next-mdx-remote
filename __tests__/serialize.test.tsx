@@ -2,6 +2,7 @@ import * as React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
+import { VFile } from 'vfile'
 
 import { MDXRemote } from '../src/index'
 import { serialize } from '../src/serialize'
@@ -162,5 +163,15 @@ hello: world
         More information: https://mdxjs.com/docs/troubleshooting-mdx]
       `)
     }
+  })
+
+  test('supports VFile', async () => {
+    const result = await renderStatic(new VFile('foo **bar**'))
+    expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
+  })
+
+  test('supports Buffer', async () => {
+    const result = await renderStatic(Buffer.from('foo **bar**'))
+    expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 })

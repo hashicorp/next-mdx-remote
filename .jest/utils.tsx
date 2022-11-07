@@ -4,9 +4,10 @@ import React from 'react'
 import { MDXRemote, MDXRemoteProps } from '../src/index'
 import { serialize } from '../src/serialize'
 import { SerializeOptions } from '../src/types'
+import { VFileCompatible } from 'vfile'
 
 export async function renderStatic(
-  mdx: string,
+  mdx: VFileCompatible,
   {
     components,
     scope,
