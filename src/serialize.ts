@@ -1,5 +1,5 @@
 import { compile, CompileOptions } from '@mdx-js/mdx'
-import { VFile } from 'vfile'
+import { VFile, VFileCompatible } from 'vfile'
 import { matter } from 'vfile-matter'
 
 import { createFormattedMDXError } from './format-mdx-error'
@@ -33,14 +33,14 @@ function getCompileOptions(
  */
 export async function serialize(
   /** Raw MDX contents as a string. */
-  source: string,
+  source: VFileCompatible,
   {
     scope = {},
     mdxOptions = {},
     parseFrontmatter = false,
   }: SerializeOptions = {}
 ): Promise<MDXRemoteSerializeResult> {
-  const vfile = new VFile({ value: source })
+  const vfile = new VFile(source)
 
   // makes frontmatter available via vfile.data.matter
   if (parseFrontmatter) {
