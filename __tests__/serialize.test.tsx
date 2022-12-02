@@ -6,6 +6,7 @@ import { VFile } from 'vfile'
 
 import { MDXRemote } from '../src/index'
 import { serialize } from '../src/serialize'
+import { serialize as serializeRs } from '../src/serialize-experimental'
 import { renderStatic } from '../.jest/utils'
 
 describe('serialize', () => {
@@ -173,5 +174,18 @@ hello: world
   test('supports Buffer', async () => {
     const result = await renderStatic(Buffer.from('foo **bar**'))
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
+  })
+
+  test.only('serialize-experimental', async () => {
+    const result = await serializeRs(`# Hello world! <Test />`)
+
+    expect(
+      ReactDOMServer.renderToStaticMarkup(
+        <MDXRemote
+          {...result}
+          components={{ Test: () => <>test component</> }}
+        />
+      )
+    ).toMatchInlineSnapshot(`"<h1>Hello world! test component</h1>"`)
   })
 })
