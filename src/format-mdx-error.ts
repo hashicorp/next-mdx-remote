@@ -7,7 +7,7 @@ import { codeFrameColumns } from '@babel/code-frame'
 function parsePositionInformationFromErrorMessage(
   message: string
 ): { start: { line: number; column: number } } | undefined {
-  const positionInfoPattern = /\d+:\d+(-\d+:\d+)/g
+  const positionInfoPattern = /\d+:\d+(-\d+:\d+)?/g
 
   const match = message.match(positionInfoPattern)
 

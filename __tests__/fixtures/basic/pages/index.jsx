@@ -2,10 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import { createContext, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { serialize } from '../../../../serialize'
+import { serialize } from '../../../../serialize-experimental'
 import { MDXRemote } from '../../../../'
 import Test from '../components/test'
-import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 
 const TestContext = createContext('test')
 const PROVIDER = {
@@ -60,7 +59,6 @@ export async function getStaticProps() {
   const source = await fs.promises.readFile(fixturePath, 'utf8')
 
   const mdxSource = await serialize(source, {
-    mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
     parseFrontmatter: true,
   })
 

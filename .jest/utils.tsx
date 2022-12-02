@@ -2,7 +2,7 @@ import ReactDOMServer from 'react-dom/server'
 import React from 'react'
 
 import { MDXRemote, MDXRemoteProps } from '../src/index'
-import { serialize } from '../src/serialize'
+import { serialize } from '../src/serialize-experimental'
 import { SerializeOptions } from '../src/types'
 import { VFileCompatible } from 'vfile'
 

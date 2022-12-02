@@ -5,8 +5,7 @@ import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
 import { MDXRemote } from '../src/index'
-import { serialize } from '../src/serialize'
-import { serialize as serializeRs } from '../src/serialize-experimental'
+import { serialize } from '../src/serialize-experimental'
 import { renderStatic } from '../.jest/utils'
 
 describe('serialize', () => {
@@ -24,7 +23,7 @@ describe('serialize', () => {
     expect(result).toMatchInlineSnapshot(`"<p>foo <span>hello test</span></p>"`)
   })
 
-  test('with options', async () => {
+  test.skip('with options', async () => {
     const options = {
       mdxOptions: {
         remarkPlugins: [paragraphCustomAlerts],
@@ -50,7 +49,7 @@ describe('serialize', () => {
   })
 
   test('with custom provider', async () => {
-    const TestContext = React.createContext(null)
+    const TestContext = React.createContext('')
 
     const mdxSource = await serialize('<Test />')
 
@@ -134,7 +133,7 @@ hello: world
       { parseFrontmatter: true }
     )
 
-    expect(result.frontmatter.hello).toEqual('world')
+    expect(result?.frontmatter?.hello).toEqual('world')
   })
 
   test('parses frontmatter - rendered result', async () => {
@@ -156,7 +155,7 @@ hello: world
     } catch (error) {
       expect(error).toMatchInlineSnapshot(`
         [Error: [next-mdx-remote] error compiling MDX:
-        Cannot close \`paragraph\` (1:1-1:31): a different token (\`mdxJsxTextTag\`, 1:18-1:31) is open
+        "1:31: Expected a closing tag for \`<GITHUB_USER>\` (1:18) before the end of \`Paragraph\` (mdx-jsx:end-tag-mismatch)"
 
         > 1 | This is very bad <GITHUB_USER>
             |                  ^
@@ -174,18 +173,5 @@ hello: world
   test('supports Buffer', async () => {
     const result = await renderStatic(Buffer.from('foo **bar**'))
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
-  })
-
-  test.only('serialize-experimental', async () => {
-    const result = await serializeRs(`# Hello world! <Test />`)
-
-    expect(
-      ReactDOMServer.renderToStaticMarkup(
-        <MDXRemote
-          {...result}
-          components={{ Test: () => <>test component</> }}
-        />
-      )
-    ).toMatchInlineSnapshot(`"<h1>Hello world! test component</h1>"`)
   })
 })

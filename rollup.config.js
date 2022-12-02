@@ -55,4 +55,22 @@ export default [
       cjs(),
     ],
   },
+  {
+    input: './src/serialize-experimental.ts',
+    output: {
+      dir: './dist',
+      format: 'es',
+    },
+    external: ['@mdx-js/mdx', 'vfile', 'vfile-matter', 'next/dist/build/swc'],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist',
+      }),
+      json(),
+      resolve(),
+      cjs(),
+    ],
+  },
 ]

@@ -1,15 +1,15 @@
 import { VFile, VFileCompatible } from 'vfile'
 import { matter } from 'vfile-matter'
-import { loadBindings } from 'next/dist/build/swc'
 
 import { createFormattedMDXError } from './format-mdx-error'
-// import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
 
-// types
-import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types'
+
+const jsxRuntimeImportPattern =
+  /import \{ (?:(.+?) as _\1)(?:, (.+?) as _\2)?(?:, (.+?) as _\3)? \} from \"react\/jsx-runtime\";/
+const importExportPattern = /^((import.+from.+)|(export.+))\n/gm
 
 let bindings: any
-let compile: any
 
 function getCompileOptions() {
   return {
@@ -36,9 +36,10 @@ export async function serialize(
     matter(vfile, { strip: true })
   }
 
-  const swcBindings = bindings || (bindings = await loadBindings())
+  const swcBindings =
+    bindings || (bindings = await require('next/dist/build/swc').loadBindings())
 
-  let compiledMdx
+  let compiledMdx: string
 
   try {
     compiledMdx = await swcBindings.mdx.compile(
@@ -48,18 +49,32 @@ export async function serialize(
 
     compiledMdx = compiledMdx
       .replace(
-        `import { jsx as _jsx } from "react/jsx-runtime";`,
-        `const {jsx: _jsx} = arguments[0];`
-      )
-      .replace(
-        `import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";`,
-        `const { jsx: _jsx, jsxs: _jsxs } = arguments[0];`
+        // replace jsx-runtime imports with const declarations. Matches an arbitrary number of import specifiers (up to 3)
+        jsxRuntimeImportPattern,
+        (_, ...matches) => {
+          const importSpecifiers = []
+
+          for (const m of matches) {
+            if (typeof m !== 'string') {
+              // end of the matched import specifiers if we run into a non-string
+              break
+            }
+
+            importSpecifiers.push(`${m}: _${m}`)
+          }
+
+          return `const {${importSpecifiers.join(',')}} = arguments[0];`
+        }
       )
       .replace(
         `import { useMDXComponents as _provideComponents } from "@mdx-js/react";`,
         `const {useMDXComponents: _provideComponents} = arguments[0];`
       )
       .replace(`export default MDXContent;`, `return { default: MDXContent };`)
+      // remove extraneous import and export statements
+      .replace(importExportPattern, '')
+
+    importExportPattern.lastIndex = 0
   } catch (error: any) {
     throw createFormattedMDXError(error, String(vfile))
   }
