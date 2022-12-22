@@ -11,8 +11,8 @@
     "./serialize": "./serialize.js"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^2.0.0",
-    "@mdx-js/react": "^2.0.0",
+    "@mdx-js/mdx": "^2.2.1",
+    "@mdx-js/react": "^2.2.1",
     "vfile": "^5.3.0",
     "vfile-matter": "^3.0.1"
   },
