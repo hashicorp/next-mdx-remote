@@ -9,12 +9,17 @@ import handler from 'serve-handler'
 import http from 'http'
 import rmfr from 'rmfr'
 import * as cheerio from 'cheerio'
+import { ChildProcess } from 'child_process'
 
 jest.setTimeout(30000)
 
-describe('hydration', () => {
+describe('hydration - production', () => {
   beforeAll(() => {
     buildFixture('basic')
+  })
+
+  afterAll(async () => {
+    await cleanupNextDirectory('basic')
   })
 
   test('server rendered output', () => {
@@ -24,7 +29,7 @@ describe('hydration', () => {
     const htmlOutput = $('#__next').html()
 
     // server renders correctly
-    expect(htmlOutput).toContain(`<h1>foo</h1><h1>Headline</h1>
+    expect(htmlOutput).toContain(`<h1>foo</h1><h2>Headline</h2>
 <!-- --><p>hello <!-- -->jeff<!-- --></p><button>Count: <!-- -->0<!-- --></button>
 <!-- --><p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"<!-- --></p>
 <!-- --><p>Some <!-- --><strong class=\"custom-strong\">markdown</strong> content<!-- --></p>
@@ -73,9 +78,36 @@ describe('hydration', () => {
   })
 })
 
-afterAll(async () => {
-  await rmfr(path.join(__dirname, 'fixtures/basic/out'))
-  await rmfr(path.join(__dirname, 'fixtures/basic/.next'))
+describe('hydration - dev server', () => {
+  let childProcess
+  let browser: Browser
+
+  beforeAll(async () => {
+    childProcess = await startDevServer('basic')
+    browser = await puppeteer.launch()
+  })
+
+  afterAll(async () => {
+    // close the browser and dev server
+    await stopDevServer(childProcess)
+    await browser.close()
+    await cleanupNextDirectory('basic')
+  })
+
+  test('loads in development', async () => {
+    const page = await browser.newPage()
+    page.on('console', (msg) => console.log(msg.text()))
+
+    await page.goto('http://localhost:12333')
+
+    // @ts-expect-error
+    await page.waitForFunction(() => Boolean(window.__NEXT_HYDRATED))
+
+    // @ts-expect-error -- el is typed as Element, but reasonable to assume it is an HTMLElement at this point
+    const headingText = await page.$eval('h1', (el) => el.innerText)
+
+    expect(headingText).toEqual('foo')
+  })
 })
 
 //
@@ -111,4 +143,54 @@ function serveStatic(fixture: string): Promise<Server> {
     )
     server.listen(1235, () => resolve(server))
   })
+}
+
+async function cleanupNextDirectory(fixture: string) {
+  await rmfr(path.join(__dirname, `fixtures/${fixture}/out`))
+  await rmfr(path.join(__dirname, `fixtures/${fixture}/.next`))
+}
+
+async function startDevServer(fixture: string) {
+  const dir = path.join(__dirname, 'fixtures', fixture)
+
+  const childProcess = spawn('next', ['dev', '-p', '12333'], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    cwd: dir,
+    env: { ...process.env, NODE_ENV: 'development', __NEXT_TEST_MODE: 'true' },
+  })
+
+  childProcess.stderr?.on('data', (chunk) => {
+    process.stdout.write(chunk)
+  })
+
+  async function waitForStarted() {
+    return new Promise<undefined>((resolve) => {
+      childProcess.stdout?.on('data', (chunk) => {
+        const msg = chunk.toString()
+        process.stdout.write(chunk)
+
+        if (msg.includes('started server on') && msg.includes('url:')) {
+          resolve(undefined)
+        }
+      })
+    })
+  }
+
+  await waitForStarted()
+
+  return childProcess
+}
+
+async function stopDevServer(childProcess: ChildProcess) {
+  console.log('stopping development server...')
+  const promise = new Promise((resolve) => {
+    childProcess.on('close', () => {
+      console.log('development server stopped')
+      resolve(undefined)
+    })
+  })
+
+  childProcess.kill('SIGINT')
+
+  await promise
 }

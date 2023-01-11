@@ -155,10 +155,10 @@ hello: world
     } catch (error) {
       expect(error).toMatchInlineSnapshot(`
         [Error: [next-mdx-remote] error compiling MDX:
-        Cannot close \`paragraph\` (1:1-1:31): a different token (\`mdxJsxTextTag\`, 1:18-1:31) is open
+        Expected a closing tag for \`<GITHUB_USER>\` (1:18-1:31) before the end of \`paragraph\`
 
         > 1 | This is very bad <GITHUB_USER>
-            |                  ^
+            | ^
 
         More information: https://mdxjs.com/docs/troubleshooting-mdx]
       `)
