@@ -4,7 +4,7 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
-import { MDXRemote } from '../src/index'
+import { MDXRemote, MDXProvider } from '../src/index'
 import { serialize } from '../src/serialize'
 import { renderStatic } from '../.jest/utils'
 
@@ -75,13 +75,13 @@ describe('serialize', () => {
     const mdxSource = await serialize('<Test />')
 
     const result = ReactDOMServer.renderToStaticMarkup(
-      <MDX.MDXProvider
+      <MDXProvider
         components={{
           Test: () => <p>Hello world</p>,
         }}
       >
         <MDXRemote {...mdxSource} />
-      </MDX.MDXProvider>
+      </MDXProvider>
     )
 
     expect(result).toMatchInlineSnapshot(`"<p>Hello world</p>"`)
