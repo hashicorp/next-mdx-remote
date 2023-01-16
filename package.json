@@ -8,7 +8,9 @@
   },
   "exports": {
     ".": "./index.js",
-    "./serialize": "./serialize.js"
+    "./serialize": "./serialize.js",
+    "./mdx-runtime": "./mdx-runtime.js",
+    "./rsc": "./rsc.js"
   },
   "dependencies": {
     "@mdx-js/mdx": "^2.2.1",

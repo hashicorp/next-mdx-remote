@@ -9,7 +9,8 @@ import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 
 function getCompileOptions(
-  mdxOptions: SerializeOptions['mdxOptions'] = {}
+  mdxOptions: SerializeOptions['mdxOptions'] = {},
+  rsc: boolean = false
 ): CompileOptions {
   const areImportsEnabled = mdxOptions?.useDynamicImport
 
@@ -24,7 +25,7 @@ function getCompileOptions(
     ...mdxOptions,
     remarkPlugins,
     outputFormat: 'function-body',
-    providerImportSource: '@mdx-js/react',
+    providerImportSource: rsc ? 'next-mdx-remote/mdx-runtime' : '@mdx-js/react',
   }
 }
 
@@ -37,7 +38,8 @@ export async function serialize(
     scope = {},
     mdxOptions = {},
     parseFrontmatter = false,
-  }: SerializeOptions = {}
+  }: SerializeOptions = {},
+  rsc: boolean = false
 ): Promise<MDXRemoteSerializeResult> {
   const vfile = new VFile(source)
 
@@ -49,7 +51,7 @@ export async function serialize(
   let compiledMdx: VFile
 
   try {
-    compiledMdx = await compile(vfile, getCompileOptions(mdxOptions))
+    compiledMdx = await compile(vfile, getCompileOptions(mdxOptions, rsc))
   } catch (error: any) {
     throw createFormattedMDXError(error, String(vfile))
   }
