@@ -5,3 +5,4 @@ __tests__/fixtures/*/out
 examples/*/package-lock.json
 examples/*/.next
 dist/
+*.tgz
