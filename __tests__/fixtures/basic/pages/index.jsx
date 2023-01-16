@@ -12,13 +12,6 @@ const PROVIDER = {
   component: TestContext.Provider,
   props: { value: 'foo' },
 }
-const ContextConsumer = () => {
-  return (
-    <TestContext.Consumer>
-      {(value) => <p className="context">Context value: "{value}"</p>}
-    </TestContext.Consumer>
-  )
-}
 
 const MDX_COMPONENTS = {
   Test,

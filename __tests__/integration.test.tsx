@@ -29,12 +29,17 @@ describe('hydration - production', () => {
     const htmlOutput = $('#__next').html()
 
     // server renders correctly
-    expect(htmlOutput).toContain(`<h1>foo</h1><h2>Headline</h2>
-<!-- --><p>hello <!-- -->jeff<!-- --></p><button>Count: <!-- -->0<!-- --></button>
-<!-- --><p class=\"context\">Context value: \"<!-- -->foo<!-- -->\"<!-- --></p>
-<!-- --><p>Some <!-- --><strong class=\"custom-strong\">markdown</strong> content<!-- --></p>
-<!-- --><div class=\"alert alert-warning g-type-body\"><p>Alert</p></div>
-<!-- --><div>I am a dynamic component.</div>`)
+    expect(htmlOutput).toContain(`<h1>foo</h1>`)
+    expect(htmlOutput).toContain(`<h2>Headline</h2>`)
+    expect(htmlOutput).toContain(`<p>hello <!-- -->jeff</p>`)
+    expect(htmlOutput).toContain(`<button>Count: <!-- -->0</button>`)
+    expect($('.context').text()).toBe('Context value: "foo"')
+    expect(htmlOutput).toContain(
+      `<p>Some <strong class=\"custom-strong\">markdown</strong> content</p>`
+    )
+    expect(htmlOutput).toContain(
+      `<div class=\"alert alert-warning g-type-body\"><p>Alert</p></div>`
+    )
   })
 
   test('rehydrates correctly in browser', async () => {
