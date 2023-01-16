@@ -18,10 +18,7 @@ export type MDXRemoteProps = MDXRemoteSerializeResult & {
 
 export { MDXRemoteSerializeResult }
 
-/**
- * Renders compiled source from next-mdx-remote/serialize.
- */
-export async function MDXRemote({
+export async function compileMDX({
   source,
   options,
   components = {},
@@ -60,5 +57,16 @@ export async function MDXRemote({
 
   const Content: React.ElementType = hydrateFn.apply(hydrateFn, values).default
 
-  return <Content components={components} />
+  return {
+    content: <Content components={components} />,
+    frontmatter,
+  }
+}
+
+/**
+ * Renders compiled source from next-mdx-remote/serialize.
+ */
+export async function MDXRemote(props: MDXRemoteProps) {
+  const { content } = await compileMDX(props)
+  return content
 }
