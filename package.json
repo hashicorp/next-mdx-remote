@@ -114,7 +114,6 @@
     "prepublishOnly": "npm run build",
     "test": "jest"
   },
-  "sideEffects": false,
   "types": "index.d.ts",
   "type": "module"
 }
