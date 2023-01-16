@@ -1,6 +1,4 @@
 {
   "private": true,
-  "dependencies": {
-    "next-mdx-remote": "*"
-  }
+  "dependencies": {}
 }
