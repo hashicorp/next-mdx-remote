@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import dynamic from 'next/dynamic'
 import Test from '../../../components/test'
-import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import { Provider, Consumer } from '../provider'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
@@ -24,7 +23,7 @@ export default async function Page() {
           source={source}
           components={MDX_COMPONENTS}
           options={{
-            mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
+            mdxOptions: { remarkPlugins: [] },
           }}
         />
       </Provider>
