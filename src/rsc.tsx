@@ -34,10 +34,7 @@ export async function compileMDX({
   // create element function as well as any components we're using
   const fullScope = Object.assign(
     {
-      opts: {
-        useMDXComponents: (components: unknown) => components,
-        ...jsxRuntime,
-      },
+      opts: jsxRuntime,
     },
     { frontmatter },
     scope

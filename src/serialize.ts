@@ -25,7 +25,8 @@ function getCompileOptions(
     ...mdxOptions,
     remarkPlugins,
     outputFormat: 'function-body',
-    providerImportSource: rsc ? 'next-mdx-remote/mdx-runtime' : '@mdx-js/react',
+    // Disable the importSource option for RSC to ensure there's no `useMDXComponents` implemented.
+    providerImportSource: rsc ? undefined : '@mdx-js/react',
   }
 }
 

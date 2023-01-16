@@ -9,7 +9,6 @@
   "exports": {
     ".": "./index.js",
     "./serialize": "./serialize.js",
-    "./mdx-runtime": "./mdx-runtime.js",
     "./rsc": "./rsc.js"
   },
   "dependencies": {
