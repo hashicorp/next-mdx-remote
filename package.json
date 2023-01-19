@@ -3,5 +3,21 @@
   "private": true,
   "workspaces": [
     "./packages/*"
-  ]
+  ],
+  "scripts": {
+    "pretest": "mkdir -p ./dist && npm run build --workspace \"next-mdx-remote\" && npm pack --workspace \"next-mdx-remote\" --pack-destination ./dist",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.2",
+    "@types/jest": "^27.0.2",
+    "@types/puppeteer": "^5.4.4",
+    "@types/serve-handler": "^6.1.1",
+    "cheerio": "^1.0.0-rc.10",
+    "cross-spawn": "^7.0.3",
+    "esbuild-jest": "^0.5.0",
+    "jest": "^27.3.1",
+    "serve-handler": "^6.1.3",
+    "tree-kill": "^1.2.2"
+  }
 }

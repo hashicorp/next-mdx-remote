@@ -1,4 +1,8 @@
 {
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "next": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
 }
