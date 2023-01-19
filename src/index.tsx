@@ -98,8 +98,13 @@ export function MDXRemote({
     )
   }
 
-  // Pass custom markdown components (such as "h1" or "a") via the "components" object
-  const content = <Content components={components} />
+  // wrapping the content with MDXProvider will allow us to customize the standard
+  // markdown components (such as "h1" or "a") with the "components" object
+  const content = (
+    <mdx.MDXProvider components={components}>
+      <Content />
+    </mdx.MDXProvider>
+  )
 
   // If lazy = true, we need to render a wrapping div to preserve the same markup structure that was SSR'd
   return lazy ? <div>{content}</div> : content
