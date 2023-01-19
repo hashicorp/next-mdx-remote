@@ -23,10 +23,5 @@ export default async function Page() {
     },
   })
 
-  return (
-    <>
-      <h1>{frontmatter.title}</h1>
-      <Provider>{content}</Provider>
-    </>
-  )
+  return <>{content}</>
 }
