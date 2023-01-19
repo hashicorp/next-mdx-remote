@@ -4,8 +4,8 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
-import { MDXRemote } from '../src/index'
-import { serialize } from '../src/serialize'
+import { MDXRemote } from '../'
+import { serialize } from '../serialize'
 import { renderStatic } from '../.jest/utils'
 
 describe('serialize', () => {
@@ -49,7 +49,7 @@ describe('serialize', () => {
   })
 
   test('with custom provider', async () => {
-    const TestContext = React.createContext(null)
+    const TestContext = React.createContext<null | string>(null)
 
     const mdxSource = await serialize('<Test />')
 
@@ -133,7 +133,7 @@ hello: world
       { parseFrontmatter: true }
     )
 
-    expect(result.frontmatter.hello).toEqual('world')
+    expect(result.frontmatter?.hello).toEqual('world')
   })
 
   test('parses frontmatter - rendered result', async () => {
