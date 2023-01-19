@@ -128,7 +128,7 @@ createDescribe(
     })
 
     test.each(['/app-dir-mdx/mdxremote', '/app-dir-mdx/compile-mdx'])(
-      'development - MDXRemote - %s',
+      'development - RSC - %s',
       async (path) => {
         const page = await browser().newPage()
         page.on('console', (msg) => console.log(msg.text()))
