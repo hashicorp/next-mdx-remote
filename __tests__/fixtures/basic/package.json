@@ -2,8 +2,8 @@
   "private": true,
   "dependencies": {
     "@hashicorp/remark-plugins": "^3.2.1",
-    "next": "*",
-    "react": "*",
-    "react-dom": "*"
+    "next": "^13.1.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
