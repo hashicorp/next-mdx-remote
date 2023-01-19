@@ -12,12 +12,9 @@ import puppeteer, { Browser } from 'puppeteer'
 import { Server } from 'http'
 import handler from 'serve-handler'
 
-import {
-  MDXRemote,
-  MDXRemoteProps,
-} from '../packages/next-mdx-remote/src/index'
-import { serialize } from '../packages/next-mdx-remote/src/serialize'
-import { SerializeOptions } from '../packages/next-mdx-remote/src/types'
+import { MDXRemote, MDXRemoteProps } from '../src/index'
+import { serialize } from '../src/serialize'
+import { SerializeOptions } from '../src/types'
 
 export async function renderStatic(
   mdx: VFileCompatible,
@@ -41,7 +38,7 @@ export async function renderStatic(
 export async function getPathToPackedPackage() {
   const packageJson = JSON.parse(
     await fs.promises.readFile(
-      path.join(__dirname, '..', 'packages', 'next-mdx-remote', 'package.json'),
+      path.join(__dirname, '..', 'package.json'),
       'utf-8'
     )
   )

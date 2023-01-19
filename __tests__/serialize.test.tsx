@@ -4,8 +4,8 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
-import { MDXRemote } from 'next-mdx-remote'
-import { serialize } from 'next-mdx-remote/serialize'
+import { MDXRemote } from '../'
+import { serialize } from '../serialize'
 import { renderStatic } from '../.jest/utils'
 
 describe('serialize', () => {
