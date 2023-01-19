@@ -38,6 +38,32 @@ export default [
     ],
   },
   {
+    input: './src/rsc.tsx',
+    output: {
+      dir: './dist',
+      format: 'es',
+    },
+    external: [
+      'react',
+      '@mdx-js/react',
+      'react/jsx-runtime',
+      './jsx-runtime.cjs',
+      '@mdx-js/mdx',
+      'vfile',
+      'vfile-matter',
+    ],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist',
+      }),
+      json(),
+      resolve(),
+      cjs(),
+    ],
+  },
+  {
     input: './src/serialize.ts',
     output: {
       dir: './dist',
