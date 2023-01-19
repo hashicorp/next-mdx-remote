@@ -434,6 +434,8 @@ For more information on RSC, check out the [Next.js beta documentation](https://
 
 ### Examples
 
+_Assuming usage in a Next.js 13+ application using the `app` directory._
+
 #### Basic
 
 ```tsx
