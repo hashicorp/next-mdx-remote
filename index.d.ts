@@ -1,1 +1,1 @@
-export * from './packages/next-mdx-remote/dist/index'
+export * from './dist/index'

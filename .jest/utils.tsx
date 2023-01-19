@@ -166,12 +166,12 @@ export function buildFixture(dir: string) {
   spawn.sync('npx', ['next', 'build'], {
     stdio: 'inherit',
     cwd: dir,
-    env: { ...process.env, NODE_ENV: undefined, __NEXT_TEST_MODE: 'true' },
+    env: { ...process.env, NODE_ENV: 'production', __NEXT_TEST_MODE: 'true' },
   })
   spawn.sync('npx', ['next', 'export'], {
     stdio: 'inherit',
     cwd: dir,
-    env: { ...process.env, NODE_ENV: undefined, __NEXT_TEST_MODE: 'true' },
+    env: { ...process.env, NODE_ENV: 'production', __NEXT_TEST_MODE: 'true' },
   })
 }
 
