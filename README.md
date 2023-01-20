@@ -529,6 +529,9 @@ import { compileMDX } from "next-mdx-remote/rsc";
 export default async function Home() {
   const {content, frontmatter} = compileMDX({
      source: `
+      ---
+      title: RSC Frontmatter Example
+      ---
       # Hello World
       This is from Server Components!
     `
