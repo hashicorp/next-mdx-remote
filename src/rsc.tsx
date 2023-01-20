@@ -2,18 +2,19 @@ import React from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 import { VFileCompatible } from 'vfile'
+import { MDXProvider } from '@mdx-js/react'
 import { serialize } from './serialize'
 
 export type MDXRemoteProps = MDXRemoteSerializeResult & {
   source: VFileCompatible
   options?: SerializeOptions
   /**
-   * A object mapping names to React components.
+   * An object mapping names to React components.
    * The key used will be the name accessible to MDX.
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
    */
-  components?: any
+  components?: React.ComponentProps<typeof MDXProvider>['components']
 }
 
 export { MDXRemoteSerializeResult }
