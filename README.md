@@ -534,7 +534,7 @@ export default async function Home() {
       ---
       # Hello World
       This is from Server Components!
-    `
+    `,
     options: { parseFrontmatter: true }
   })
   return (
