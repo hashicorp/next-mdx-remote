@@ -305,7 +305,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
       mdxOptions: {
         remarkPlugins: [],
         rehypePlugins: [],
-        format: 'mdx'
+        format: 'mdx',
       },
       // Indicates whether or not to parse the frontmatter from the mdx source
       parseFrontmatter: false,
@@ -407,18 +407,144 @@ export default function ExamplePage({ mdxSource }: Props) {
   )
 }
 
-export const getStaticProps: GetStaticProps<{mdxSource: MDXRemoteSerializeResult}> =
-  async () => {
-    const mdxSource = await serialize(
-      'some *mdx* content: <ExampleComponent />'
-    )
-    return { props: { mdxSource } }
-  }
+export const getStaticProps: GetStaticProps<{
+  mdxSource: MDXRemoteSerializeResult
+}> = async () => {
+  const mdxSource = await serialize('some *mdx* content: <ExampleComponent />')
+  return { props: { mdxSource } }
+}
 ```
 
-## Migrating from v2 to v3
+## React Server Components (RSC) & Next.js `app` Directory Support
 
-See https://github.com/hashicorp/next-mdx-remote/releases/tag/3.0.0
+> **Warning**
+> Server Components and Next.js's `app` directory are unstable, and so we consider the `next-mdx-remote/rsc` API to be unstable as well. Use at your own discretion, and be aware that the API and behavior might change between minor and/or patch releases.
+
+Usage of `next-mdx-remote` within server components, and specifically within Next.js's `app` directory (beta), is supported by importing from `next-mdx-remote/rsc`. Previously, the serialization and render steps were separate, but going forward RSC makes this separation unnecessary.
+
+Some noteworthy differences:
+
+- `<MDXRemote />` now accepts a `source` prop, instead of accepting the serialized output from `next-mdx-remote/serialize`
+- Custom components can no longer be provided by using the `MDXProvider` context from `@mdx-js/react`, as RSC does not support React Context
+- To access frontmatter outside of your MDX when passing `parseFrontmatter: true`, use the `compileMdx` method exposed from `next-mdx-remote/rsc`
+- The `lazy` prop is no longer supported, as the rendering happens on the server
+- `<MDXRemote />` must be rendered on the server, as it is now an async component. Client components can be rendered as part of the MDX markup
+
+For more information on RSC, check out the [Next.js beta documentation](https://beta.nextjs.org/docs/rendering/server-and-client-components#server-components).
+
+### Examples
+
+_Assuming usage in a Next.js 13+ application using the `app` directory._
+
+#### Basic
+
+```tsx
+import { MDXRemote } from 'next-mdx-remote/rsc'
+
+// app/page.js
+export default function Home() {
+  return (
+    <MDXRemote
+      source={`
+      # Hello World
+
+      This is from Server Components!
+      `}
+    />
+  )
+}
+```
+
+#### Loading state
+
+```tsx
+import { MDXRemote } from 'next-mdx-remote/rsc'
+
+// app/page.js
+export default function Home() {
+  return (
+    // Ideally this loading spinner would ensure there is no layout shift,
+    // this is an example for how to provide such a loading spinner.
+    // In Next.js you can also use `loading.js` for this.
+    <Suspense fallback={<>Loading...</>}>
+      <MDXRemote
+        source={`
+        # Hello World
+
+        This is from Server Components!
+        `}
+      />
+    </Suspense>
+  )
+}
+```
+
+#### Custom Components
+
+```tsx
+// components/mdx-remote.js
+import { MDXRemote } from 'next-mdx-remote/rsc'
+
+const components = {
+  h1: (props) => (
+    <h1 {...props} className="large-text">
+      {props.children}
+    </h1>
+  ),
+}
+
+export function CustomMDX(props) {
+  return (
+    <MDXRemote
+      {...props}
+      components={{ ...components, ...(props.components || {}) }}
+    />
+  )
+}
+```
+
+```tsx
+// app/page.js
+import { CustomMDX } from '../components/mdx-remote'
+
+export default function Home() {
+  return (
+    <CustomMDX
+      // h1 now renders with `large-text` className
+      source={`
+      # Hello World
+      This is from Server Components!
+    `}
+    />
+  )
+}
+```
+
+#### Access Frontmatter outside of MDX
+
+```tsx
+// app/page.js
+import { compileMDX } from "next-mdx-remote/rsc";
+
+export default async function Home() {
+  const {content, frontmatter} = compileMDX({
+     source: `
+      ---
+      title: RSC Frontmatter Example
+      ---
+      # Hello World
+      This is from Server Components!
+    `
+    options: { parseFrontmatter: true }
+  })
+  return (
+    <>
+      <h1>{frontmatter.title}</h1>
+      {content}
+   </>
+  );
+}
+```
 
 ## License
 
