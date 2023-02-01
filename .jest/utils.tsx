@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 import ReactDOMServer from 'react-dom/server'
 import React from 'react'
 import { VFileCompatible } from 'vfile'
