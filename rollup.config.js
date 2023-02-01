@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 import resolve from '@rollup/plugin-node-resolve'
 import cjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
