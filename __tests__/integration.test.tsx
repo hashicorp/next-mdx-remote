@@ -133,7 +133,7 @@ createDescribe(
     })
 
     test.each(['/app-dir-mdx/mdxremote', '/app-dir-mdx/compile-mdx'])(
-      'development - RSC - %s',
+      '%s',
       async (path) => {
         const page = await browser().newPage()
         page.on('console', (msg) => console.log(msg.text()))

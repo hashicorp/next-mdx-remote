@@ -10,7 +10,10 @@ import { VFileCompatible } from 'vfile'
 import { MDXProvider } from '@mdx-js/react'
 import { serialize } from './serialize'
 
-export type MDXRemoteProps = MDXRemoteSerializeResult & {
+export type MDXRemoteProps = Omit<
+  MDXRemoteSerializeResult,
+  'compiledSource'
+> & {
   source: VFileCompatible
   options?: SerializeOptions
   /**
