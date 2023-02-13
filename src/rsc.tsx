@@ -27,12 +27,15 @@ export type MDXRemoteProps = Omit<
 
 export { MDXRemoteSerializeResult }
 
-export async function compileMDX({
+export async function compileMDX<TFrontmatter = Record<string, unknown>>({
   source,
   options,
   components = {},
 }: MDXRemoteProps) {
-  const { compiledSource, frontmatter, scope } = await serialize(
+  const { compiledSource, frontmatter, scope } = await serialize<
+    Record<string, unknown>,
+    TFrontmatter
+  >(
     source,
     options,
     // Enable RSC importSource
