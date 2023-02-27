@@ -8,6 +8,9 @@ title: 'Hello World'
 ---
 
 # Hi`,
+      options: {
+        parseFrontmatter: true,
+      },
     })
 
     expect(frontmatter?.title).toEqual('Hello World')
