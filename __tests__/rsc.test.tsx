@@ -13,9 +13,9 @@ title: 'Hello World'
       },
     })
 
-    expect(frontmatter?.title).toEqual('Hello World')
+    expect(frontmatter.title).toEqual('Hello World')
 
     // @ts-expect-error -- blah does not exist on the frontmatter type
-    expect(frontmatter?.blah).toBeUndefined()
+    expect(frontmatter.blah).toBeUndefined()
   })
 })
