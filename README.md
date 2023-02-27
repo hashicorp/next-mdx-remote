@@ -524,7 +524,7 @@ export default function Home() {
 import { compileMDX } from 'next-mdx-remote/rsc'
 
 export default async function Home() {
-  const { content, frontmatter } = compileMDX({
+  const { content, frontmatter } = await compileMDX({
     source: `---
       title: RSC Frontmatter Example
       ---
