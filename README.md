@@ -445,8 +445,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 export default function Home() {
   return (
     <MDXRemote
-      source={`
-      # Hello World
+      source={`# Hello World
 
       This is from Server Components!
       `}
@@ -468,8 +467,7 @@ export default function Home() {
     // In Next.js you can also use `loading.js` for this.
     <Suspense fallback={<>Loading...</>}>
       <MDXRemote
-        source={`
-        # Hello World
+        source={`# Hello World
 
         This is from Server Components!
         `}
@@ -511,8 +509,7 @@ export default function Home() {
   return (
     <CustomMDX
       // h1 now renders with `large-text` className
-      source={`
-      # Hello World
+      source={`# Hello World
       This is from Server Components!
     `}
     />
@@ -528,9 +525,8 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 
 export default async function Home() {
   // Optionally provide a type for your frontmatter object
-  const { content, frontmatter } = compileMDX<{ title: string }>({
-    source: `
-      ---
+  const { content, frontmatter } = await compileMDX<{ title: string }>({
+    source: `---
       title: RSC Frontmatter Example
       ---
       # Hello World
