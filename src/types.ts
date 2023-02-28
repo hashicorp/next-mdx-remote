@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { Pluggable, Compiler } from 'unified'
 import { CompileOptions } from '@mdx-js/mdx'
 
 export interface SerializeOptions {
