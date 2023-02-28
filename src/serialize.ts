@@ -38,7 +38,10 @@ function getCompileOptions(
 /**
  * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
  */
-export async function serialize(
+export async function serialize<
+  TScope = Record<string, unknown>,
+  TFrontmatter = Record<string, unknown>
+>(
   source: VFileCompatible,
   {
     scope = {},
@@ -46,7 +49,7 @@ export async function serialize(
     parseFrontmatter = false,
   }: SerializeOptions = {},
   rsc: boolean = false
-): Promise<MDXRemoteSerializeResult> {
+): Promise<MDXRemoteSerializeResult<TScope, TFrontmatter>> {
   const vfile = new VFile(source)
 
   // makes frontmatter available via vfile.data.matter
@@ -66,8 +69,7 @@ export async function serialize(
 
   return {
     compiledSource,
-    frontmatter:
-      (vfile.data.matter as Record<string, string> | undefined) ?? {},
-    scope,
+    frontmatter: (vfile.data.matter ?? {}) as TFrontmatter,
+    scope: scope as TScope,
   }
 }

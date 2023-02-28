@@ -39,9 +39,9 @@ export type MDXRemoteSerializeResult<
    * For example, in cases where you want to provide template variables to the MDX, like `my name is {name}`,
    * you could provide scope as `{ name: "Some name" }`.
    */
-  scope?: TScope
+  scope: TScope
   /**
    * If parseFrontmatter was set to true, contains any parsed frontmatter found in the MDX source.
    */
-  frontmatter?: TFrontmatter
+  frontmatter: TFrontmatter
 }

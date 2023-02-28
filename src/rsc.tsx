@@ -10,10 +10,7 @@ import { VFileCompatible } from 'vfile'
 import { MDXProvider } from '@mdx-js/react'
 import { serialize } from './serialize'
 
-export type MDXRemoteProps = Omit<
-  MDXRemoteSerializeResult,
-  'compiledSource'
-> & {
+export type MDXRemoteProps = {
   source: VFileCompatible
   options?: SerializeOptions
   /**
@@ -27,12 +24,20 @@ export type MDXRemoteProps = Omit<
 
 export { MDXRemoteSerializeResult }
 
-export async function compileMDX({
+export type CompileMDXResult<TFrontmatter = Record<string, unknown>> = {
+  content: React.ReactElement
+  frontmatter: TFrontmatter
+}
+
+export async function compileMDX<TFrontmatter = Record<string, unknown>>({
   source,
   options,
   components = {},
-}: MDXRemoteProps) {
-  const { compiledSource, frontmatter, scope } = await serialize(
+}: MDXRemoteProps): Promise<CompileMDXResult<TFrontmatter>> {
+  const { compiledSource, frontmatter, scope } = await serialize<
+    Record<string, unknown>,
+    TFrontmatter
+  >(
     source,
     options,
     // Enable RSC importSource
