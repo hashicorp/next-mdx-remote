@@ -14,6 +14,5 @@
     "declarationDir": "./dist",
     "outDir": "./dist"
   },
-  "exclude": ["__tests__"],
-  "include": ["./src", "types.d.ts"]
+  "include": ["./src", "types.d.ts", "__tests__", "global.d.ts"]
 }

@@ -30,6 +30,7 @@
     "@types/node": "^16.11.6",
     "@types/puppeteer": "^5.4.4",
     "@types/react": "^17.0.33",
+    "@types/react-dom": "^18.0.11",
     "@types/rmfr": "^2.0.1",
     "@types/serve-handler": "^6.1.1",
     "cheerio": "^1.0.0-rc.10",
@@ -41,8 +42,8 @@
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
     "puppeteer": "^10.4.0",
-    "react-dom": "^18.2.0",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "release": "^6.3.0",
     "rmfr": "^2.0.0",
     "rollup": "^2.59.0",
@@ -86,7 +87,9 @@
     "release:patch": "release patch && npm publish",
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
-    "test": "jest"
+    "test": "npm run test:types && npm run test:js",
+    "test:js": "jest",
+    "test:types": "tsc -p . --noEmit"
   },
   "types": "index.d.ts",
   "type": "module"

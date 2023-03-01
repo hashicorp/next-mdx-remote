@@ -14,6 +14,7 @@ import {
   startDevServer,
   stopDevServer,
 } from '../.jest/utils'
+import { ChildProcess } from 'child_process'
 
 jest.setTimeout(30000)
 
@@ -89,7 +90,7 @@ createDescribe(
   'hydration - dev server',
   { fixture: 'basic' },
   ({ dir, browser }) => {
-    let childProcess
+    let childProcess: ChildProcess
 
     beforeAll(async () => {
       childProcess = await startDevServer(dir())
@@ -121,7 +122,7 @@ createDescribe(
   'hydration - dev server - rsc',
   { fixture: 'rsc' },
   ({ dir, browser }) => {
-    let childProcess
+    let childProcess: ChildProcess
 
     beforeAll(async () => {
       childProcess = await startDevServer(dir())

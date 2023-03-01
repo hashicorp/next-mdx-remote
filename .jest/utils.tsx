@@ -25,10 +25,10 @@ export async function renderStatic(
   mdx: VFileCompatible,
   {
     components,
-    scope,
+    scope = {},
     mdxOptions,
     parseFrontmatter,
-  }: SerializeOptions & Pick<MDXRemoteProps, 'components'> = {}
+  }: Partial<SerializeOptions & Pick<MDXRemoteProps, 'components'>> = {}
 ): Promise<string> {
   const mdxSource = await serialize(mdx, {
     mdxOptions,
@@ -55,7 +55,7 @@ export async function getPathToPackedPackage() {
 
 // Create a temporary directory from one of our fixtures to run isolated tests in
 // Handles installing the locally-packed next-mdx-remote
-export async function createTmpTestDir(fixture) {
+export async function createTmpTestDir(fixture: string) {
   const tmpDir = await fs.promises.mkdtemp(
     path.join(os.tmpdir(), `next-mdx-remote-${fixture}-`)
   )
@@ -93,8 +93,8 @@ export function createDescribe(
   fn: ({ dir }: { dir: () => string; browser: () => Browser }) => void
 ): void {
   describe(name, () => {
-    let tmpDir
-    let browser
+    let tmpDir: string
+    let browser: Browser
 
     beforeAll(async () => {
       tmpDir = await createTmpTestDir(options.fixture)
@@ -187,7 +187,7 @@ export function readOutputFile(dir: string, name: string) {
 
 // Serves the out directory relative to the provided dir on port 1235
 // TODO: we should just use next start
-export function serveStatic(dir): Promise<Server> {
+export function serveStatic(dir: string): Promise<Server> {
   return new Promise((resolve) => {
     const server = http.createServer((req, res) =>
       handler(req, res, {

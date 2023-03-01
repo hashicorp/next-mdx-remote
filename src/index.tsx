@@ -29,7 +29,10 @@ declare global {
   }
 }
 
-export type MDXRemoteProps = MDXRemoteSerializeResult & {
+export type MDXRemoteProps<
+  TScope = Record<string, unknown>,
+  TFrontmatter = Record<string, unknown>
+> = MDXRemoteSerializeResult<TScope, TFrontmatter> & {
   /**
    * A object mapping names to React components.
    * The key used will be the name accessible to MDX.
@@ -48,13 +51,13 @@ export { MDXRemoteSerializeResult }
 /**
  * Renders compiled source from next-mdx-remote/serialize.
  */
-export function MDXRemote({
+export function MDXRemote<TScope, TFrontmatter>({
   compiledSource,
   frontmatter,
   scope,
   components = {},
   lazy,
-}: MDXRemoteProps) {
+}: MDXRemoteProps<TScope, TFrontmatter>) {
   const [isReadyToRender, setIsReadyToRender] = useState(
     !lazy || typeof window === 'undefined'
   )
