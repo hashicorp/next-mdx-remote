@@ -13,6 +13,10 @@ import { MDXRemote } from '../'
 import { serialize } from '../serialize'
 import { renderStatic } from '../.jest/utils'
 
+interface Frontmatter {
+  hello: string
+}
+
 describe('serialize', () => {
   test('minimal', async () => {
     const result = await renderStatic('foo **bar**')
@@ -22,7 +26,7 @@ describe('serialize', () => {
   test('with component', async () => {
     const result = await renderStatic('foo <Test name="test" />', {
       components: {
-        Test: ({ name }) => <span>hello {name}</span>,
+        Test: ({ name }: { name: string }) => <span>hello {name}</span>,
       },
     })
     expect(result).toMatchInlineSnapshot(`"<p>foo <span>hello test</span></p>"`)
@@ -118,7 +122,7 @@ export const bar = 'bar'`)
 
   test('fragments', async () => {
     const components = {
-      Test: ({ content }) => content,
+      Test: ({ content }: { content: string }) => <>{content}</>,
     }
 
     const result = await renderStatic(
@@ -129,6 +133,22 @@ export const bar = 'bar'`)
   })
 
   test('parses frontmatter - serialize result', async () => {
+    const result = await serialize<Record<string, unknown>, Frontmatter>(
+      `---
+hello: world
+---
+
+# Hello`,
+      { parseFrontmatter: true }
+    )
+
+    // Validating type correctness here, this should not error
+    expect(<MDXRemote {...result} />).toBeTruthy()
+
+    expect(result.frontmatter?.hello).toEqual('world')
+  })
+
+  test('parses frontmatter - serialize result - no types', async () => {
     const result = await serialize(
       `---
 hello: world
@@ -137,6 +157,9 @@ hello: world
 # Hello`,
       { parseFrontmatter: true }
     )
+
+    // Validating type correctness here, this should not error
+    expect(<MDXRemote {...result} />).toBeTruthy()
 
     expect(result.frontmatter?.hello).toEqual('world')
   })

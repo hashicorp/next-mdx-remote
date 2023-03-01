@@ -6,3 +6,4 @@ babel.config.js
 src
 .circleci
 *.tgz
+global.d.ts
