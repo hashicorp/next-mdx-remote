@@ -87,7 +87,9 @@
     "release:patch": "release patch && npm publish",
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
-    "test": "jest"
+    "test": "npm run test:types && npm run test:js",
+    "test:js": "jest",
+    "test:types": "tsc -p . --noEmit"
   },
   "types": "index.d.ts",
   "type": "module"

@@ -25,7 +25,7 @@ export async function renderStatic(
   mdx: VFileCompatible,
   {
     components,
-    scope,
+    scope = {},
     mdxOptions,
     parseFrontmatter,
   }: Partial<SerializeOptions & Pick<MDXRemoteProps, 'components'>> = {}
