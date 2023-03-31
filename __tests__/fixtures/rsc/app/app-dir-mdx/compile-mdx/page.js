@@ -12,6 +12,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 const MDX_COMPONENTS = {
   Test,
   strong: (props) => <strong className="custom-strong" {...props} />,
+  h1: async (props) => <h1 {...props} />,
   Dynamic: dynamic(() => import('../../../components/dynamic')),
 }
 

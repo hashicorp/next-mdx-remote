@@ -7,8 +7,40 @@ import React from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
 import { VFileCompatible } from 'vfile'
-import { MDXProvider } from '@mdx-js/react'
 import { serialize } from './serialize'
+
+type FunctionComponent<Props> = (props: Props) => JSX.Element | null
+type AsyncFunctionComponent<Props> = (
+  props: Props
+) => Promise<JSX.Element | null>
+
+// Class components are not allowed in RSCs, but are allowed in client
+// components. Hence we still accept it here. If the user forgets to configure
+// the class component in a `"use client"` file, they will get a build error.
+type ClassComponent<Props> = new (props: Props) => JSX.ElementClass
+
+type Component<Props> =
+  | FunctionComponent<Props>
+  | AsyncFunctionComponent<Props>
+  | ClassComponent<Props>
+
+interface NestedMDXComponents {
+  [key: string]:
+    | NestedMDXComponents
+    | Component<any>
+    | keyof JSX.IntrinsicElements
+}
+
+type MDXComponents = NestedMDXComponents & {
+  [Key in keyof JSX.IntrinsicElements]?:
+    | Component<JSX.IntrinsicElements[Key]>
+    | keyof JSX.IntrinsicElements
+} & {
+  /**
+   * If a wrapper component is defined, the MDX content will be wrapped inside of it.
+   */
+  wrapper?: Component<any>
+}
 
 export type MDXRemoteProps = {
   source: VFileCompatible
@@ -19,7 +51,7 @@ export type MDXRemoteProps = {
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
    */
-  components?: React.ComponentProps<typeof MDXProvider>['components']
+  components?: MDXComponents | undefined
 }
 
 export { MDXRemoteSerializeResult }
