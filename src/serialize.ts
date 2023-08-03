@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { compile, CompileOptions } from '@mdx-js/mdx'
+import { compile, compileSync, CompileOptions } from '@mdx-js/mdx'
 import { VFile, VFileCompatible } from 'vfile'
 import { matter } from 'vfile-matter'
 
@@ -32,6 +32,45 @@ function getCompileOptions(
     outputFormat: 'function-body',
     // Disable the importSource option for RSC to ensure there's no `useMDXComponents` implemented.
     providerImportSource: rsc ? undefined : '@mdx-js/react',
+  }
+}
+
+/**
+ * Parses and compiles the provided MDX string. Returns a result which can be passed into <MDXRemote /> to be rendered.
+ */
+export function serializeSync<
+  TScope = Record<string, unknown>,
+  TFrontmatter = Record<string, unknown>
+>(
+  source: VFileCompatible,
+  {
+    scope = {},
+    mdxOptions = {},
+    parseFrontmatter = false,
+  }: SerializeOptions = {},
+  rsc: boolean = false
+): MDXRemoteSerializeResult<TScope, TFrontmatter> {
+  const vfile = new VFile(source)
+
+  // makes frontmatter available via vfile.data.matter
+  if (parseFrontmatter) {
+    matter(vfile, { strip: true })
+  }
+
+  let compiledMdx: VFile
+
+  try {
+    compiledMdx = compileSync(vfile, getCompileOptions(mdxOptions, rsc))
+  } catch (error: any) {
+    throw createFormattedMDXError(error, String(vfile))
+  }
+
+  let compiledSource = String(compiledMdx)
+
+  return {
+    compiledSource,
+    frontmatter: (vfile.data.matter ?? {}) as TFrontmatter,
+    scope: scope as TScope,
   }
 }
 
