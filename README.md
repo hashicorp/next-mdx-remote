@@ -54,6 +54,55 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 ### Additional Examples
 
+
+
+<details>
+  <summary>Using Nextjs App dir and Server Components</summary>
+
+```jsx
+// app/posts/[slug]/page.js
+import Post from "@/app/posts/[slug]/Post";
+import { db } from "@/lib/database";
+import { serialize } from "next-mdx-remote/serialize";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import React from "react";
+
+export default async function PostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const post = await db.selectFrom("posts")...
+  if (!post) {
+    notFound();
+  }
+  const mdxSource = await serialize(post.body);
+
+  return (
+    <div>
+      <h1>{post.title}</h1>
+      <Post source={mdxSource} />
+    </div>
+  );
+}
+
+```
+
+```jsx
+// app/posts/[slug]/page.js
+"use client";
+import React from "react";
+import { MDXRemote } from "next-mdx-remote";
+
+export default function Post(props: { source: any }) {
+  return <MDXRemote {...props.source} />;
+}
+
+```
+
+</details>
+
 <details>
   <summary>Parsing Frontmatter</summary>
 
