@@ -62,28 +62,14 @@ While it may seem strange to see these two in the same file, this is one of the 
 ```jsx
 // app/posts/[slug]/page.js
 import Post from "@/app/posts/[slug]/Post";
-import { db } from "@/lib/database";
 import { serialize } from "next-mdx-remote/serialize";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import React from "react";
 
-export default async function PostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const post = await db.selectFrom("posts")...
-  if (!post) {
-    notFound();
-  }
-  const mdxSource = await serialize(post.body);
+export default async function TestPage() {
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source);
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <Post source={mdxSource} />
-    </div>
+    <Post source={mdxSource} />
   );
 }
 
