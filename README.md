@@ -543,6 +543,40 @@ export default async function Home() {
 }
 ```
 
+## Get TOC _(Table of Contents)_
+
+```tsx
+import { compileMDX } from 'next-mdx-remote/rsc'
+
+const TocTrail = ({ tocData }) => (
+  <div>
+    {tocData.map((item) => (
+      <div key={item.id}>
+        <a href={`#${item.id}`}>{item.text}</a>
+        {item.children && <TocTrail tocData={item.children} />}
+      </div>
+    ))}
+  </div>
+)
+
+
+export default async function Home() {
+  // Optionally provide a type for your frontmatter object
+  const { content, tocData } = await compileMDX({
+  source: `# heading 1
+    This is from Server Components!
+    ## heading 2`,
+  options: { parseToc: true },
+})
+  return (
+    <>
+      <TocTrail tocData={tocData} />
+      {content}
+    </>
+  )
+}
+```
+
 ## License
 
 [Mozilla Public License Version 2.0](./LICENSE)
