@@ -55,6 +55,46 @@ While it may seem strange to see these two in the same file, this is one of the 
 ### Additional Examples
 
 <details>
+  <summary>Serialize Sync</summary>
+
+You can also use the sync function `serializeSync`
+
+Here's what that looks like:
+
+```jsx
+import { serializeSync } from 'next-mdx-remote/serialize'
+import { MDXRemote } from 'next-mdx-remote'
+
+import Test from '../components/test'
+
+const components = { Test }
+
+export default function TestPage({ mdxSource }) {
+  return (
+    <div className="wrapper">
+      <h1>{mdxSource.frontmatter.title}</h1>
+      <MDXRemote {...mdxSource} components={components} />
+    </div>
+  )
+}
+
+export function getStaticProps() {
+  // MDX text - can be from a local file, database, anywhere
+  const source = `---
+title: Test
+---
+
+Some **mdx** text, with a component <Test name={title}/>
+  `
+
+  const mdxSource = serializeSync(source, { parseFrontmatter: true })
+  return { props: { mdxSource } }
+}
+```
+
+</details>
+
+<details>
   <summary>Parsing Frontmatter</summary>
 
 Markdown in general is often paired with frontmatter, and normally this means adding some extra custom processing to the way markdown is handled. To address this, `next-mdx-remote` comes with optional parsing of frontmatter, which can be enabled by passing `parseFrontmatter: true` to `serialize`.
