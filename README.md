@@ -84,7 +84,7 @@ export async function getStaticProps() {
 title: Test
 ---
 
-Some **mdx** text, with a component <Test name={title}/>
+Some **mdx** text, with a component <Test name={frontmatter.title}/>
   `
 
   const mdxSource = await serialize(source, { parseFrontmatter: true })
