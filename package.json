@@ -11,6 +11,17 @@
     "./serialize": "./serialize.js",
     "./rsc": "./rsc.js"
   },
+  "files": [
+    "dist/*",
+    "index.d.ts",
+    "index.js",
+    "LICENSE",
+    "README.md",
+    "rsc.d.ts",
+    "rsc.js",
+    "serialize.d.ts",
+    "serialize.js"
+  ]
   "dependencies": {
     "@mdx-js/mdx": "^2.2.1",
     "@mdx-js/react": "^2.2.1",
