@@ -6,3 +6,4 @@ examples/*/package-lock.json
 examples/*/.next
 dist/
 *.tgz
+.idea/
