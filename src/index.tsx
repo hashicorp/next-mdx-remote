@@ -93,7 +93,7 @@ export function MDXRemote<TScope, TFrontmatter>({
     // function with the actual values.
     const hydrateFn = Reflect.construct(
       Function,
-      keys.concat(`${compiledSource}`)
+      keys.concat(compiledSource)
     )
 
     return hydrateFn.apply(hydrateFn, values).default
