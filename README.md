@@ -418,9 +418,9 @@ export const getStaticProps: GetStaticProps<{
 ## React Server Components (RSC) & Next.js `app` Directory Support
 
 > **Warning**
-> Server Components and Next.js's `app` directory are unstable, and so we consider the `next-mdx-remote/rsc` API to be unstable as well. Use at your own discretion, and be aware that the API and behavior might change between minor and/or patch releases.
+> We consider the `next-mdx-remote/rsc` API to be unstable. Use at your own discretion, and be aware that the API and behavior might change between minor and/or patch releases.
 
-Usage of `next-mdx-remote` within server components, and specifically within Next.js's `app` directory (beta), is supported by importing from `next-mdx-remote/rsc`. Previously, the serialization and render steps were separate, but going forward RSC makes this separation unnecessary.
+Usage of `next-mdx-remote` within server components, and specifically within Next.js's `app` directory, is supported by importing from `next-mdx-remote/rsc`. Previously, the serialization and render steps were separate, but going forward RSC makes this separation unnecessary.
 
 Some noteworthy differences:
 
@@ -430,7 +430,7 @@ Some noteworthy differences:
 - The `lazy` prop is no longer supported, as the rendering happens on the server
 - `<MDXRemote />` must be rendered on the server, as it is now an async component. Client components can be rendered as part of the MDX markup
 
-For more information on RSC, check out the [Next.js beta documentation](https://beta.nextjs.org/docs/rendering/server-and-client-components#server-components).
+For more information on RSC, check out the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/rendering/server-components).
 
 ### Examples
 
