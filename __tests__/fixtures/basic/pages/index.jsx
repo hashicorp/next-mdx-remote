@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic'
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote } from 'next-mdx-remote'
 import Test from '../components/test'
-import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
+import emoji from 'remark-emoji'
 
 const TestContext = createContext('test')
 const PROVIDER = {
@@ -58,7 +58,7 @@ export async function getStaticProps() {
   const source = await fs.promises.readFile(fixturePath, 'utf8')
 
   const mdxSource = await serialize(source, {
-    mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
+    mdxOptions: { remarkPlugins: [emoji] },
     parseFrontmatter: true,
   })
 

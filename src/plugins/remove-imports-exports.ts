@@ -4,11 +4,11 @@
  */
 
 import { remove } from 'unist-util-remove'
-import { Plugin } from 'unified'
+import { Node } from 'unist'
 
 /**
  * remark plugin which removes all import and export statements
  */
-export function removeImportsExportsPlugin(): Plugin {
-  return (tree) => remove(tree, 'mdxjsEsm')
+export function removeImportsExportsPlugin() {
+  return (tree: Node) => remove(tree, 'mdxjsEsm')
 }

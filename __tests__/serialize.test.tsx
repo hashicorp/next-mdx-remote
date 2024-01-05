@@ -5,13 +5,14 @@
 
 import * as React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
+import emoji from 'remark-emoji'
 
 import { MDXRemote } from '../'
 import { serialize } from '../serialize'
 import { renderStatic } from '../.jest/utils'
+import { describe, expect, test } from 'vitest'
 
 interface Frontmatter {
   hello: string
@@ -35,13 +36,11 @@ describe('serialize', () => {
   test('with options', async () => {
     const options = {
       mdxOptions: {
-        remarkPlugins: [paragraphCustomAlerts],
+        remarkPlugins: [emoji],
       },
     }
-    const result = await renderStatic('~> hello', options)
-    expect(result).toMatchInlineSnapshot(
-      `"<div class=\\"alert alert-warning g-type-body\\"><p>hello</p></div>"`
-    )
+    const result = await renderStatic(':tada:', options)
+    expect(result).toMatchInlineSnapshot(`"<p>🎉</p>"`)
     expect(options.mdxOptions.remarkPlugins.length).toBe(1)
   })
 
@@ -186,7 +185,7 @@ hello: world
         Expected a closing tag for \`<GITHUB_USER>\` (1:18-1:31) before the end of \`paragraph\`
 
         > 1 | This is very bad <GITHUB_USER>
-            | ^
+            |                  ^
 
         More information: https://mdxjs.com/docs/troubleshooting-mdx]
       `)

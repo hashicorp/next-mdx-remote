@@ -12,18 +12,17 @@ import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
 
 // types
 import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import { PluggableList } from '@mdx-js/mdx/lib/core'
 
 function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},
   rsc: boolean = false
 ): CompileOptions {
-  const areImportsEnabled = mdxOptions?.useDynamicImport
-
   // don't modify the original object when adding our own plugin
   // this allows code to reuse the same options object
-  const remarkPlugins = [
+  const remarkPlugins: PluggableList = [
     ...(mdxOptions.remarkPlugins || []),
-    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
+    ...[removeImportsExportsPlugin],
   ]
 
   return {

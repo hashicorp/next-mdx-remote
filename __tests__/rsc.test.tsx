@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
+import { describe, expect, test } from 'vitest'
 import { compileMDX } from '../rsc'
 
 describe('compileMDX', () => {

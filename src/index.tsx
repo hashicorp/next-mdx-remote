@@ -79,10 +79,18 @@ export function MDXRemote<TScope, TFrontmatter>({
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
     const fullScope = Object.assign(
-      { opts: { ...mdx, ...jsxRuntime } },
+      {
+        opts: {
+          ...mdx,
+          ...jsxRuntime,
+          jsxs: (jsxRuntime as any).jsxs || (jsxRuntime as any).jsxDEV,
+          jsx: (jsxRuntime as any).jsx || (jsxRuntime as any).jsxDEV,
+        },
+      },
       { frontmatter },
       scope
     )
+
     const keys = Object.keys(fullScope)
     const values = Object.values(fullScope)
 
