@@ -5,10 +5,11 @@
 
 import { remove } from 'unist-util-remove'
 import { Plugin } from 'unified'
+import { Root } from 'mdast'
 
 /**
  * remark plugin which removes all import and export statements
  */
-export function removeImportsExportsPlugin(): Plugin {
+export const removeImportsExportsPlugin: Plugin<[], Root> = () => {
   return (tree) => remove(tree, 'mdxjsEsm')
 }

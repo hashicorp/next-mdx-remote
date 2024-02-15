@@ -13,7 +13,6 @@ import http from 'http'
 import spawn from 'cross-spawn'
 import { ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
-import puppeteer, { Browser } from 'puppeteer'
 import { Server } from 'http'
 import handler from 'serve-handler'
 
@@ -73,8 +72,6 @@ export async function createTmpTestDir(fixture: string) {
   // install locally packed package
   const pathToPackedPackage = await getPathToPackedPackage()
 
-  console.log('installing dependencies in test directory')
-
   spawn.sync('npm', ['install', pathToPackedPackage], {
     cwd: tmpDir,
   })
@@ -82,44 +79,13 @@ export async function createTmpTestDir(fixture: string) {
   return tmpDir
 }
 
-async function cleanupTmpTestDir(tmpDir: string) {
+export async function cleanupTmpTestDir(tmpDir: string) {
   await fs.promises.rm(tmpDir, { recursive: true, force: true })
 }
 
-// Handles creating an isolated test dir from one of the fixtures in __tests__/fixtures/
-export function createDescribe(
-  name: string,
-  options: { fixture: string },
-  fn: ({ dir }: { dir: () => string; browser: () => Browser }) => void
-): void {
-  describe(name, () => {
-    let tmpDir: string
-    let browser: Browser
-
-    beforeAll(async () => {
-      tmpDir = await createTmpTestDir(options.fixture)
-      browser = await puppeteer.launch()
-    })
-
-    fn({
-      dir() {
-        return tmpDir
-      },
-      browser() {
-        return browser
-      },
-    })
-
-    afterAll(async () => {
-      await browser.close()
-      await cleanupTmpTestDir(tmpDir)
-    })
-  })
-}
-
-// Starts a next dev server from the given directory on port 12333
-export async function startDevServer(dir: string) {
-  const childProcess = spawn('npx', ['next', 'dev', '-p', '12333'], {
+// Starts a next dev server from the given directory on the given port
+export async function startDevServer(dir: string, port: string) {
+  const childProcess = spawn('npx', ['next', 'dev', '-p', port], {
     stdio: ['ignore', 'pipe', 'pipe'],
     cwd: dir,
     env: { ...process.env, NODE_ENV: 'development', __NEXT_TEST_MODE: 'true' },
@@ -135,7 +101,7 @@ export async function startDevServer(dir: string) {
         const msg = chunk.toString()
         process.stdout.write(chunk)
 
-        if (msg.includes('started server on') && msg.includes('url:')) {
+        if (msg.includes('Ready in ')) {
           resolve(undefined)
         }
       })

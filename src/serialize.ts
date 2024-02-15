@@ -17,13 +17,11 @@ function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},
   rsc: boolean = false
 ): CompileOptions {
-  const areImportsEnabled = mdxOptions?.useDynamicImport
-
   // don't modify the original object when adding our own plugin
   // this allows code to reuse the same options object
   const remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
-    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
+    ...[removeImportsExportsPlugin],
   ]
 
   return {
@@ -32,6 +30,7 @@ function getCompileOptions(
     outputFormat: 'function-body',
     // Disable the importSource option for RSC to ensure there's no `useMDXComponents` implemented.
     providerImportSource: rsc ? undefined : '@mdx-js/react',
+    development: process.env.NODE_ENV === 'development',
   }
 }
 

@@ -12,10 +12,10 @@
     "./rsc": "./rsc.js"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^2.2.1",
-    "@mdx-js/react": "^2.2.1",
-    "vfile": "^5.3.0",
-    "vfile-matter": "^3.0.1"
+    "@mdx-js/mdx": "^3.0.0",
+    "@mdx-js/react": "^3.0.0",
+    "vfile": "^6.0.0",
+    "vfile-matter": "^5.0.0"
   },
   "devDependencies": {
     "@babel/code-frame": "^7.16.0",
@@ -26,18 +26,16 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/babel__code-frame": "^7.0.3",
     "@types/cross-spawn": "^6.0.2",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.6",
+    "@types/node": "^18.0.0",
     "@types/puppeteer": "^5.4.4",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^18.0.11",
     "@types/rmfr": "^2.0.1",
     "@types/serve-handler": "^6.1.1",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "cheerio": "^1.0.0-rc.10",
     "cross-spawn": "^7.0.3",
-    "esbuild-jest": "^0.5.0",
     "husky": "^4.3.6",
-    "jest": "^27.3.1",
     "next": "^13.1.2",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
@@ -50,8 +48,9 @@
     "serve-handler": "^6.1.3",
     "tree-kill": "^1.2.2",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.4",
-    "unist-util-remove": "^3.1.0"
+    "typescript": "^4.9.5",
+    "unist-util-remove": "^4.0.0",
+    "vitest": "^1.2.2"
   },
   "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
   "husky": {
@@ -71,7 +70,7 @@
     "react-dom": ">=16.x <=18.x"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "npm": ">=7"
   },
   "repository": {
@@ -88,7 +87,7 @@
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
     "test": "npm run test:types && npm run test:js",
-    "test:js": "jest",
+    "test:js": "vitest",
     "test:types": "tsc -p . --noEmit"
   },
   "types": "index.d.ts",
