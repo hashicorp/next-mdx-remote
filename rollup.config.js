@@ -21,7 +21,7 @@ export default [
       'react',
       '@mdx-js/react',
       'react/jsx-runtime',
-      './jsx-runtime.cjs',
+      './jsx-runtime.mjs',
     ],
     plugins: [
       ts({
@@ -53,7 +53,7 @@ export default [
       'react',
       '@mdx-js/react',
       'react/jsx-runtime',
-      './jsx-runtime.cjs',
+      './jsx-runtime.mjs',
       '@mdx-js/mdx',
       'vfile',
       'vfile-matter',

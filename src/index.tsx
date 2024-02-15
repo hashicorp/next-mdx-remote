@@ -5,7 +5,7 @@
 
 import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
-import { jsxRuntime } from './jsx-runtime.cjs'
+import { jsxRuntime } from './jsx-runtime.mjs'
 import * as mdx from '@mdx-js/react'
 import { MDXRemoteSerializeResult } from './types'
 

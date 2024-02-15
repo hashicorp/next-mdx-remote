@@ -79,7 +79,7 @@
   },
   "scripts": {
     "build": "rm -rf ./dist && rollup -c rollup.config.js",
-    "postbuild": "cp ./src/jsx-runtime.cjs dist",
+    "postbuild": "cp ./src/jsx-runtime.mjs dist",
     "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
