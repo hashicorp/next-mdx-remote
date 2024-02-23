@@ -135,7 +135,7 @@ export async function startDevServer(dir: string) {
         const msg = chunk.toString()
         process.stdout.write(chunk)
 
-        if (msg.includes('started server on') && msg.includes('url:')) {
+        if (msg.includes('Ready in')) {
           resolve(undefined)
         }
       })
