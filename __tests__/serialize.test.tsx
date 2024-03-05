@@ -9,8 +9,8 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
-import { MDXRemote } from '../'
-import { serialize } from '../serialize'
+import { MDXRemote } from '../src'
+import { serialize } from '../src/serialize'
 import { renderStatic } from '../.jest/utils'
 
 interface Frontmatter {

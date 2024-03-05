@@ -7,9 +7,18 @@
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
   },
   "exports": {
-    ".": "./index.js",
-    "./serialize": "./serialize.js",
-    "./rsc": "./rsc.js"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./serialize": {
+      "import": "./dist/serialize.js",
+      "require": "./dist/serialize.cjs"
+    },
+    "./rsc": {
+      "import": "./dist/rsc.js",
+      "require": "./dist/rsc.cjs"
+    }
   },
   "dependencies": {
     "@mdx-js/mdx": "^2.2.1",
@@ -91,6 +100,5 @@
     "test:js": "jest",
     "test:types": "tsc -p . --noEmit"
   },
-  "types": "index.d.ts",
-  "type": "module"
+  "types": "index.d.ts"
 }

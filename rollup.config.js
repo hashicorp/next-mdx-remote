@@ -90,4 +90,83 @@ export default [
       cjs(),
     ],
   },
+
+  // --- CommonJS ---
+  {
+    input: './src/index.tsx',
+    output: {
+      format: 'cjs',
+      file: './dist/index.cjs',
+    },
+    external: [
+      'react',
+      '@mdx-js/react',
+      'react/jsx-runtime',
+      './jsx-runtime.cjs',
+    ],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: false,
+        exclude: ['./__tests__/**/*'],
+      }),
+      resolve(),
+      {
+        // ensure that the requestIdleCallback polyfill file is marked as having
+        // side-effects so that it gets bundled
+        name: 'ensure-idle-callback-polyfill',
+        transform(code, id) {
+          if (id.includes('idle-callback-polyfill.js')) {
+            return { code, moduleSideEffects: true }
+          }
+        },
+      },
+    ],
+  },
+  {
+    input: './src/rsc.tsx',
+    output: {
+      format: 'cjs',
+      file: './dist/rsc.cjs',
+    },
+    external: [
+      'react',
+      '@mdx-js/react',
+      'react/jsx-runtime',
+      './jsx-runtime.cjs',
+      '@mdx-js/mdx',
+      'vfile',
+      'vfile-matter',
+    ],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: false,
+        declarationDir: './dist',
+        exclude: ['./__tests__/**/*'],
+      }),
+      json(),
+      resolve(),
+      cjs(),
+    ],
+  },
+  {
+    input: './src/serialize.ts',
+    output: {
+      format: 'cjs',
+      file: './dist/serialize.cjs',
+    },
+    external: ['@mdx-js/mdx', 'vfile', 'vfile-matter'],
+    plugins: [
+      ts({
+        tsconfig: './tsconfig.json',
+        declaration: false,
+        declarationDir: './dist',
+        exclude: ['./__tests__/**/*'],
+      }),
+      json(),
+      resolve(),
+      cjs(),
+    ],
+  },
 ]
