@@ -10,6 +10,7 @@ import ts from '@rollup/plugin-typescript'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
+/** @type {import('rollup').RollupOptions[]} */
 export default [
   {
     input: './src/index.tsx',
