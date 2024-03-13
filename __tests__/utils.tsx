@@ -6,21 +6,22 @@
 import ReactDOMServer from 'react-dom/server'
 import React from 'react'
 import { VFileCompatible } from 'vfile'
-import fs from 'fs'
+import { readFile, mkdtemp, cp, rm } from 'node:fs/promises'
 import os from 'os'
 import path from 'path'
 import http from 'http'
+import { fileURLToPath } from 'url'
 import spawn from 'cross-spawn'
 import { ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
-import puppeteer, { Browser } from 'puppeteer'
 import { Server } from 'http'
 import handler from 'serve-handler'
 
 import { MDXRemote, MDXRemoteProps } from '../src/index'
 import { serialize } from '../src/serialize'
 import { SerializeOptions } from '../src/types'
-import __dirname from './dirname.cjs'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export async function renderStatic(
   mdx: VFileCompatible,
@@ -43,10 +44,7 @@ export async function renderStatic(
 
 export async function getPathToPackedPackage() {
   const packageJson = JSON.parse(
-    await fs.promises.readFile(
-      path.join(__dirname, '..', 'package.json'),
-      'utf-8'
-    )
+    await readFile(path.join(__dirname, '..', 'package.json'), 'utf-8')
   )
 
   const filename = `${packageJson.name}-${packageJson.version}.tgz`
@@ -57,7 +55,7 @@ export async function getPathToPackedPackage() {
 // Create a temporary directory from one of our fixtures to run isolated tests in
 // Handles installing the locally-packed next-mdx-remote
 export async function createTmpTestDir(fixture: string) {
-  const tmpDir = await fs.promises.mkdtemp(
+  const tmpDir = await mkdtemp(
     path.join(os.tmpdir(), `next-mdx-remote-${fixture}-`)
   )
 
@@ -69,12 +67,10 @@ export async function createTmpTestDir(fixture: string) {
     fixture
   )
 
-  await fs.promises.cp(pathToFixture, tmpDir, { recursive: true })
+  await cp(pathToFixture, tmpDir, { recursive: true })
 
   // install locally packed package
   const pathToPackedPackage = await getPathToPackedPackage()
-
-  console.log('installing dependencies in test directory')
 
   spawn.sync('npm', ['install', pathToPackedPackage], {
     cwd: tmpDir,
@@ -83,39 +79,8 @@ export async function createTmpTestDir(fixture: string) {
   return tmpDir
 }
 
-async function cleanupTmpTestDir(tmpDir: string) {
-  await fs.promises.rm(tmpDir, { recursive: true, force: true })
-}
-
-// Handles creating an isolated test dir from one of the fixtures in __tests__/fixtures/
-export function createDescribe(
-  name: string,
-  options: { fixture: string },
-  fn: ({ dir }: { dir: () => string; browser: () => Browser }) => void
-): void {
-  describe(name, () => {
-    let tmpDir: string
-    let browser: Browser
-
-    beforeAll(async () => {
-      tmpDir = await createTmpTestDir(options.fixture)
-      browser = await puppeteer.launch()
-    })
-
-    fn({
-      dir() {
-        return tmpDir
-      },
-      browser() {
-        return browser
-      },
-    })
-
-    afterAll(async () => {
-      await browser.close()
-      await cleanupTmpTestDir(tmpDir)
-    })
-  })
+export async function cleanupTmpTestDir(tmpDir: string) {
+  await rm(tmpDir, { recursive: true, force: true })
 }
 
 // Starts a next dev server from the given directory on port 12333
@@ -169,6 +134,9 @@ export async function stopDevServer(childProcess: ChildProcess) {
 
 // Runs next build and next export in the provided directory
 export function buildFixture(dir: string) {
+  if (!dir) {
+    throw new Error('dir is required')
+  }
   spawn.sync('npx', ['next', 'build'], {
     stdio: 'inherit',
     cwd: dir,
@@ -182,8 +150,8 @@ export function buildFixture(dir: string) {
 }
 
 // Helper to read an html file in the out directory relative to the provided dir
-export function readOutputFile(dir: string, name: string) {
-  return fs.readFileSync(path.join(dir, 'out', `${name}.html`), 'utf8')
+export async function readOutputFile(dir: string, name: string) {
+  return readFile(path.join(dir, 'out', `${name}.html`), 'utf8')
 }
 
 // Serves the out directory relative to the provided dir on port 1235

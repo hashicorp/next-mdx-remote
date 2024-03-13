@@ -11,7 +11,9 @@ import { VFile } from 'vfile'
 
 import { MDXRemote } from '../'
 import { serialize } from '../serialize'
-import { renderStatic } from '../.jest/utils'
+import { renderStatic } from './utils'
+
+import { describe, test, expect } from 'vitest'
 
 interface Frontmatter {
   hello: string
