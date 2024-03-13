@@ -20,6 +20,7 @@ import handler from 'serve-handler'
 import { MDXRemote, MDXRemoteProps } from '../src/index'
 import { serialize } from '../src/serialize'
 import { SerializeOptions } from '../src/types'
+import __dirname from './dirname.cjs'
 
 export async function renderStatic(
   mdx: VFileCompatible,

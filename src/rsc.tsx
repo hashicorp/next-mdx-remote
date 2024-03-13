@@ -5,7 +5,7 @@
 
 import React from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
-import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types'
 import { VFileCompatible } from 'vfile'
 import { MDXProvider } from '@mdx-js/react'
 import { serialize } from './serialize'
