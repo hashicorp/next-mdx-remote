@@ -7,11 +7,11 @@ import { compile, CompileOptions } from '@mdx-js/mdx'
 import { VFile, VFileCompatible } from 'vfile'
 import { matter } from 'vfile-matter'
 
-import { createFormattedMDXError } from './format-mdx-error'
-import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
+import { createFormattedMDXError } from './format-mdx-error.js'
+import { removeImportsExportsPlugin } from './plugins/remove-imports-exports.js'
 
 // types
-import type { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types.js'
 
 function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},

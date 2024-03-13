@@ -7,7 +7,7 @@ import './idle-callback-polyfill'
 import React, { useEffect, useState, useMemo } from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
 import * as mdx from '@mdx-js/react'
-import type { MDXRemoteSerializeResult } from './types'
+import type { MDXRemoteSerializeResult } from './types.js'
 
 // requestIdleCallback types found here: https://github.com/microsoft/TypeScript/issues/21309
 type RequestIdleCallbackHandle = number
