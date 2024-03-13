@@ -12,6 +12,7 @@
     "./rsc": "./rsc.js"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.23.5",
     "@mdx-js/mdx": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "unist-util-remove": "^3.1.0",
@@ -23,7 +24,6 @@
     "react-dom": ">=16.x <=18.x"
   },
   "devDependencies": {
-    "@babel/code-frame": "^7.23.5",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
     "@hashicorp/remark-plugins": "^3.2.1",
