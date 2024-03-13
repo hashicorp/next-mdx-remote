@@ -1,0 +1,76 @@
+name: Canary Release
+
+on:
+  workflow_call:
+    secrets:
+      CHANGESETS_PAT:
+        required: true
+      NPM_TOKEN:
+        required: true
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+
+jobs:
+  release-canary:
+    name: Release Canary
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'release:canary')
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 18.x
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Version
+        run: npx changeset version --snapshot canary
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_PAT }}
+
+      - name: Publish Canary Packages
+        id: changesets
+        uses: changesets/action@e2f8e964d080ae97c874b19e27b12e0a8620fb6c # v1.4.6
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: npm run release:canary
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_PAT }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Compute new packages info
+        id: packagesData
+        if: success() && steps.changesets.outputs.published == 'true'
+        # We're using the special GH Actions syntax to add step outputs (ref: https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter)
+        # for count: use jq to determine the length of the array
+        # for packageList: use jq reduce to build up a string of markdown (ref: https://stedolan.github.io/jq/manual/#Reduce)
+        run: |
+          echo "::set-output name=count::$(echo ${{toJson(steps.changesets.outputs.publishedPackages)}} | jq '. | length')"
+          echo "::set-output name=packageList::$(echo ${{toJson(steps.changesets.outputs.publishedPackages)}} | jq 'reduce .[] as $item (""; . + "#### \($item.name)@\($item.version)\n```\nnpm install \($item.name)@canary\n```\n")')"
+
+      - name: Comment
+        uses: marocchino/sticky-pull-request-comment@331f8f5b4215f0445d3c07b4967662a32a2d3e31 # v2.9.0
+        if: success() && steps.changesets.outputs.published == 'true'
+        with:
+          header: 'canary-release'
+          message: |
+            ### :package: Canary Packages Published
+
+            Latest commit: ${{ github.event.pull_request.head.sha }}
+
+            <details><summary>Published ${{ steps.packagesData.outputs.count }} packages</summary>
+
+            ${{ fromJSON(steps.packagesData.outputs.packageList) }}
+
+            </details>

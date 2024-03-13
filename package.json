@@ -19,6 +19,8 @@
   },
   "devDependencies": {
     "@babel/code-frame": "^7.16.0",
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.1",
     "@hashicorp/remark-plugins": "^3.2.1",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
@@ -85,6 +87,7 @@
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
     "release:patch": "release patch && npm publish",
+    "release:canary": "npm run build && changeset publish --tag canary",
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
     "test": "npm run test:types && npm run test:js",
