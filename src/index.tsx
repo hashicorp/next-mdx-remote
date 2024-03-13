@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import './idle-callback-polyfill'
+import './idle-callback-polyfill.js'
 import React, { useEffect, useState, useMemo } from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
 import * as mdx from '@mdx-js/react'
