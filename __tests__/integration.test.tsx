@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
+import { jest } from '@jest/globals'
 import { Server } from 'http'
 import * as cheerio from 'cheerio'
 

@@ -40,7 +40,7 @@ describe('serialize', () => {
     }
     const result = await renderStatic('~> hello', options)
     expect(result).toMatchInlineSnapshot(
-      `"<div class=\\"alert alert-warning g-type-body\\"><p>hello</p></div>"`
+      `"<div class=\"alert alert-warning g-type-body\"><p>hello</p></div>"`
     )
     expect(options.mdxOptions.remarkPlugins.length).toBe(1)
   })
@@ -186,7 +186,7 @@ hello: world
         Expected a closing tag for \`<GITHUB_USER>\` (1:18-1:31) before the end of \`paragraph\`
 
         > 1 | This is very bad <GITHUB_USER>
-            | ^
+            |                  ^
 
         More information: https://mdxjs.com/docs/troubleshooting-mdx]
       `)
