@@ -12,34 +12,32 @@
     "./rsc": "./rsc.js"
   },
   "dependencies": {
-    "@mdx-js/mdx": "^2.2.1",
-    "@mdx-js/react": "^2.2.1",
-    "vfile": "^5.3.0",
-    "vfile-matter": "^3.0.1"
+    "@babel/code-frame": "^7.23.5",
+    "@mdx-js/mdx": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "unist-util-remove": "^3.1.0",
+    "vfile": "^6.0.1",
+    "vfile-matter": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.x <=18.x",
+    "react-dom": ">=16.x <=18.x"
   },
   "devDependencies": {
-    "@babel/code-frame": "^7.16.0",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.1",
     "@hashicorp/remark-plugins": "^3.2.1",
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.6",
-    "@rollup/plugin-typescript": "^8.3.0",
     "@types/babel__code-frame": "^7.0.3",
     "@types/cross-spawn": "^6.0.2",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.6",
+    "@types/node": "^18.11.9",
     "@types/puppeteer": "^5.4.4",
-    "@types/react": "^17.0.33",
-    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.2.65",
+    "@types/react-dom": "^18.2.22",
     "@types/rmfr": "^2.0.1",
     "@types/serve-handler": "^6.1.1",
     "cheerio": "^1.0.0-rc.10",
     "cross-spawn": "^7.0.3",
-    "esbuild-jest": "^0.5.0",
     "husky": "^4.3.6",
-    "jest": "^27.3.1",
     "next": "^13.1.2",
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.1",
@@ -48,12 +46,10 @@
     "react-dom": "^18.2.0",
     "release": "^6.3.0",
     "rmfr": "^2.0.0",
-    "rollup": "^2.59.0",
     "serve-handler": "^6.1.3",
     "tree-kill": "^1.2.2",
-    "tslib": "^2.3.1",
-    "typescript": "^4.4.4",
-    "unist-util-remove": "^3.1.0"
+    "typescript": "^5.4.2",
+    "vitest": "^1.3.1"
   },
   "homepage": "https://github.com/hashicorp/next-mdx-remote#readme",
   "husky": {
@@ -68,10 +64,6 @@
     "next.js"
   ],
   "license": "MPL-2.0",
-  "peerDependencies": {
-    "react": ">=16.x <=18.x",
-    "react-dom": ">=16.x <=18.x"
-  },
   "engines": {
     "node": ">=14",
     "npm": ">=7"
@@ -81,8 +73,7 @@
     "url": "git+https://github.com/hashicorp/next-mdx-remote.git"
   },
   "scripts": {
-    "build": "rm -rf ./dist && rollup -c rollup.config.js",
-    "postbuild": "cp ./src/jsx-runtime.cjs dist",
+    "build": "rm -rf ./dist && tsc -p .",
     "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
     "release:major": "release major && npm publish",
     "release:minor": "release minor && npm publish",
@@ -91,7 +82,7 @@
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
     "test": "npm run test:types && npm run test:js",
-    "test:js": "jest",
+    "test:js": "vitest",
     "test:types": "tsc -p . --noEmit"
   },
   "types": "index.d.ts",
