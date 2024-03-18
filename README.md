@@ -438,10 +438,10 @@ _Assuming usage in a Next.js 13+ application using the `app` directory._
 
 #### Basic
 
-```tsx
+```jsx
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
-// app/page.js
+// app/page.jsx
 export default function Home() {
   return (
     <MDXRemote
@@ -456,10 +456,10 @@ export default function Home() {
 
 #### Loading state
 
-```tsx
+```jsx
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
-// app/page.js
+// app/page.jsx
 export default function Home() {
   return (
     // Ideally this loading spinner would ensure there is no layout shift,
@@ -479,8 +479,8 @@ export default function Home() {
 
 #### Custom Components
 
-```tsx
-// components/mdx-remote.js
+```jsx
+// components/mdx-remote.jsx
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
 const components = {
@@ -501,8 +501,8 @@ export function CustomMDX(props) {
 }
 ```
 
-```tsx
-// app/page.js
+```jsx
+// app/page.jsx
 import { CustomMDX } from '../components/mdx-remote'
 
 export default function Home() {
@@ -520,7 +520,7 @@ export default function Home() {
 #### Access Frontmatter outside of MDX
 
 ```tsx
-// app/page.js
+// app/page.tsx
 import { compileMDX } from 'next-mdx-remote/rsc'
 
 export default async function Home() {
