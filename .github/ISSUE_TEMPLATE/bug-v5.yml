@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 name: "\U0001F41E Bug report (v5)"
 description: Report an issue with a canary release of next-mdx-remote v5
 labels: [v5]
