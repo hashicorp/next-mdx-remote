@@ -4,11 +4,15 @@
  */
 
 import React from 'react'
-import { jsxRuntime } from './jsx-runtime.cjs'
-import { MDXRemoteSerializeResult, SerializeOptions } from './types'
-import { VFileCompatible } from 'vfile'
 import { MDXProvider } from '@mdx-js/react'
+
+import { jsxRuntime } from './jsx-runtime.cjs'
 import { serialize } from './serialize'
+import generateTableOfContents from './toc'
+
+import type { VFileCompatible } from 'vfile'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { TocItem } from './toc'
 
 export type MDXRemoteProps = {
   source: VFileCompatible
@@ -27,6 +31,10 @@ export { MDXRemoteSerializeResult }
 export type CompileMDXResult<TFrontmatter = Record<string, unknown>> = {
   content: React.ReactElement
   frontmatter: TFrontmatter
+  /**
+   * @TODO - type this
+   */
+  tocData: TocItem[] | null
 }
 
 export async function compileMDX<TFrontmatter = Record<string, unknown>>({
@@ -43,6 +51,9 @@ export async function compileMDX<TFrontmatter = Record<string, unknown>>({
     // Enable RSC importSource
     true
   )
+
+  const tocData = options?.parseToc ? generateTableOfContents(source) : null;
+  
   // if we're ready to render, we can assemble the component tree and let React do its thing
   // first we set up the scope which has to include the mdx custom
   // create element function as well as any components we're using
@@ -68,9 +79,11 @@ export async function compileMDX<TFrontmatter = Record<string, unknown>>({
 
   const Content: React.ElementType = hydrateFn.apply(hydrateFn, values).default
 
+
   return {
     content: <Content components={components} />,
     frontmatter,
+    tocData,
   }
 }
 
