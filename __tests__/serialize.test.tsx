@@ -177,6 +177,24 @@ hello: world
     expect(result).toMatchInlineSnapshot(`"<h1>Hello world</h1>"`)
   })
 
+  test('should works with `export` statement', async () => {
+    const result = await renderStatic(
+      `export const num = 1
+
+export let str = 'foo'
+
+export var bool = true && 'true'
+
+export function Component() {
+  return 'from component'
+}
+
+# {num} {str} {bool} <Component />`
+    )
+
+    expect(result).toMatchInlineSnapshot(`"<h1>1 foo true from component</h1>"`)
+  })
+
   test('prints helpful message from compile error', async () => {
     try {
       await serialize(`This is very bad <GITHUB_USER>`)

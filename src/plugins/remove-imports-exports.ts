@@ -10,5 +10,11 @@ import { Plugin } from 'unified'
  * remark plugin which removes all import and export statements
  */
 export function removeImportsExportsPlugin(): Plugin {
-  return (tree) => remove(tree, 'mdxjsEsm')
+  return (ast) =>
+    remove(
+      ast,
+      (node) =>
+        node.type === 'mdxjsEsm' &&
+        node.data.estree.body[0].type === 'ImportDeclaration'
+    )
 }
