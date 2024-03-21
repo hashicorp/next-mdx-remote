@@ -1,7 +1,6 @@
 name: 'Test'
 on:
   pull_request:
-    branches: [main]
   push:
     branches: [main]
 
@@ -21,5 +20,5 @@ jobs:
       - name: Install and build
         run: |
           npm ci
-      - name: Run Jest
+      - name: Run Tests
         run: npm run test
