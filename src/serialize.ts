@@ -17,11 +17,12 @@ function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},
   rsc: boolean = false
 ): CompileOptions {
+  const areImportsEnabled = mdxOptions.useDynamicImport ?? false
   // don't modify the original object when adding our own plugin
   // this allows code to reuse the same options object
   const remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
-    removeImportsExportsPlugin,
+    ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
   ]
 
   return {
