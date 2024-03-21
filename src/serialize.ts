@@ -7,18 +7,17 @@ import { compile, CompileOptions } from '@mdx-js/mdx'
 import { VFile, VFileCompatible } from 'vfile'
 import { matter } from 'vfile-matter'
 
-import { createFormattedMDXError } from './format-mdx-error'
-import { removeImportsExportsPlugin } from './plugins/remove-imports-exports'
+import { createFormattedMDXError } from './format-mdx-error.js'
+import { removeImportsExportsPlugin } from './plugins/remove-imports-exports.js'
 
 // types
-import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types.js'
 
 function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},
   rsc: boolean = false
 ): CompileOptions {
-  const areImportsEnabled = mdxOptions?.useDynamicImport
-
+  const areImportsEnabled = mdxOptions.useDynamicImport ?? false
   // don't modify the original object when adding our own plugin
   // this allows code to reuse the same options object
   const remarkPlugins = [
@@ -32,6 +31,7 @@ function getCompileOptions(
     outputFormat: 'function-body',
     // Disable the importSource option for RSC to ensure there's no `useMDXComponents` implemented.
     providerImportSource: rsc ? undefined : '@mdx-js/react',
+    development: process.env.NODE_ENV !== 'production',
   }
 }
 

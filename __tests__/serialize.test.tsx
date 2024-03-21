@@ -9,9 +9,11 @@ import { paragraphCustomAlerts } from '@hashicorp/remark-plugins'
 import * as MDX from '@mdx-js/react'
 import { VFile } from 'vfile'
 
-import { MDXRemote } from '../'
-import { serialize } from '../serialize'
-import { renderStatic } from '../.jest/utils'
+import { MDXRemote } from '../src'
+import { serialize } from '../src/serialize'
+import { renderStatic } from './utils'
+
+import { describe, test, expect } from 'vitest'
 
 interface Frontmatter {
   hello: string
@@ -40,7 +42,7 @@ describe('serialize', () => {
     }
     const result = await renderStatic('~> hello', options)
     expect(result).toMatchInlineSnapshot(
-      `"<div class=\\"alert alert-warning g-type-body\\"><p>hello</p></div>"`
+      `"<div class=\"alert alert-warning g-type-body\"><p>hello</p></div>"`
     )
     expect(options.mdxOptions.remarkPlugins.length).toBe(1)
   })
@@ -111,13 +113,35 @@ describe('serialize', () => {
     expect(result).toMatchInlineSnapshot(`"<p>Hello world</p>"`)
   })
 
-  test('strips imports & exports', async () => {
-    const result = await renderStatic(`import foo from 'bar'
+  test('strips imports & exports by default', async () => {
+    const source = `import foo from 'bar'
 
 foo **bar**
 
-export const bar = 'bar'`)
+export const bar = 'bar'`
+
+    const { compiledSource } = await serialize(source)
+    expect(compiledSource).not.toMatch(/import/)
+
+    const result = await renderStatic(source)
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
+  })
+
+  test('keeps imports & exports if useDynamicImport is true', async () => {
+    const source = `import foo from 'bar'
+
+foo **bar**
+
+export const bar = 'bar'`
+
+    const { compiledSource } = await serialize(source, {
+      mdxOptions: { useDynamicImport: true },
+    })
+    expect(compiledSource).toMatch(/await import/)
+
+    // We specifically don't attempt to render this source given that it won't
+    // run correctly since we're emitting a top-level await and executing the
+    // code in a non-async context.
   })
 
   test('fragments', async () => {
@@ -186,7 +210,7 @@ hello: world
         Expected a closing tag for \`<GITHUB_USER>\` (1:18-1:31) before the end of \`paragraph\`
 
         > 1 | This is very bad <GITHUB_USER>
-            | ^
+            |                  ^
 
         More information: https://mdxjs.com/docs/troubleshooting-mdx]
       `)

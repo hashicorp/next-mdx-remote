@@ -5,10 +5,10 @@
 
 import React from 'react'
 import { jsxRuntime } from './jsx-runtime.cjs'
-import { MDXRemoteSerializeResult, SerializeOptions } from './types'
+import type { MDXRemoteSerializeResult, SerializeOptions } from './types.js'
 import { VFileCompatible } from 'vfile'
 import { MDXProvider } from '@mdx-js/react'
-import { serialize } from './serialize'
+import { serialize } from './serialize.js'
 
 export type MDXRemoteProps = {
   source: VFileCompatible

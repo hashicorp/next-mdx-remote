@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { compileMDX } from '../rsc'
+import { compileMDX } from '../src/rsc'
+
+import { describe, test, expect } from 'vitest'
 
 describe('compileMDX', () => {
   test('frontmatter types', async () => {
