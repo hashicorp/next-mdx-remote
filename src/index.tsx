@@ -34,7 +34,7 @@ export type MDXRemoteProps<
   TFrontmatter = Record<string, unknown>
 > = MDXRemoteSerializeResult<TScope, TFrontmatter> & {
   /**
-   * A object mapping names to React components.
+   * An object mapping names to React components.
    * The key used will be the name accessible to MDX.
    *
    * For example: `{ ComponentName: Component }` will be accessible in the MDX as `<ComponentName/>`.
@@ -54,7 +54,7 @@ export { MDXRemoteSerializeResult }
 export function MDXRemote<TScope, TFrontmatter>({
   compiledSource,
   frontmatter,
-  scope,
+  scope: scopeWithProps,
   components = {},
   lazy,
 }: MDXRemoteProps<TScope, TFrontmatter>) {
@@ -75,6 +75,8 @@ export function MDXRemote<TScope, TFrontmatter>({
   }, [])
 
   const Content: React.ElementType = useMemo(() => {
+    const { props = {}, ...scope } = scopeWithProps || {}
+
     // if we're ready to render, we can assemble the component tree and let React do its thing
     // first we set up the scope which has to include the mdx custom
     // create element function as well as any components we're using
@@ -96,8 +98,10 @@ export function MDXRemote<TScope, TFrontmatter>({
       keys.concat(`${compiledSource}`)
     )
 
-    return hydrateFn.apply(hydrateFn, values).default
-  }, [scope, compiledSource])
+    const Component = hydrateFn.apply(hydrateFn, values).default
+
+    return () => <Component {...props} />
+  }, [scopeWithProps, compiledSource])
 
   if (!isReadyToRender) {
     // If we're not ready to render, return an empty div to preserve SSR'd markup
