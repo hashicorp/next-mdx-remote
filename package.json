@@ -75,6 +75,7 @@
   "scripts": {
     "build": "rm -rf ./dist && tsc -p .",
     "lint": "prettier --write \"./**/*.{js,jsx,json}\"",
+    "release": "changeset publish",
     "release:canary": "npm run build && changeset publish --tag canary",
     "prepublishOnly": "npm run build",
     "pretest": "mkdir -p ./dist && npm run build && npm pack --pack-destination ./dist",
