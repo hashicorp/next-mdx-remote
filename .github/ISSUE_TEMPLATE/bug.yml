@@ -26,6 +26,6 @@ body:
     attributes:
       label: next-mdx-remote version
       description: The version of next-mdx-remote you are using.
-      placeholder: v4.4.1
+      placeholder: v5.0.0
     validations:
       required: true
