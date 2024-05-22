@@ -4,7 +4,7 @@
 
 # next-mdx-remote
 
-A set of light utilities allowing mdx to be loaded within `getStaticProps` or `getServerSideProps` and hydrated correctly on the client.
+A set of light utilities allowing MDX to be loaded within `getStaticProps` or `getServerSideProps` and hydrated correctly on the client.
 
 -->
 
@@ -15,11 +15,15 @@ A set of light utilities allowing mdx to be loaded within `getStaticProps` or `g
 ## Installation
 
 ```sh
-# using npm
-npm i next-mdx-remote
+npm install next-mdx-remote
+```
 
-# using yarn
-yarn add next-mdx-remote
+If using with Turbopack, you'll need to add the following to your `next.config.js` until [this issue](https://github.com/vercel/next.js/issues/64525) is resolved:
+
+```diff
+const nextConfig = {
++  transpilePackages: ['next-mdx-remote'],
+}
 ```
 
 ## Examples
@@ -50,7 +54,7 @@ export async function getStaticProps() {
 
 While it may seem strange to see these two in the same file, this is one of the cool things about Next.js -- `getStaticProps` and `TestPage`, while appearing in the same file, run in two different places. Ultimately your browser bundle will not include `getStaticProps` at all, or any of the functions it uses only on the server, so `serialize` will be removed from the browser bundle entirely.
 
-> **IMPORTANT**: Be very careful about putting any `mdx-remote` code into a separate "utilities" file. Doing so will likely cause issues with nextjs' code splitting abilities - it must be able to cleanly determine what is used only on the server side and what should be left in the client bundle. If you put `mdx-remote` code into an external utilities file and something is broken, remove it and start from the simple example above before filing an issue.
+> **IMPORTANT**: Be very careful about putting any `next-mdx-remote` code into a separate "utilities" file. Doing so will likely cause issues with Next.js' code splitting abilities - it must be able to cleanly determine what is used only on the server side and what should be left in the client bundle. If you put `next-mdx-remote` code into an external utilities file and something is broken, remove it and start from the simple example above before filing an issue.
 
 ### Additional Examples
 
@@ -290,7 +294,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
 
 - **`serialize(source: string, { mdxOptions?: object, scope?: object, parseFrontmatter?: boolean })`**
 
-  **`serialize`** consumes a string of MDX. It can also optionally be passed options which are [passed directly to MDX](https://mdxjs.com/docs/extending-mdx/), and a scope object that can be included in the mdx scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
+  **`serialize`** consumes a string of MDX. It can also optionally be passed options which are [passed directly to MDX](https://mdxjs.com/docs/extending-mdx/), and a scope object that can be included in the MDX scope. The function returns an object that is intended to be passed into `<MDXRemote />` directly.
 
   ```ts
   serialize(
@@ -298,7 +302,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
     '# hello, world',
     // Optional parameters
     {
-      // made available to the arguments of any custom mdx component
+      // made available to the arguments of any custom MDX component
       scope: {},
       // MDX's available options, see the MDX docs for more info.
       // https://mdxjs.com/packages/mdx/#compilefile-options
@@ -307,7 +311,7 @@ This library exposes a function and a component, `serialize` and `<MDXRemote />`
         rehypePlugins: [],
         format: 'mdx',
       },
-      // Indicates whether or not to parse the frontmatter from the mdx source
+      // Indicates whether or not to parse the frontmatter from the MDX source
       parseFrontmatter: false,
     }
   )
@@ -342,9 +346,9 @@ Note: `th/td` won't work because of the "/" in the component name.
 
 ## Background & Theory
 
-There isn't really a good default way to load mdx files in a Next.js app. Previously, we wrote [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
+There isn't really a good default way to load MDX files in a Next.js app. Previously, we wrote [`next-mdx-enhanced`](https://github.com/hashicorp/next-mdx-enhanced) in order to be able to render your MDX files into layouts and import their front matter to create index pages.
 
-This workflow from mdx-enhanced was fine, but introduced a few limitations that we have removed with `next-mdx-remote`:
+This workflow from `next-mdx-enhanced` was fine, but introduced a few limitations that we have removed with `next-mdx-remote`:
 
 - **The file content must be local.** You cannot store MDX files in another repo, a database, etc. For a large enough operation, there will end up being a split between those authoring content and those working on presentation of the content. Overlapping these two concerns in the same repo makes a more difficult workflow for everyone.
 - **You are bound to filesystem-based routing.** Your pages are generated with urls according to their locations. Or maybe you remap them using `exportPathMap`, which creates confusion for authors. Regardless, moving pages around in any way breaks things -- either the page's url or your `exportPathMap` configuration.
@@ -353,13 +357,13 @@ This workflow from mdx-enhanced was fine, but introduced a few limitations that 
 
 So, `next-mdx-remote` changes the entire pattern so that you load your MDX content not through an import, but rather through `getStaticProps` or `getServerProps` -- you know, the same way you would load any other data. The library provides the tools to serialize and hydrate the MDX content in a manner that is performant. This removes all of the limitations listed above, and does so at a significantly lower cost -- `next-mdx-enhanced` is a very heavy library with a lot of custom logic and [some annoying limitations](https://github.com/hashicorp/next-mdx-enhanced/issues/17). Our informal testing has shown build times reduced by 50% or more.
 
-Since this project was initially created, Kent C Dodds has made a similar project, [`mdx-bundler`](https://github.com/kentcdodds/mdx-bundler). This library supports imports and exports within a mdx file (as long as you manually read each imported file and pass its contents) and automatically processes frontmatter. If you have a lot of files that all import and use different components, you may benefit from using `mdx-bundler`, as `next-mdx-remote` currently only allows components to be imported and made available across all pages. It's important to note that this functionality comes with a cost though - `mdx-bundler`'s output is at least 400% larger than the output from `next-mdx-remote` for basic markdown content.
+Since this project was initially created, Kent C. Dodds has made a similar project, [`mdx-bundler`](https://github.com/kentcdodds/mdx-bundler). This library supports imports and exports within a MDX file (as long as you manually read each imported file and pass its contents) and automatically processes frontmatter. If you have a lot of files that all import and use different components, you may benefit from using `mdx-bundler`, as `next-mdx-remote` currently only allows components to be imported and made available across all pages. It's important to note that this functionality comes with a cost though - `mdx-bundler`'s output is at least 400% larger than the output from `next-mdx-remote` for basic markdown content.
 
 ### How Can I Build A Blog With This?
 
-Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal html and css. You definitely do not need to be using a heavy full-stack javascript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
+Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal HTML and CSS. You definitely do not need to be using a heavy full-stack JavaScript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
 
-If you really insist though, check out [our official nextjs example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
+If you really insist though, check out [our official Next.js example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
 
 ## Caveats
 
@@ -388,9 +392,9 @@ This project does include native types for TypeScript use. Both `serialize` and 
 Below is an example of a simple implementation in TypeScript. You may not need to implement the types exactly in this way for every configuration of TypeScript - this example is just a demonstration of where the types could be applied if needed.
 
 ```tsx
-import { GetStaticProps } from 'next'
+import type { GetStaticProps } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { MDXRemote, type MDXRemoteSerializeResult } from 'next-mdx-remote'
 import ExampleComponent from './example'
 
 const components = { ExampleComponent }
@@ -416,9 +420,6 @@ export const getStaticProps: GetStaticProps<{
 ```
 
 ## React Server Components (RSC) & Next.js `app` Directory Support
-
-> **Warning**
-> We consider the `next-mdx-remote/rsc` API to be unstable. Use at your own discretion, and be aware that the API and behavior might change between minor and/or patch releases.
 
 Usage of `next-mdx-remote` within server components, and specifically within Next.js's `app` directory, is supported by importing from `next-mdx-remote/rsc`. Previously, the serialization and render steps were separate, but going forward RSC makes this separation unnecessary.
 
@@ -538,6 +539,88 @@ This is from Server Components!
     <>
       <h1>{frontmatter.title}</h1>
       {content}
+    </>
+  )
+}
+```
+
+## Alternatives
+
+`next-mdx-remote` is opinionated in what features it supports. If you need additional features not provided by `next-mdx-remote`, here are a few alternatives to consider:
+
+- [`mdx-bundler`](https://github.com/kentcdodds/mdx-bundler)
+- [`next-mdx-remote-client`](https://github.com/ipikuka/next-mdx-remote-client)
+- [`remote-mdx`](https://github.com/devjiwonchoi/remote-mdx)
+
+### You Might Not Need `next-mdx-remote`
+
+If you're using React Server Components and just trying to use basic MDX with custom components, you don't need anything other than the core MDX library.
+
+```js
+import { compile, run } from '@mdx-js/mdx'
+import * as runtime from 'react/jsx-runtime'
+import ClientComponent from './components/client'
+
+// MDX can be retrieved from anywhere, such as a file or a database.
+const mdxSource = `# Hello, world!
+<ClientComponent />
+`
+
+export default async function Page() {
+  // Compile the MDX source code to a function body
+  const code = String(
+    await compile(mdxSource, { outputFormat: 'function-body' })
+  )
+  // You can then either run the code on the server, generating a server
+  // component, or you can pass the string to a client component for
+  // final rendering.
+
+  // Run the compiled code with the runtime and get the default export
+  const { default: MDXContent } = await run(code, {
+    ...runtime,
+    baseUrl: import.meta.url,
+  })
+
+  // Render the MDX content, supplying the ClientComponent as a component
+  return <MDXContent components={{ ClientComponent }} />
+}
+```
+
+You can also simplify this approach with `evaluate`, which compiles and runs code in a single call if you don't plan on passing the compiled string to a database or client component.
+
+```js
+import { evaluate } from '@mdx-js/mdx'
+import * as runtime from 'react/jsx-runtime'
+import ClientComponent from './components/client'
+
+// MDX can be retrieved from anywhere, such as a file or a database.
+const mdxSource = `
+export const title = "MDX Export Demo";
+
+# Hello, world!
+<ClientComponent />
+
+export function MDXDefinedComponent() {
+  return <p>MDX-defined component</p>;
+}
+`
+
+export default async function Page() {
+  // Run the compiled code
+  const {
+    default: MDXContent,
+    MDXDefinedComponent,
+    ...rest
+  } = await evaluate(mdxSource, runtime)
+
+  console.log(rest) // logs { title: 'MDX Export Demo' }
+
+  // Render the MDX content, supplying the ClientComponent as a component, and
+  // the exported MDXDefinedComponent.
+  return (
+    <>
+      <MDXContent components={{ ClientComponent }} />
+      <MDXDefinedComponent />
     </>
   )
 }

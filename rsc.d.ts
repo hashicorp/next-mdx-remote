@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-export * from './dist/rsc'
+export * from './dist/rsc.js'
