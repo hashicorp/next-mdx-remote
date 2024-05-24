@@ -58,6 +58,41 @@ While it may seem strange to see these two in the same file, this is one of the 
 
 ### Additional Examples
 
+
+
+<details>
+  <summary>Using Nextjs App dir and Server Components</summary>
+
+```jsx
+// app/posts/[slug]/page.js
+import Post from "@/app/posts/[slug]/Post";
+import { serialize } from "next-mdx-remote/serialize";
+
+export default async function TestPage() {
+  const source = 'Some **mdx** text, with a component <Test />'
+  const mdxSource = await serialize(source);
+
+  return (
+    <Post source={mdxSource} />
+  );
+}
+
+```
+
+```jsx
+// app/posts/[slug]/page.js
+"use client";
+import React from "react";
+import { MDXRemote } from "next-mdx-remote";
+
+export default function Post(props: { source: any }) {
+  return <MDXRemote {...props.source} />;
+}
+
+```
+
+</details>
+
 <details>
   <summary>Parsing Frontmatter</summary>
 
