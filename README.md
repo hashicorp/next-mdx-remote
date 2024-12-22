@@ -18,14 +18,6 @@ A set of light utilities allowing MDX to be loaded within `getStaticProps` or `g
 npm install next-mdx-remote
 ```
 
-If using with Turbopack, you'll need to add the following to your `next.config.js` until [this issue](https://github.com/vercel/next.js/issues/64525) is resolved:
-
-```diff
-const nextConfig = {
-+  transpilePackages: ['next-mdx-remote'],
-}
-```
-
 ## Examples
 
 ```jsx
