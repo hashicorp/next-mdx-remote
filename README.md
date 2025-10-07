@@ -363,7 +363,7 @@ Since this project was initially created, Kent C. Dodds has made a similar proje
 
 Data has shown that 99% of use cases for all developer tooling are building unnecessarily complex personal blogs. Just kidding. But seriously, if you are trying to build a blog for personal or small business use, consider just using normal HTML and CSS. You definitely do not need to be using a heavy full-stack JavaScript framework to make a simple blog. You'll thank yourself later when you return to make an update in a couple years and there haven't been 10 breaking releases to all of your dependencies.
 
-If you really insist though, check out [our official Next.js example implementation](https://github.com/vercel/next.js/tree/canary/examples/with-mdx-remote). 💖
+If you really insist though, check out [our official Next.js example implementation](https://github.com/vercel/next.js/tree/canary/examples/mdx-remote). 💖
 
 ## Caveats
 
