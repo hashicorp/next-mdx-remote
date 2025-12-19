@@ -226,4 +226,28 @@ hello: world
     const result = await renderStatic(Buffer.from('foo **bar**'))
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
+
+  test('respects development option from mdxOptions', async () => {
+
+    const mdxSourceDev = await serialize('foo **bar**', {
+      mdxOptions: { development: true },
+    })
+    
+
+    const mdxSourceProd = await serialize('foo **bar**', {
+      mdxOptions: { development: false },
+    })
+
+    // In development mode, React uses _jsxDEV for enhanced debugging
+    expect(mdxSourceDev.compiledSource).toContain('_jsxDEV(')
+    // In production mode, React does not use _jsxDEV
+    expect(mdxSourceProd.compiledSource).not.toContain('_jsxDEV(')
+    expect(mdxSourceProd.compiledSource).toContain('_jsx(')
+    
+    // Verify development version renders correctly
+    const resultDev = await renderStatic('foo **bar**', {
+      mdxOptions: { development: true },
+    })
+    expect(resultDev).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
+  })
 })
