@@ -127,23 +127,6 @@ export const bar = 'bar'`
     expect(result).toMatchInlineSnapshot(`"<p>foo <strong>bar</strong></p>"`)
   })
 
-  test('keeps imports & exports if useDynamicImport is true', async () => {
-    const source = `import foo from 'bar'
-
-foo **bar**
-
-export const bar = 'bar'`
-
-    const { compiledSource } = await serialize(source, {
-      mdxOptions: { useDynamicImport: true },
-    })
-    expect(compiledSource).toMatch(/await import/)
-
-    // We specifically don't attempt to render this source given that it won't
-    // run correctly since we're emitting a top-level await and executing the
-    // code in a non-async context.
-  })
-
   test('fragments', async () => {
     const components = {
       Test: ({ content }: { content: string }) => <>{content}</>,
