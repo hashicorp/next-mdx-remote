@@ -21,6 +21,16 @@ export interface SerializeOptions {
    * Indicate whether or not frontmatter should be parsed out of the MDX. Defaults to false
    */
   parseFrontmatter?: boolean
+  /**
+   * Block JavaScript expressions in MDX. When true, patterns like {variable} or {func()}
+   * will be removed while preserving JSX components and standard Markdown. Defaults to true
+   */
+  blockJS?: boolean
+  /**
+   * Provides a best effort option to block dangerous JavaScript expressions when JS is enabled. Prevents access to eval, Function,
+   * process, and other dangerous globals. Defaults to true for security.
+   */
+  blockDangerousJS?: boolean
 }
 
 /**

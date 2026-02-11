@@ -9,13 +9,17 @@ import { matter } from 'vfile-matter'
 
 import { createFormattedMDXError } from './format-mdx-error.js'
 import { removeImportsExportsPlugin } from './plugins/remove-imports-exports.js'
+import { removeJavaScriptExpressions } from './plugins/remove-javascript-expressions.js'
+import { CreateRemoveDangerousCallsPlugin } from './plugins/remove-dangerous-javascript-expressions.js'
 
 // types
 import type { MDXRemoteSerializeResult, SerializeOptions } from './types.js'
 
 function getCompileOptions(
   mdxOptions: SerializeOptions['mdxOptions'] = {},
-  rsc: boolean = false
+  rsc: boolean = false,
+  blockJS: boolean = true,
+  blockDangerousJS: boolean = true
 ): CompileOptions {
   const areImportsEnabled = mdxOptions.useDynamicImport ?? false
   // don't modify the original object when adding our own plugin
@@ -23,6 +27,10 @@ function getCompileOptions(
   const remarkPlugins = [
     ...(mdxOptions.remarkPlugins || []),
     ...(areImportsEnabled ? [] : [removeImportsExportsPlugin]),
+    ...(blockJS ? [removeJavaScriptExpressions] : []),
+    ...(!blockJS && blockDangerousJS
+      ? [CreateRemoveDangerousCallsPlugin()]
+      : []),
   ]
 
   return {
@@ -47,6 +55,8 @@ export async function serialize<
     scope = {},
     mdxOptions = {},
     parseFrontmatter = false,
+    blockJS = true,
+    blockDangerousJS = true,
   }: SerializeOptions = {},
   rsc: boolean = false
 ): Promise<MDXRemoteSerializeResult<TScope, TFrontmatter>> {
@@ -60,7 +70,10 @@ export async function serialize<
   let compiledMdx: VFile
 
   try {
-    compiledMdx = await compile(vfile, getCompileOptions(mdxOptions, rsc))
+    compiledMdx = await compile(
+      vfile,
+      getCompileOptions(mdxOptions, rsc, blockJS, blockDangerousJS)
+    )
   } catch (error: any) {
     throw createFormattedMDXError(error, String(vfile))
   }

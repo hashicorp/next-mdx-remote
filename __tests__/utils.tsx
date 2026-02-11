@@ -30,11 +30,15 @@ export async function renderStatic(
     scope = {},
     mdxOptions,
     parseFrontmatter,
+    blockJS,
+    blockDangerousJS,
   }: Partial<SerializeOptions & Pick<MDXRemoteProps, 'components'>> = {}
 ): Promise<string> {
   const mdxSource = await serialize(mdx, {
     mdxOptions,
     parseFrontmatter,
+    blockJS,
+    blockDangerousJS,
   })
 
   return ReactDOMServer.renderToStaticMarkup(

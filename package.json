@@ -1,7 +1,7 @@
 {
   "name": "next-mdx-remote",
   "description": "utilities for loading mdx from any remote source as data, rather than as a local import",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "author": "Jeff Escalante",
   "bugs": {
     "url": "https://github.com/hashicorp/next-mdx-remote/issues"
@@ -16,7 +16,8 @@
     "@babel/code-frame": "^7.23.5",
     "@mdx-js/mdx": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
-    "unist-util-remove": "^3.1.0",
+    "unist-util-remove": "^4.0.0",
+    "unist-util-visit": "^5.1.0",
     "vfile": "^6.0.1",
     "vfile-matter": "^5.0.0"
   },
