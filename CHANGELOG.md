@@ -1,5 +1,15 @@
 # next-mdx-remote
 
+## 6.0.0
+
+### Breaking/Major Changes
+
+- [#448](https://github.com/hashicorp/next-mdx-remote/pull/498)
+
+* Updated unist-util-remove to ^4.0.0
+* Introduced the parameters blockJS and blockDangerousJS that controls how JS in interpreted during compiling MDX. Both default to true for security reasons.
+* Updated the README to explain this change: https://github.com/hashicorp/next-mdx-remote/pull/498/changes#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5R393.
+
 ## 5.0.0
 
 ### Major Changes
