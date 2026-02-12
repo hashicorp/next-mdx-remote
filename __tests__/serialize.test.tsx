@@ -55,6 +55,7 @@ describe('serialize', () => {
       scope: {
         bar: 'test',
       },
+      blockJS: false,
     })
     expect(result).toMatchInlineSnapshot(`"<p>test</p>"`)
   })
@@ -151,7 +152,7 @@ export const bar = 'bar'`
 
     const result = await renderStatic(
       `<Test content={<>Rendering a fragment</>} />`,
-      { components }
+      { components, blockJS: false }
     )
     expect(result).toMatchInlineSnapshot(`"Rendering a fragment"`)
   })
@@ -195,7 +196,7 @@ hello: world
 ---
 
 # Hello {frontmatter.hello}`,
-      { parseFrontmatter: true }
+      { parseFrontmatter: true, blockJS: false }
     )
 
     expect(result).toMatchInlineSnapshot(`"<h1>Hello world</h1>"`)

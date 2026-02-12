@@ -60,6 +60,7 @@ export async function getStaticProps() {
   const mdxSource = await serialize(source, {
     mdxOptions: { remarkPlugins: [paragraphCustomAlerts] },
     parseFrontmatter: true,
+    blockJS: false,
   })
 
   return { props: { mdxSource } }

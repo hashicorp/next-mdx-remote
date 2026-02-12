@@ -27,6 +27,7 @@ export default async function Page() {
         options={{
           mdxOptions: { remarkPlugins: [] },
           parseFrontmatter: true,
+          blockJS: false,
         }}
       />
     </>
