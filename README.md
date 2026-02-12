@@ -442,6 +442,8 @@ export const getStaticProps: GetStaticProps<{
 
 Usage of `next-mdx-remote` within server components, and specifically within Next.js's `app` directory, is supported by importing from `next-mdx-remote/rsc`. Previously, the serialization and render steps were separate, but going forward RSC makes this separation unnecessary.
 
+
+
 Some noteworthy differences:
 
 - `<MDXRemote />` now accepts a `source` prop, instead of accepting the serialized output from `next-mdx-remote/serialize`
@@ -449,6 +451,8 @@ Some noteworthy differences:
 - To access frontmatter outside of your MDX when passing `parseFrontmatter: true`, use the `compileMdx` method exposed from `next-mdx-remote/rsc`
 - The `lazy` prop is no longer supported, as the rendering happens on the server
 - `<MDXRemote />` must be rendered on the server, as it is now an async component. Client components can be rendered as part of the MDX markup
+
+<i>Note: `next-mdx-remote/rsc` `<MDXRemote />` and `next-mdx-remote` `<MDXRemote />` have different APIs.</i>
 
 For more information on RSC, check out the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/rendering/server-components).
 
@@ -497,11 +501,12 @@ export default function Home() {
 }
 ```
 
-#### Custom Components
+#### Custom Components (using rsc)
 
 ```tsx
 // components/mdx-remote.js
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { SerializeOptions } from 'next-mdx-remote/dist/types'
 
 const components = {
   h1: (props) => (
@@ -511,10 +516,18 @@ const components = {
   ),
 }
 
+// Example options to pass to MDXRemote (rsc) for using plugins to serialize latex (optional)
+const serializeOptions: SerializeOptions = {mdxOptions: {
+  remarkPlugins: [remarkMath] as unknown as Pluggable[],
+  rehypePlugins: [rehypeKatex] as unknown as Pluggable[],
+  format: 'mdx',
+}}
+
 export function CustomMDX(props) {
   return (
     <MDXRemote
       {...props}
+      options={serializeOptions}
       components={{ ...components, ...(props.components || {}) }}
     />
   )
