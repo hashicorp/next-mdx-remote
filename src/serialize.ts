@@ -39,7 +39,7 @@ function getCompileOptions(
     outputFormat: 'function-body',
     // Disable the importSource option for RSC to ensure there's no `useMDXComponents` implemented.
     providerImportSource: rsc ? undefined : '@mdx-js/react',
-    development: process.env.NODE_ENV !== 'production',
+    development: mdxOptions.development ?? process.env.NODE_ENV !== 'production',
   }
 }
 
