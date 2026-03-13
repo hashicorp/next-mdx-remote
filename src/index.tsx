@@ -96,7 +96,7 @@ export function MDXRemote<TScope, TFrontmatter>({
       keys.concat(`${compiledSource}`)
     )
 
-    return hydrateFn.apply(hydrateFn, values).default
+    return hydrateFn(...values).default
   }, [scope, compiledSource])
 
   if (!isReadyToRender) {
