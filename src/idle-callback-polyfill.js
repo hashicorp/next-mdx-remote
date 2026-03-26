@@ -4,8 +4,7 @@
  */
 
 if (typeof window !== 'undefined') {
-  window.requestIdleCallback =
-    window.requestIdleCallback ||
+  window.requestIdleCallback ||=
     function (cb) {
       var start = Date.now()
       return setTimeout(function () {
@@ -18,9 +17,5 @@ if (typeof window !== 'undefined') {
       }, 1)
     }
 
-  window.cancelIdleCallback =
-    window.cancelIdleCallback ||
-    function (id) {
-      clearTimeout(id)
-    }
+  window.cancelIdleCallback ||= clearTimeout
 }
