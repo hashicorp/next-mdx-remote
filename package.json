@@ -12,6 +12,17 @@
     "./rsc": "./rsc.js",
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist/*",
+    "index.d.ts",
+    "index.js",
+    "LICENSE",
+    "README.md",
+    "rsc.d.ts",
+    "rsc.js",
+    "serialize.d.ts",
+    "serialize.js"
+  ]
   "dependencies": {
     "@babel/code-frame": "^7.23.5",
     "@mdx-js/mdx": "^3.0.1",
